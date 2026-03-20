@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=My Product
+Comment=A myapp2 application
+# The Exec line includes %u to pass the URL to the application
+Exec=/usr/local/bin/myapp2.exe %u
+Terminal=false
+Type=Application
+Icon=myapp2.exe
+Categories=Utility;
+StartupWMClass=myapp2.exe
+
+ 
