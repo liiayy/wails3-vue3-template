@@ -12,7 +12,7 @@ export default defineConfig({
   plugins: [
     vue(),
     vueJsx(),
-    vueDevTools(),
+    vueDevTools({launchEditor:"C:\\Program Files\\JetBrains\\GoLand 2024.3.5\\bin\\goland64.exe"}),
     wails("./bindings"),
     tailwindcss(),
   ],
