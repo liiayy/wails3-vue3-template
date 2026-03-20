@@ -5,6 +5,7 @@ import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import wails from "@wailsio/runtime/plugins/vite";
+import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -13,6 +14,7 @@ export default defineConfig({
     vueJsx(),
     vueDevTools(),
     wails("./bindings"),
+    tailwindcss(),
   ],
   resolve: {
     alias: {
@@ -20,3 +22,4 @@ export default defineConfig({
     },
   },
 })
+
