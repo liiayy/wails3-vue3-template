@@ -64,7 +64,7 @@ func (wm *WindowManager) CreateSettingsWindow() *application.WebviewWindow {
 		Title:            "系统设置",
 		Width:            720,
 		Height:           520,
-		URL:              "/#/settings",
+		URL:              "/#/standalone/settings",
 		BackgroundColour: application.NewRGB(27, 38, 54),
 		// 按 Escape 键自动隐藏此窗口
 		HideOnEscape: true,
@@ -87,7 +87,7 @@ func (wm *WindowManager) CreateAboutWindow() *application.WebviewWindow {
 		Title:            "关于 MyApp2",
 		Width:            400,
 		Height:           300,
-		URL:              "/#/about",
+		URL:              "/#/standalone/about",
 		BackgroundColour: application.NewRGB(27, 38, 54),
 		HideOnEscape:     true,
 	})

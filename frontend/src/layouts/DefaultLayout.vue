@@ -1,24 +1,157 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { useSettingsStore } from '../stores/settings'
+import {
+  HomeIcon,
+  SettingIcon,
+  InfoCircleIcon,
+  ChevronLeftDoubleIcon,
+  ChevronRightDoubleIcon,
+} from 'tdesign-icons-vue-next'
+
+const router = useRouter()
+const route = useRoute()
+const settings = useSettingsStore()
+
+// 当前激活的菜单项
+const activeMenu = computed(() => {
+  // 让 route name 映射到菜单的 value
+  return route.name as string || 'home'
+})
+
+// 菜单项定义
+const menuItems = [
+  { value: 'home', label: '首页', icon: HomeIcon, path: '/' },
+  { value: 'settings', label: '系统设置', icon: SettingIcon, path: '/settings' },
+  { value: 'about', label: '关于', icon: InfoCircleIcon, path: '/about' },
+]
+
+function onMenuChange(value: string) {
+  const item = menuItems.find(m => m.value === value)
+  if (item) {
+    router.push(item.path)
+  }
+}
+
+function toggleSidebar() {
+  settings.updateSetting('isSidebarCollapsed', !settings.isSidebarCollapsed)
+}
 </script>
 
 <template>
-  <div class="h-screen w-full flex flex-col overflow-hidden bg-[var(--td-bg-color-page)]">
-    <!-- Wails3 窗口拖拽区域（如果你配置了无边框窗口） -->
-    <div class="w-full h-[50px] titlebar-drag-region flex items-center px-4 bg-[var(--td-bg-color-container)] border-b border-[var(--td-border-level-1-color)]" style="--wails-draggable:drag">
-      <h1 class="text-sm font-semibold text-[var(--td-text-color-primary)]">MyApp2</h1>
-    </div>
+  <div class="h-screen w-full flex overflow-hidden bg-[var(--td-bg-color-page)]">
+    <!-- ========== 侧边栏 ========== -->
+    <aside
+      class="sidebar flex flex-col h-full transition-all duration-300 border-r border-[var(--td-border-level-1-color)] bg-[var(--td-bg-color-container)]"
+      :class="settings.isSidebarCollapsed ? 'w-[64px]' : 'w-[220px]'"
+    >
+      <!-- Logo 区域 (可拖拽) -->
+      <div
+        class="h-[50px] flex items-center gap-2 px-4 shrink-0 border-b border-[var(--td-border-level-1-color)]"
+        style="--wails-draggable: drag; -webkit-app-region: drag; user-select: none;"
+      >
+        <div class="w-7 h-7 rounded-md bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shrink-0 shadow">
+          M
+        </div>
+        <span
+          v-show="!settings.isSidebarCollapsed"
+          class="text-sm font-semibold text-[var(--td-text-color-primary)] whitespace-nowrap overflow-hidden"
+        >
+          MyApp2
+        </span>
+      </div>
 
-    <!-- 主体内容区 -->
-    <main class="flex-1 overflow-auto p-4">
-      <router-view />
-    </main>
+      <!-- 菜单导航 -->
+      <nav class="flex-1 overflow-y-auto py-2">
+        <t-menu
+          :value="activeMenu"
+          :collapsed="settings.isSidebarCollapsed"
+          @change="onMenuChange"
+          theme="light"
+        >
+          <t-menu-item
+            v-for="item in menuItems"
+            :key="item.value"
+            :value="item.value"
+          >
+            <template #icon>
+              <component :is="item.icon" />
+            </template>
+            {{ item.label }}
+          </t-menu-item>
+        </t-menu>
+      </nav>
+
+      <!-- 底部折叠按钮 -->
+      <div
+        class="h-[48px] flex items-center justify-center border-t border-[var(--td-border-level-1-color)] cursor-pointer hover:bg-[var(--td-bg-color-secondarycontainer)] transition-colors"
+        @click="toggleSidebar"
+        style="-webkit-app-region: no-drag"
+      >
+        <component
+          :is="settings.isSidebarCollapsed ? ChevronRightDoubleIcon : ChevronLeftDoubleIcon"
+          class="text-[var(--td-text-color-secondary)]"
+          :size="20"
+        />
+      </div>
+    </aside>
+
+    <!-- ========== 右侧主区域 ========== -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <!-- 顶部标题栏 (可拖拽) -->
+      <header
+        class="h-[50px] flex items-center justify-between px-5 shrink-0 border-b border-[var(--td-border-level-1-color)] bg-[var(--td-bg-color-container)]"
+        style="--wails-draggable: drag; -webkit-app-region: drag; user-select: none;"
+      >
+        <h2 class="text-sm font-medium text-[var(--td-text-color-primary)]">
+          {{ route.meta?.title || 'MyApp2' }}
+        </h2>
+
+        <!-- 右侧主题切换 (不可拖拽) -->
+        <div class="flex items-center gap-3" style="-webkit-app-region: no-drag">
+          <t-tooltip :content="settings.theme === 'dark' ? '切换到明亮模式' : '切换到黑暗模式'">
+            <t-button
+              variant="text"
+              shape="square"
+              size="small"
+              @click="settings.updateSetting('theme', settings.theme === 'dark' ? 'light' : 'dark')"
+            >
+              <template #icon>
+                <span v-if="settings.theme === 'dark'">☀️</span>
+                <span v-else>🌙</span>
+              </template>
+            </t-button>
+          </t-tooltip>
+        </div>
+      </header>
+
+      <!-- 主内容区 -->
+      <main class="flex-1 overflow-auto p-5">
+        <router-view v-slot="{ Component }">
+          <transition name="fade" mode="out-in">
+            <component :is="Component" />
+          </transition>
+        </router-view>
+      </main>
+    </div>
   </div>
 </template>
 
 <style scoped>
-/* 定义拖拽区域 */
-.titlebar-drag-region {
-  -webkit-app-region: drag;
-  user-select: none;
+/* 页面切换动画 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* 侧边栏菜单样式微调 */
+.sidebar :deep(.t-default-menu) {
+  border-right: none;
+  background: transparent;
 }
 </style>
