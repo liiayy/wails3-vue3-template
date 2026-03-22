@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <t-button>我是一个安娜</t-button>
+  <router-view />
 </template>
 
 <style scoped></style>
