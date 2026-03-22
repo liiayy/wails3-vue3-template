@@ -13,6 +13,8 @@ import (
 
 	"myapp2/internal/app"
 	"myapp2/internal/binding"
+	"myapp2/internal/buildinfo"
+	"myapp2/internal/config"
 	"myapp2/internal/database"
 	"myapp2/internal/logger"
 	"myapp2/internal/manager"
@@ -23,8 +25,7 @@ import (
 //go:embed all:frontend/dist
 var assets embed.FS
 
-// IsDev dynamically dictates the environment (true for dev, false for prod)
-const IsDev = true
+const appName = "MyApp2"
 
 // main 程序的唯一入口点，它的职责极度专注：仅仅负责对象的实例化、依赖组装和框架启动。
 func main() {
@@ -44,16 +45,24 @@ func main() {
 		}
 	}()
 
-	// 【1. 动态环境隔绝与全局日志系统】
-	// isDev 决定屏蔽或开启某些工具 (结合 Wails 构建参数可自动化)
-	if err := logger.InitLogger(IsDev, "MyApp2"); err != nil {
+	// 【1. 配置中心 → 日志 → 数据库（严格按顺序初始化）】
+
+	// -- 1.0 加载 YAML 配置文件 (首次启动自动生成默认值) --
+	if err := config.InitConfig(appName); err != nil {
+		log.Fatalf("配置中心初始化失败: %v", err)
+	}
+	cfg := config.Cfg
+
+	// -- 1.1 初始化日志（is_dev 从编译期注入，用户无法修改）--
+	if err := logger.InitLogger(buildinfo.IsDevMode(), appName); err != nil {
 		log.Fatalf("无法初始化日志系统: %v", err)
 	}
-	defer zap.L().Sync() // 确保程序退出前刷新磁盘 IO
+	defer zap.L().Sync()
 
-	// 【1. 依赖注入与装配期】
-	// -- 1.0 初始化 SQLite 数据库及 GORM 对象 --
-	db, err := database.InitDB("MyApp2")
+	zap.S().Infof("应用环境: isDev=%v, version=%s", buildinfo.IsDevMode(), buildinfo.Version)
+
+	// -- 1.2 初始化 SQLite 数据库及 GORM 对象 --
+	db, err := database.InitDB(appName)
 	if err != nil {
 		zap.S().Fatalf("核心数据库引擎启动失败，终止此应用: %v", err)
 	}
@@ -78,7 +87,7 @@ func main() {
 
 	// 【2. 构建 Wails 应用实例】
 	wailsApp := application.New(application.Options{
-		Name:        "myapp2",
+		Name:        cfg.App.Name,
 		Description: "A demo application with large-scale architecture best-practices",
 		// 【注册所有想要暴露给前台调用的 Bindings】
 		Services: []application.Service{
@@ -98,7 +107,7 @@ func main() {
 	defer coreApp.Shutdown(context.Background())
 
 	// 【4. 窗口管理器 & 系统托盘初始化】
-	winManager := manager.NewWindowManager(wailsApp)
+	winManager := manager.NewWindowManager(wailsApp, cfg.Window.Width, cfg.Window.Height, cfg.Window.Title)
 	winManager.CreateMainWindow() // 创建主窗口
 	winManager.SetupSystemTray()  // 挂载系统托盘图标和菜单
 	_ = winManager

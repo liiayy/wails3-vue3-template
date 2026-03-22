@@ -17,12 +17,19 @@ type WindowManager struct {
 	app        *application.App
 	mainWindow *application.WebviewWindow
 	tray       *application.SystemTray
+	// 从配置中心注入
+	winWidth  int
+	winHeight int
+	winTitle  string
 }
 
 // NewWindowManager 在 Wails App 创建之后调用
-func NewWindowManager(app *application.App) *WindowManager {
+func NewWindowManager(app *application.App, width, height int, title string) *WindowManager {
 	return &WindowManager{
-		app: app,
+		app:       app,
+		winWidth:  width,
+		winHeight: height,
+		winTitle:  title,
 	}
 }
 
@@ -34,9 +41,9 @@ func (wm *WindowManager) CreateMainWindow() *application.WebviewWindow {
 
 	wm.mainWindow = wm.app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Name:   "main",
-		Title:  "Wails 3 Mega-Structure Dashboard",
-		Width:  1280,
-		Height: 800,
+		Title:  wm.winTitle,
+		Width:  wm.winWidth,
+		Height: wm.winHeight,
 		Mac: application.MacWindow{
 			InvisibleTitleBarHeight: 50,
 			Backdrop:                application.MacBackdropTranslucent,
