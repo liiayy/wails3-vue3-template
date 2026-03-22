@@ -15,6 +15,7 @@ import (
 	"myapp2/internal/binding"
 	"myapp2/internal/database"
 	"myapp2/internal/logger"
+	"myapp2/internal/manager"
 	"myapp2/internal/repository"
 	"myapp2/internal/service"
 )
@@ -96,19 +97,11 @@ func main() {
 	// 在退出主函数前，调用了我们自定义的优雅停机代码
 	defer coreApp.Shutdown(context.Background())
 
-	// 【4. 创建主进程界面窗口】
-	wailsApp.Window.NewWithOptions(application.WebviewWindowOptions{
-		Title: "Wails 3 Mega-Structure Dashboard",
-		Mac: application.MacWindow{
-			InvisibleTitleBarHeight: 50,
-			Backdrop:                application.MacBackdropTranslucent,
-			TitleBar:                application.MacTitleBarHiddenInset,
-		},
-		BackgroundColour: application.NewRGB(27, 38, 54),
-		URL:              "/",
-		// 在这里也可以根据 IsDev 决定是否把 DevTools 的使用权禁掉
-		// DisableContextMenu: !IsDev,  (Wait for final Wails 3 spec)
-	})
+	// 【4. 窗口管理器 & 系统托盘初始化】
+	winManager := manager.NewWindowManager(wailsApp)
+	winManager.CreateMainWindow() // 创建主窗口
+	winManager.SetupSystemTray()  // 挂载系统托盘图标和菜单
+	_ = winManager
 
 	// 【5. 阻塞式运行启动】
 	zap.S().Info("Wails主进程启动中...")
