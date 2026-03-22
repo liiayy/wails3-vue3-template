@@ -40,8 +40,8 @@ func InitDB(appName string) (*gorm.DB, error) {
 	}
 
 	// 执行自动迁移（Auto Migrate）
-	// Gorm 会自动对比现在的 domain.User 结构体，如果没有表就建表，缺字段就加字段
-	err = db.AutoMigrate(&domain.User{})
+	// Gorm 会自动对比目前的 domain.User, domain.Setting 结构体，如果没有表就建表，缺字段就加字段
+	err = db.AutoMigrate(&domain.User{}, &domain.Setting{})
 	if err != nil {
 		zap.S().Fatalf("数据库结构迁移失败: %v", err)
 		return nil, err

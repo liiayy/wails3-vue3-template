@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { registerUser, fetchUserProfile } from '../api/user'
+import { useSettingsStore } from '../stores/settings'
 import { Events } from '@wailsio/runtime'
 
+const settings = useSettingsStore()
 const registerForm = ref({ name: '', email: '' })
 const queryId = ref<number>(1)
 const resultText = ref("Ready to interact with Go Mega-Structure Backend 🚀")
@@ -63,9 +65,19 @@ async function onQuery() {
         </p>
       </div>
 
-      <!-- Result Display -->
-      <div class="w-full bg-[var(--td-bg-color-secondarycontainer)] p-4 rounded-md text-center text-[var(--td-brand-color)] font-medium">
-        {{ resultText }}
+      <div class="w-full bg-[var(--td-bg-color-secondarycontainer)] p-4 rounded-md flex justify-between items-center text-[var(--td-brand-color)] font-medium">
+        <span>{{ resultText }}</span>
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-[var(--td-text-color-secondary)] uppercase">持久化主题:</span>
+          <t-radio-group 
+            variant="default-filled" 
+            :value="settings.theme" 
+            @change="(val: any) => settings.updateSetting('theme', val)"
+          >
+            <t-radio-button value="light">明亮</t-radio-button>
+            <t-radio-button value="dark">黑暗</t-radio-button>
+          </t-radio-group>
+        </div>
       </div>
 
       <div class="w-full grid grid-cols-2 gap-8">
