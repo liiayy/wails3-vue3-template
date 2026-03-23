@@ -21,7 +21,7 @@ const { t } = useI18n()
 // 当前激活的菜单项
 const activeMenu = computed(() => {
   // 让 route name 映射到菜单的 value
-  return route.name as string || 'home'
+  return (route.name as string) || 'home'
 })
 
 // 菜单项定义
@@ -33,7 +33,7 @@ const menuItems = computed(() => [
 ])
 
 function onMenuChange(value: string) {
-  const item = menuItems.value.find(m => m.value === value)
+  const item = menuItems.value.find((m) => m.value === value)
   if (item) {
     router.push(item.path)
   }
@@ -49,14 +49,15 @@ function toggleSidebar() {
     <!-- ========== 侧边栏 ========== -->
     <aside
       class="sidebar flex flex-col h-full transition-all duration-300 border-r border-[var(--td-border-level-1-color)] bg-[var(--td-bg-color-container)]"
-      :class="settings.isSidebarCollapsed ? 'w-[64px]' : 'w-[220px]'"
     >
       <!-- Logo 区域 (可拖拽) -->
       <div
         class="h-[50px] flex items-center gap-2 px-4 shrink-0 border-b border-[var(--td-border-level-1-color)]"
-        style="--wails-draggable: drag; -webkit-app-region: drag; user-select: none;"
+        style="--wails-draggable: drag; -webkit-app-region: drag; user-select: none"
       >
-        <div class="w-7 h-7 rounded-md bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shrink-0 shadow">
+        <div
+          class="w-7 h-7 rounded-md bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shrink-0 shadow"
+        >
           M
         </div>
         <span
@@ -75,11 +76,7 @@ function toggleSidebar() {
           @change="onMenuChange"
           theme="light"
         >
-          <t-menu-item
-            v-for="item in menuItems"
-            :key="item.value"
-            :value="item.value"
-          >
+          <t-menu-item v-for="item in menuItems" :key="item.value" :value="item.value">
             <template #icon>
               <component :is="item.icon" />
             </template>
@@ -107,28 +104,11 @@ function toggleSidebar() {
       <!-- 顶部标题栏 (可拖拽) -->
       <header
         class="h-[50px] flex items-center justify-between px-5 shrink-0 border-b border-[var(--td-border-level-1-color)] bg-[var(--td-bg-color-container)]"
-        style="--wails-draggable: drag; -webkit-app-region: drag; user-select: none;"
+        style="--wails-draggable: drag; -webkit-app-region: drag; user-select: none"
       >
         <h2 class="text-sm font-medium text-[var(--td-text-color-primary)]">
           {{ $t(`menu.${activeMenu}`) }}
         </h2>
-
-        <!-- 右侧主题切换 (不可拖拽) -->
-        <div class="flex items-center gap-3" style="-webkit-app-region: no-drag">
-          <t-tooltip :content="settings.theme === 'dark' ? $t('titlebar.toggleLight') : $t('titlebar.toggleDark')">
-            <t-button
-              variant="text"
-              shape="square"
-              size="small"
-              @click="settings.updateSetting('theme', settings.theme === 'dark' ? 'light' : 'dark')"
-            >
-              <template #icon>
-                <span v-if="settings.theme === 'dark'">☀️</span>
-                <span v-else>🌙</span>
-              </template>
-            </t-button>
-          </t-tooltip>
-        </div>
       </header>
 
       <!-- 主内容区 -->
