@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { useSettingsStore } from '../stores/settings'
-import TitleBar from '../components/TitleBar.vue'
+import { useSettingsStore } from '@/stores/settings'
+import TitleBar from '@/components/TitleBar.vue'
 import {
   PaletteIcon,
   TranslateIcon,

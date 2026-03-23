@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { merge } from 'lodash-es'
 import enConfig from 'tdesign-vue-next/es/locale/en_US'
 import zhConfig from 'tdesign-vue-next/es/locale/zh_CN'
-import { useSettingsStore } from './stores/settings'
+import { useSettingsStore } from '@/stores/settings'
 
 const settings = useSettingsStore()
 

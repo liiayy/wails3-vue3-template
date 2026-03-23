@@ -10,7 +10,7 @@ import {
   exportUsers,
   type User,
 } from '../api/user'
-import { useAsyncAction, useDebounce } from '../composables'
+import { useAsyncAction, useDebounce } from '@/composables'
 import { SearchIcon, AddIcon, EditIcon, DeleteIcon, DownloadIcon } from 'tdesign-icons-vue-next'
 
 const { t } = useI18n()

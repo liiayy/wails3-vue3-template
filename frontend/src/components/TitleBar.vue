@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useWindowControl } from '../composables'
+import { useWindowControl } from '@/composables'
 import { RectangleIcon, MinusIcon, CloseIcon } from 'tdesign-icons-vue-next'
 
 defineProps<{

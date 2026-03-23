@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { useSettingsStore } from '../stores/settings'
+import { useSettingsStore } from '@/stores/settings'
 import {
   HomeIcon,
   UserIcon,
@@ -12,7 +12,7 @@ import {
 } from 'tdesign-icons-vue-next'
 
 import { useI18n } from 'vue-i18n'
-import { useWindowControl } from '../composables'
+import { useWindowControl } from '@/composables'
 import { RectangleIcon, MinusIcon, CloseIcon, FullscreenIcon } from 'tdesign-icons-vue-next'
 
 const router = useRouter()

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { registerUser, fetchUserProfile } from '../api/user'
-import { useSettingsStore } from '../stores/settings'
-import { useWailsEvent, useAsyncAction } from '../composables'
+import { registerUser, fetchUserProfile } from '@/api/user'
+import { useSettingsStore } from '@/stores/settings'
+import { useWailsEvent, useAsyncAction } from '@/composables'
 
 const settings = useSettingsStore()
 const { t } = useI18n()

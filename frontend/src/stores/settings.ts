@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
-import { SettingBinding } from '../../bindings/myapp2/internal/binding'
+import { SettingBinding } from '#/myapp2/internal/binding'
 import { Events } from '@wailsio/runtime'
-import i18n from '../locales'
+import i18n from '@/locales'
 
 interface SettingsState {
   theme: 'light' | 'dark' | 'auto'
@@ -54,13 +54,11 @@ export const useSettingsStore = defineStore('settings', {
         })
 
         // 监听系统主题变化
-        window
-          .matchMedia('(prefers-color-scheme: dark)')
-          .addEventListener('change', () => {
-            if (this.theme === 'auto') {
-              this.applyTheme()
-            }
-          })
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+          if (this.theme === 'auto') {
+            this.applyTheme()
+          }
+        })
       } catch (err) {
         console.error('[Settings] 初始化失败:', err)
       }

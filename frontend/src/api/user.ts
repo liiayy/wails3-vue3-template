@@ -1,5 +1,5 @@
-import { UserBinding } from '../../bindings/myapp2/internal/binding'
-import type { User, UserListResult } from '../../bindings/myapp2/internal/domain'
+import { UserBinding } from '#/myapp2/internal/binding'
+import type { User, UserListResult } from '#/myapp2/internal/domain'
 
 export type { User, UserListResult }
 

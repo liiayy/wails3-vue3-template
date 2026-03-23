@@ -57,32 +57,6 @@ func (wm *WindowManager) CreateMainWindow() *application.WebviewWindow {
 	return wm.mainWindow
 }
 
-// CreateSettingsWindow 创建一个独立的设置窗口
-func (wm *WindowManager) CreateSettingsWindow() *application.WebviewWindow {
-	zap.S().Info("[WindowManager] 创建设置窗口...")
-
-	// 检查是否已经有名为 settings 的窗口
-	if w, ok := wm.app.Window.GetByName("settings"); ok {
-		w.Show()
-		return w.(*application.WebviewWindow)
-	}
-
-	settingsWin := wm.app.Window.NewWithOptions(application.WebviewWindowOptions{
-		Name:             "settings",
-		Title:            "系统设置",
-		Width:            1000,
-		Height:           650,
-		URL:              "/#/standalone/settings",
-		BackgroundColour: application.NewRGB(27, 38, 54),
-		Frameless:        true,
-		DisableResize:    true,
-		// 按 Escape 键自动隐藏此窗口
-		HideOnEscape: true,
-	})
-
-	return settingsWin
-}
-
 // CreateAboutWindow 创建一个"关于"窗口
 func (wm *WindowManager) CreateAboutWindow() *application.WebviewWindow {
 	zap.S().Info("[WindowManager] 创建关于窗口...")
@@ -128,10 +102,6 @@ func (wm *WindowManager) SetupSystemTray() {
 
 	trayMenu.Add("显示主窗口").OnClick(func(ctx *application.Context) {
 		wm.ShowMainWindow()
-	})
-
-	trayMenu.Add("打开设置").OnClick(func(ctx *application.Context) {
-		wm.CreateSettingsWindow()
 	})
 
 	trayMenu.Add("关于").OnClick(func(ctx *application.Context) {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import TitleBar from '../components/TitleBar.vue'
+import TitleBar from '@/components/TitleBar.vue'
 
 const route = useRoute()
 const isStandalone = route.path.startsWith('/standalone')

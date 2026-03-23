@@ -1,9 +1,9 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import DefaultLayout from '../layouts/DefaultLayout.vue'
-import HomeView from '../views/HomeView.vue'
-import UserManageView from '../views/UserManageView.vue'
-import SettingsView from '../views/SettingsView.vue'
-import AboutView from '../views/AboutView.vue'
+import DefaultLayout from '@/layouts/DefaultLayout.vue'
+import HomeView from '@/views/HomeView.vue'
+import UserManageView from '@/views/UserManageView.vue'
+import SettingsView from '@/views/SettingsView.vue'
+import AboutView from '@/views/AboutView.vue'
 
 const router = createRouter({
   // 使用 hash 模式，因为独立窗口通过 /#/settings 导航
