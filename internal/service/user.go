@@ -70,3 +70,8 @@ func (s *UserService) ListUsers(keyword string, page, pageSize int) (*domain.Use
 	}
 	return s.repo.List(keyword, page, pageSize)
 }
+
+// GetAllUsers 返回所有用户（全量导出场景）
+func (s *UserService) GetAllUsers() ([]*domain.User, error) {
+	return s.repo.GetAll()
+}

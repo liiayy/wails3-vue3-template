@@ -64,6 +64,8 @@ export default {
     emailRequired: '邮箱不能为空',
     namePlaceholder: '请输入用户名',
     emailPlaceholder: '请输入邮箱地址',
+    exportBtn: '全量导出',
+    exportSuccess: '导出成功',
   },
 
   // ========== 系统设置 ==========

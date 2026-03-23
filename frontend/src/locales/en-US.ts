@@ -65,6 +65,8 @@ export default {
     emailRequired: 'Email is required',
     namePlaceholder: 'Enter name',
     emailPlaceholder: 'Enter email address',
+    exportBtn: 'Export All',
+    exportSuccess: 'Exported successfully',
   },
 
   // ========== Settings ==========

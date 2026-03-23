@@ -2,9 +2,16 @@
 import { ref, reactive, watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { MessagePlugin, DialogPlugin } from 'tdesign-vue-next'
-import { listUsers, registerUser, updateUser, deleteUser, type User } from '../api/user'
+import {
+  listUsers,
+  registerUser,
+  updateUser,
+  deleteUser,
+  exportUsers,
+  type User,
+} from '../api/user'
 import { useAsyncAction, useDebounce } from '../composables'
-import { SearchIcon, AddIcon, EditIcon, DeleteIcon } from 'tdesign-icons-vue-next'
+import { SearchIcon, AddIcon, EditIcon, DeleteIcon, DownloadIcon } from 'tdesign-icons-vue-next'
 
 const { t } = useI18n()
 
@@ -112,6 +119,12 @@ function handleDelete(row: User) {
     },
   })
 }
+
+// ========== 导出 ==========
+const { execute: handleExport, loading: exportLoading } = useAsyncAction(async () => {
+  await exportUsers()
+  MessagePlugin.success(t('users.exportSuccess'))
+})
 </script>
 
 <template>
@@ -129,6 +142,11 @@ function handleDelete(row: User) {
         >
           <template #prefixIcon><SearchIcon /></template>
         </t-input>
+
+        <t-button variant="outline" theme="default" :loading="exportLoading" @click="handleExport">
+          <template #icon><DownloadIcon /></template>
+          {{ $t('users.exportBtn') }}
+        </t-button>
 
         <t-button theme="primary" @click="openCreateDialog">
           <template #icon><AddIcon /></template>

@@ -20,4 +20,5 @@ type UserRepository interface {
 	Save(user *User) error
 	Delete(id int) error
 	List(keyword string, page, pageSize int) (*UserListResult, error)
+	GetAll() ([]*User, error)
 }

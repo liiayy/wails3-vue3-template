@@ -60,3 +60,13 @@ export async function deleteUser(id: number): Promise<void> {
     throw err
   }
 }
+
+/** 导出所有用户 */
+export async function exportUsers(): Promise<void> {
+  try {
+    await UserBinding.Export()
+  } catch (err) {
+    console.error('[API] exportUsers failed:', err)
+    throw err
+  }
+}

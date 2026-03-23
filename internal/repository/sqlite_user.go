@@ -86,3 +86,13 @@ func (r *SqliteUserRepository) List(keyword string, page, pageSize int) (*domain
 		Total: total,
 	}, nil
 }
+
+// GetAll 获取所有用户数据 (用于导出等全量场景)
+func (r *SqliteUserRepository) GetAll() ([]*domain.User, error) {
+	var users []*domain.User
+	if err := r.db.Order("id ASC").Find(&users).Error; err != nil {
+		zap.S().Errorf("查询全量 User 数据错误: %v", err)
+		return nil, err
+	}
+	return users, nil
+}
