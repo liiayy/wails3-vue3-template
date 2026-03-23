@@ -49,6 +49,7 @@ func (wm *WindowManager) CreateMainWindow() *application.WebviewWindow {
 			Backdrop:                application.MacBackdropTranslucent,
 			TitleBar:                application.MacTitleBarHiddenInset,
 		},
+		Frameless:        true,
 		BackgroundColour: application.NewRGB(27, 38, 54),
 		URL:              "/",
 	})
@@ -73,6 +74,7 @@ func (wm *WindowManager) CreateSettingsWindow() *application.WebviewWindow {
 		Height:           520,
 		URL:              "/#/standalone/settings",
 		BackgroundColour: application.NewRGB(27, 38, 54),
+		Frameless:        true,
 		// 按 Escape 键自动隐藏此窗口
 		HideOnEscape: true,
 	})
@@ -96,6 +98,7 @@ func (wm *WindowManager) CreateAboutWindow() *application.WebviewWindow {
 		Height:           300,
 		URL:              "/#/standalone/about",
 		BackgroundColour: application.NewRGB(27, 38, 54),
+		Frameless:        true,
 		HideOnEscape:     true,
 	})
 

@@ -12,11 +12,19 @@ import {
 } from 'tdesign-icons-vue-next'
 
 import { useI18n } from 'vue-i18n'
+import { useWindowControl } from '../composables'
+import {
+  RectangleIcon,
+  MinusIcon,
+  CloseIcon,
+  FullscreenIcon,
+} from 'tdesign-icons-vue-next'
 
 const router = useRouter()
 const route = useRoute()
 const settings = useSettingsStore()
 const { t } = useI18n()
+const { minimise, toggleMaximise, close } = useWindowControl()
 
 // 当前激活的菜单项
 const activeMenu = computed(() => {
@@ -98,12 +106,25 @@ function toggleSidebar() {
     <div class="flex-1 flex flex-col overflow-hidden">
       <!-- 顶部标题栏 (可拖拽) -->
       <header
-        class="h-[50px] flex items-center justify-between px-5 shrink-0 border-b border-[var(--td-border-level-1-color)] bg-[var(--td-bg-color-container)]"
+        class="h-[50px] flex items-center justify-between pl-5 shrink-0 border-b border-[var(--td-border-level-1-color)] bg-[var(--td-bg-color-container)]"
         style="--wails-draggable: drag; -webkit-app-region: drag; user-select: none"
       >
         <h2 class="text-sm font-medium text-[var(--td-text-color-primary)]">
           {{ $t(`menu.${activeMenu}`) }}
         </h2>
+
+        <!-- 右侧窗口控制按钮 -->
+        <div class="flex h-full items-stretch" style="-webkit-app-region: no-drag">
+          <div class="window-control-btn" @click="minimise">
+            <MinusIcon size="16" />
+          </div>
+          <div class="window-control-btn" @click="toggleMaximise">
+            <RectangleIcon size="14" />
+          </div>
+          <div class="window-control-btn hover:bg-[#e81123] hover:text-white" @click="close">
+            <CloseIcon size="16" />
+          </div>
+        </div>
       </header>
 
       <!-- 主内容区 -->
@@ -133,5 +154,26 @@ function toggleSidebar() {
 .sidebar :deep(.t-default-menu) {
   border-right: none;
   background: transparent;
+}
+
+/* 窗口控制按钮样式 */
+.window-control-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 100%;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--td-text-color-primary);
+}
+
+.window-control-btn:hover {
+  background-color: var(--td-bg-color-secondarycontainer);
+}
+
+.window-control-btn :deep(svg) {
+  display: block;
+  margin: auto;
 }
 </style>
