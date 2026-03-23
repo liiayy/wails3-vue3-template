@@ -71,11 +71,20 @@ export default {
   // ========== 系统设置 ==========
   settings: {
     title: '系统设置',
-    themeLabel: '主题模式',
-    themeLight: '明亮',
-    themeDark: '黑暗',
+    categories: '分类',
+    personalization: '个性化',
+    subtitle: '根据您的审美和工作流偏好定制数字工作区。',
+    themeMode: '主题模式',
+    themeLight: '明亮模式',
+    themeDark: '黑暗模式',
     languageLabel: '语言',
-    sidebarLabel: '侧边栏默认折叠',
+    displayLanguage: '显示语言',
+    langDesc: '系统范围内的 UI 组件和工具语言。',
+    sidebarBehavior: '侧边栏行为',
+    autoHideSidebar: '自动折叠侧边栏',
+    sidebarDesc: '在不使用时自动收起轨道以扩大工作区。',
+    notifications: '通知设置',
+    comingSoon: '即将推出',
   },
 
   // ========== 关于 ==========

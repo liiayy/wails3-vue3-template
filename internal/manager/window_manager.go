@@ -70,8 +70,8 @@ func (wm *WindowManager) CreateSettingsWindow() *application.WebviewWindow {
 	settingsWin := wm.app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Name:             "settings",
 		Title:            "系统设置",
-		Width:            720,
-		Height:           520,
+		Width:            1000,
+		Height:           650,
 		URL:              "/#/standalone/settings",
 		BackgroundColour: application.NewRGB(27, 38, 54),
 		Frameless:        true,

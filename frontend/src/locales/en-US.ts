@@ -72,11 +72,20 @@ export default {
   // ========== Settings ==========
   settings: {
     title: 'Settings',
-    themeLabel: 'Theme Mode',
-    themeLight: 'Light',
-    themeDark: 'Dark',
+    categories: 'Categories',
+    personalization: 'Personalization',
+    subtitle: 'Tailor your digital workspace to your aesthetic and workflow preferences.',
+    themeMode: 'Theme Mode',
+    themeLight: 'Light Mode',
+    themeDark: 'Dark Mode',
     languageLabel: 'Language',
-    sidebarLabel: 'Collapse Sidebar by Default',
+    displayLanguage: 'Display Language',
+    langDesc: 'System-wide language for UI components and tools.',
+    sidebarBehavior: 'Sidebar Behavior',
+    autoHideSidebar: 'Auto-hide Sidebar',
+    sidebarDesc: 'Expand the workspace by automatically minimizing the rail when not in use.',
+    notifications: 'Notifications',
+    comingSoon: 'Coming Soon',
   },
 
   // ========== About ==========
