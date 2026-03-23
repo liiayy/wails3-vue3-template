@@ -48,7 +48,7 @@ function toggleSidebar() {
   <div class="h-screen w-full flex overflow-hidden bg-[var(--td-bg-color-page)]">
     <!-- ========== 侧边栏 ========== -->
     <aside
-      class="sidebar flex flex-col h-full transition-all duration-300 border-r border-[var(--td-border-level-1-color)] bg-[var(--td-bg-color-container)]"
+      class="sidebar flex flex-col h-full transition-all duration-300 bg-[var(--td-bg-color-container)]"
     >
       <!-- Logo 区域 (可拖拽) -->
       <div
@@ -70,12 +70,7 @@ function toggleSidebar() {
 
       <!-- 菜单导航 -->
       <nav class="flex-1 overflow-y-auto py-2">
-        <t-menu
-          :value="activeMenu"
-          :collapsed="settings.isSidebarCollapsed"
-          @change="onMenuChange"
-          theme="light"
-        >
+        <t-menu :value="activeMenu" :collapsed="settings.isSidebarCollapsed" @change="onMenuChange">
           <t-menu-item v-for="item in menuItems" :key="item.value" :value="item.value">
             <template #icon>
               <component :is="item.icon" />
@@ -127,7 +122,7 @@ function toggleSidebar() {
 /* 页面切换动画 */
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.2s ease;
+  transition: opacity 0.1s ease;
 }
 .fade-enter-from,
 .fade-leave-to {
