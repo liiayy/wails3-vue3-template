@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import { useWindowControl } from '../composables'
-import {
-  RectangleIcon,
-  MinusIcon,
-  CloseIcon,
-} from 'tdesign-icons-vue-next'
+import { RectangleIcon, MinusIcon, CloseIcon } from 'tdesign-icons-vue-next'
 
 defineProps<{
   title?: string
@@ -21,7 +17,7 @@ const { minimise, toggleMaximise, close } = useWindowControl()
     style="--wails-draggable: drag; -webkit-app-region: drag"
   >
     <span class="text-xs text-[var(--td-text-color-secondary)]">{{ title }}</span>
-    
+
     <div class="flex h-full items-stretch" style="-webkit-app-region: no-drag">
       <div v-if="!noMinimize" class="control-btn" @click="minimise">
         <MinusIcon size="14" />

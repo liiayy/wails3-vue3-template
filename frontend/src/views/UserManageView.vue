@@ -4,12 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { MessagePlugin, DialogPlugin } from 'tdesign-vue-next'
 import { listUsers, registerUser, updateUser, deleteUser, type User } from '../api/user'
 import { useAsyncAction, useDebounce } from '../composables'
-import {
-  SearchIcon,
-  AddIcon,
-  EditIcon,
-  DeleteIcon,
-} from 'tdesign-icons-vue-next'
+import { SearchIcon, AddIcon, EditIcon, DeleteIcon } from 'tdesign-icons-vue-next'
 
 const { t } = useI18n()
 
@@ -174,7 +169,11 @@ function handleDelete(row: User) {
     <t-dialog
       v-model:visible="dialogVisible"
       :header="isEdit ? $t('users.editUser') : $t('users.addUser')"
-      :confirm-btn="{ content: isEdit ? $t('common.save') : $t('common.create'), loading: submitLoading, theme: 'primary' }"
+      :confirm-btn="{
+        content: isEdit ? $t('common.save') : $t('common.create'),
+        loading: submitLoading,
+        theme: 'primary',
+      }"
       :cancel-btn="$t('common.cancel')"
       :on-confirm="() => doSubmit()"
       width="480px"

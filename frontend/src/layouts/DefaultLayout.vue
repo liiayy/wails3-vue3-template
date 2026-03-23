@@ -13,12 +13,7 @@ import {
 
 import { useI18n } from 'vue-i18n'
 import { useWindowControl } from '../composables'
-import {
-  RectangleIcon,
-  MinusIcon,
-  CloseIcon,
-  FullscreenIcon,
-} from 'tdesign-icons-vue-next'
+import { RectangleIcon, MinusIcon, CloseIcon, FullscreenIcon } from 'tdesign-icons-vue-next'
 
 const router = useRouter()
 const route = useRoute()

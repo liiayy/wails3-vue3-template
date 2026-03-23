@@ -9,9 +9,11 @@ const isStandalone = route.path.startsWith('/standalone')
 <template>
   <div class="h-full flex flex-col bg-[var(--td-bg-color-page)] overflow-hidden">
     <TitleBar v-if="isStandalone" :title="$t('about.title')" no-minimize no-maximize />
-    
+
     <div class="flex-1 flex flex-col items-center justify-center p-10 space-y-4 overflow-auto">
-      <div class="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold shadow-lg">
+      <div
+        class="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold shadow-lg"
+      >
         M
       </div>
       <h1 class="text-xl font-bold text-[var(--td-text-color-primary)]">{{ $t('about.title') }}</h1>

@@ -18,39 +18,39 @@ const router = createRouter({
           path: '',
           name: 'home',
           component: HomeView,
-          meta: { title: '首页', icon: 'home' }
+          meta: { title: '首页', icon: 'home' },
         },
         {
           path: 'users',
           name: 'users',
           component: UserManageView,
-          meta: { title: '用户管理', icon: 'user' }
+          meta: { title: '用户管理', icon: 'user' },
         },
         {
           path: 'settings',
           name: 'settings',
           component: SettingsView,
-          meta: { title: '系统设置', icon: 'setting' }
+          meta: { title: '系统设置', icon: 'setting' },
         },
         {
           path: 'about',
           name: 'about',
           component: AboutView,
-          meta: { title: '关于', icon: 'info-circle' }
-        }
-      ]
+          meta: { title: '关于', icon: 'info-circle' },
+        },
+      ],
     },
     // 独立窗口路由（不含侧边栏，供 WindowManager 使用）
     {
       path: '/standalone/settings',
       name: 'standalone-settings',
-      component: SettingsView
+      component: SettingsView,
     },
     {
       path: '/standalone/about',
       name: 'standalone-about',
-      component: AboutView
-    }
+      component: AboutView,
+    },
   ],
 })
 

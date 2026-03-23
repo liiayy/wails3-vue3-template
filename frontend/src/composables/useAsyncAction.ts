@@ -18,9 +18,7 @@ import { ref, type Ref } from 'vue'
  * <p v-if="data">{{ data.name }}</p>
  * ```
  */
-export function useAsyncAction<T, Args extends any[] = any[]>(
-  fn: (...args: Args) => Promise<T>
-) {
+export function useAsyncAction<T, Args extends any[] = any[]>(fn: (...args: Args) => Promise<T>) {
   const loading: Ref<boolean> = ref(false)
   const error: Ref<string | null> = ref(null)
   const data: Ref<T | null> = ref(null) as Ref<T | null>

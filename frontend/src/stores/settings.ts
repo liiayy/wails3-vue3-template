@@ -22,13 +22,14 @@ export const useSettingsStore = defineStore('settings', {
     async init() {
       try {
         const remoteSettings = await SettingBinding.GetAll()
-        
+
         if (remoteSettings) {
           if (remoteSettings.theme) this.theme = remoteSettings.theme as any
           if (remoteSettings.language) this.language = remoteSettings.language
-          if (remoteSettings.isSidebarCollapsed) this.isSidebarCollapsed = remoteSettings.isSidebarCollapsed === 'true'
+          if (remoteSettings.isSidebarCollapsed)
+            this.isSidebarCollapsed = remoteSettings.isSidebarCollapsed === 'true'
         }
-        
+
         console.log('[Settings] 初始化加载完成:', this.$state)
         this.applyTheme()
         this.applyLanguage()
@@ -42,11 +43,11 @@ export const useSettingsStore = defineStore('settings', {
      */
     async updateSetting<K extends keyof SettingsState>(key: K, value: SettingsState[K]) {
       this.$state[key] = value
-      
+
       // 执行持久化同步
       try {
         await SettingBinding.Save(key, String(value))
-        
+
         if (key === 'theme') {
           this.applyTheme()
         }
@@ -76,7 +77,7 @@ export const useSettingsStore = defineStore('settings', {
      * 更新 i18n
      */
     applyLanguage() {
-      (i18n.global.locale as any).value = this.language
-    }
-  }
+      ;(i18n.global.locale as any).value = this.language
+    },
+  },
 })

@@ -18,10 +18,7 @@ import { Events } from '@wailsio/runtime'
  * })
  * ```
  */
-export function useWailsEvent<T = any>(
-  eventName: string,
-  callback?: (data: T) => void
-) {
+export function useWailsEvent<T = any>(eventName: string, callback?: (data: T) => void) {
   const data: Ref<T | null> = ref(null)
   let unsubscribe: (() => void) | null = null
 

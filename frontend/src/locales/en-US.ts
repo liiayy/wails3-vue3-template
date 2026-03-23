@@ -54,7 +54,8 @@ export default {
     colEmail: 'Email',
     colAction: 'Actions',
     deleteConfirmTitle: 'Confirm Delete',
-    deleteConfirmBody: 'Are you sure you want to delete user "{name}"? This action cannot be undone.',
+    deleteConfirmBody:
+      'Are you sure you want to delete user "{name}"? This action cannot be undone.',
     createSuccess: 'Created successfully',
     updateSuccess: 'Updated successfully',
     deleteSuccess: 'Deleted successfully',

@@ -24,7 +24,11 @@ export async function fetchUserProfile(id: number): Promise<User | null> {
 }
 
 /** 分页查询用户列表 */
-export async function listUsers(keyword: string, page: number, pageSize: number): Promise<{ items: User[]; total: number }> {
+export async function listUsers(
+  keyword: string,
+  page: number,
+  pageSize: number,
+): Promise<{ items: User[]; total: number }> {
   try {
     const res = await UserBinding.List(keyword, page, pageSize)
     return {

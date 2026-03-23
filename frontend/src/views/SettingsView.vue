@@ -14,7 +14,9 @@ const isStandalone = route.path.startsWith('/standalone')
 
     <div class="flex-1 overflow-auto py-10 px-6 space-y-8">
       <div class="max-w-xl mx-auto space-y-8">
-        <h1 class="text-2xl font-bold text-[var(--td-text-color-primary)]">{{ $t('settings.title') }}</h1>
+        <h1 class="text-2xl font-bold text-[var(--td-text-color-primary)]">
+          {{ $t('settings.title') }}
+        </h1>
 
         <!-- 主题设置 -->
         <t-card :title="$t('settings.themeLabel')" :bordered="false" class="shadow-sm">
