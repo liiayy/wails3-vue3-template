@@ -18,33 +18,75 @@ const router = createRouter({
           path: '',
           name: 'home',
           component: HomeView,
-          meta: { title: '首页', icon: 'home' },
+          meta: { title: 'menu.home', icon: 'home', showInMenu: true, menuSection: 'top' },
         },
         {
           path: 'users',
           name: 'users',
           component: UserManageView,
-          meta: { title: '用户管理', icon: 'user' },
+          meta: { title: 'menu.users', icon: 'user', showInMenu: true, menuSection: 'top' },
         },
         {
           path: 'settings',
-          name: 'settings',
           component: SettingsView,
-          meta: { title: '系统设置', icon: 'setting' },
+          meta: {
+            title: 'menu.settings',
+            icon: 'setting',
+            showInMenu: true,
+            menuSection: 'bottom',
+          },
+          children: [
+            {
+              path: '',
+              redirect: '/settings/personalization',
+            },
+            {
+              path: 'personalization',
+              name: 'settings',
+              component: () => import('@/views/settings/PersonalizationView.vue'),
+              meta: { title: 'settings.personalization', showInMenu: true },
+            },
+            {
+              path: 'notifications',
+              name: 'settings-notifications',
+              component: () => import('@/views/settings/NotificationsView.vue'),
+              meta: { title: 'settings.notifications', showInMenu: true },
+            },
+          ],
         },
         {
           path: 'about',
           name: 'about',
           component: AboutView,
-          meta: { title: '关于', icon: 'info-circle' },
+          meta: {
+            title: 'menu.about',
+            icon: 'info-circle',
+            showInMenu: false,
+            menuSection: 'bottom',
+          },
         },
       ],
     },
     // 独立窗口路由（不含侧边栏，供 WindowManager 使用）
     {
       path: '/standalone/settings',
-      name: 'standalone-settings',
       component: SettingsView,
+      children: [
+        {
+          path: '',
+          redirect: '/standalone/settings/personalization',
+        },
+        {
+          path: 'personalization',
+          name: 'standalone-settings',
+          component: () => import('@/views/settings/PersonalizationView.vue'),
+        },
+        {
+          path: 'notifications',
+          name: 'standalone-settings-notifications',
+          component: () => import('@/views/settings/NotificationsView.vue'),
+        },
+      ],
     },
     {
       path: '/standalone/about',

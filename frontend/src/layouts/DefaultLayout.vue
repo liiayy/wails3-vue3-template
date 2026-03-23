@@ -27,15 +27,40 @@ const activeMenu = computed(() => {
   return (route.name as string) || 'home'
 })
 
-// 菜单项定义
-const topMenuItems = computed(() => [
-  { value: 'home', label: t('menu.home'), icon: HomeIcon, path: '/' },
-  { value: 'users', label: t('menu.users'), icon: UserIcon, path: '/users' },
-])
+// 图标映射表
+const menuIconMap: Record<string, any> = {
+  home: HomeIcon,
+  user: UserIcon,
+  setting: SettingIcon,
+  'info-circle': InfoCircleIcon,
+}
 
-const bottomMenuItems = computed(() => [
-  { value: 'settings', label: t('menu.settings'), icon: SettingIcon, path: '/settings' },
-])
+// 动态通过路由配置生成菜单
+const allRoutes = router.options.routes.find((r) => r.path === '/')?.children || []
+
+// 顶部主菜单
+const topMenuItems = computed(() => {
+  return allRoutes
+    .filter((r) => r.meta?.showInMenu && r.meta?.menuSection === 'top')
+    .map((r) => ({
+      value: r.name as string,
+      label: t(r.meta?.title as string),
+      icon: menuIconMap[r.meta?.icon as string],
+      path: r.path === '' ? '/' : `/${r.path}`,
+    }))
+})
+
+// 底部功能菜单
+const bottomMenuItems = computed(() => {
+  return allRoutes
+    .filter((r) => r.meta?.showInMenu && r.meta?.menuSection === 'bottom')
+    .map((r) => ({
+      value: r.name as string,
+      label: t(r.meta?.title as string),
+      icon: menuIconMap[r.meta?.icon as string],
+      path: `/${r.path}`,
+    }))
+})
 
 function onMenuChange(value: string) {
   const allItems = [...topMenuItems.value, ...bottomMenuItems.value]
@@ -145,7 +170,9 @@ function toggleSidebar() {
       <main class="flex-1 overflow-auto p-2">
         <router-view v-slot="{ Component }">
           <transition name="fade" mode="out-in">
-            <component :is="Component" />
+            <keep-alive>
+              <component :is="Component" />
+            </keep-alive>
           </transition>
         </router-view>
       </main>
