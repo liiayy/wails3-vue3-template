@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import DefaultLayout from '../layouts/DefaultLayout.vue'
 import HomeView from '../views/HomeView.vue'
+import UserManageView from '../views/UserManageView.vue'
 import SettingsView from '../views/SettingsView.vue'
 import AboutView from '../views/AboutView.vue'
 
@@ -18,6 +19,12 @@ const router = createRouter({
           name: 'home',
           component: HomeView,
           meta: { title: '首页', icon: 'home' }
+        },
+        {
+          path: 'users',
+          name: 'users',
+          component: UserManageView,
+          meta: { title: '用户管理', icon: 'user' }
         },
         {
           path: 'settings',

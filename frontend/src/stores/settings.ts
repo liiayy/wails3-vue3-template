@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { SettingBinding } from '../../bindings/myapp2/internal/binding'
+import i18n from '../locales'
 
 interface SettingsState {
   theme: 'light' | 'dark' | 'auto'
@@ -30,6 +31,7 @@ export const useSettingsStore = defineStore('settings', {
         
         console.log('[Settings] 初始化加载完成:', this.$state)
         this.applyTheme()
+        this.applyLanguage()
       } catch (err) {
         console.error('[Settings] 初始化失败:', err)
       }
@@ -48,6 +50,9 @@ export const useSettingsStore = defineStore('settings', {
         if (key === 'theme') {
           this.applyTheme()
         }
+        if (key === 'language') {
+          this.applyLanguage()
+        }
       } catch (err) {
         console.error(`[Settings] 同步项目 ${key} 失败:`, err)
       }
@@ -65,6 +70,13 @@ export const useSettingsStore = defineStore('settings', {
         doc.removeAttribute('theme-mode')
         doc.classList.remove('dark')
       }
+    },
+
+    /**
+     * 更新 i18n
+     */
+    applyLanguage() {
+      (i18n.global.locale as any).value = this.language
     }
   }
 })

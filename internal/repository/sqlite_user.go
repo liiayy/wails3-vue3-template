@@ -16,15 +16,13 @@ type SqliteUserRepository struct {
 
 // NewSqliteUserRepository 注入已经连接好的 gorm 引擎
 func NewSqliteUserRepository(db *gorm.DB) *SqliteUserRepository {
-	return &SqliteUserRepository{
-		db: db,
-	}
+	return &SqliteUserRepository{db: db}
 }
 
 // FindByID 根据主键查询 User 对象
 func (r *SqliteUserRepository) FindByID(id int) (*domain.User, error) {
 	var user domain.User
-	result := r.db.First(&user, id) // GORM 根据主键默认查找
+	result := r.db.First(&user, id)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			zap.S().Warnf("数据库查询 User 失败：未找到 ID=%d 的用户", id)
@@ -38,11 +36,53 @@ func (r *SqliteUserRepository) FindByID(id int) (*domain.User, error) {
 
 // Save 新增或更新数据
 func (r *SqliteUserRepository) Save(user *domain.User) error {
-	// 如果 ID 主键为 0 则创建，非 0 则执行更新（Gorm 的 Save 带有 Upsert 语义）
 	result := r.db.Save(user)
 	if result.Error != nil {
 		zap.S().Errorf("保存数据写入 SQLite 失败: %v", result.Error)
 		return result.Error
 	}
 	return nil
+}
+
+// Delete 根据主键删除用户
+func (r *SqliteUserRepository) Delete(id int) error {
+	result := r.db.Delete(&domain.User{}, id)
+	if result.Error != nil {
+		zap.S().Errorf("删除用户失败 ID=%d: %v", id, result.Error)
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return errors.New("user not found")
+	}
+	return nil
+}
+
+// List 分页 + 关键词模糊搜索
+func (r *SqliteUserRepository) List(keyword string, page, pageSize int) (*domain.UserListResult, error) {
+	var users []*domain.User
+	var total int64
+
+	query := r.db.Model(&domain.User{})
+
+	// 模糊搜索（名称或邮箱）
+	if keyword != "" {
+		like := "%" + keyword + "%"
+		query = query.Where("name LIKE ? OR email LIKE ?", like, like)
+	}
+
+	// 先查总数
+	if err := query.Count(&total).Error; err != nil {
+		return nil, err
+	}
+
+	// 分页查询
+	offset := (page - 1) * pageSize
+	if err := query.Order("id DESC").Offset(offset).Limit(pageSize).Find(&users).Error; err != nil {
+		return nil, err
+	}
+
+	return &domain.UserListResult{
+		Items: users,
+		Total: total,
+	}, nil
 }

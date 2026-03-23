@@ -4,15 +4,19 @@ import { useRouter, useRoute } from 'vue-router'
 import { useSettingsStore } from '../stores/settings'
 import {
   HomeIcon,
+  UserIcon,
   SettingIcon,
   InfoCircleIcon,
   ChevronLeftDoubleIcon,
   ChevronRightDoubleIcon,
 } from 'tdesign-icons-vue-next'
 
+import { useI18n } from 'vue-i18n'
+
 const router = useRouter()
 const route = useRoute()
 const settings = useSettingsStore()
+const { t } = useI18n()
 
 // 当前激活的菜单项
 const activeMenu = computed(() => {
@@ -21,14 +25,15 @@ const activeMenu = computed(() => {
 })
 
 // 菜单项定义
-const menuItems = [
-  { value: 'home', label: '首页', icon: HomeIcon, path: '/' },
-  { value: 'settings', label: '系统设置', icon: SettingIcon, path: '/settings' },
-  { value: 'about', label: '关于', icon: InfoCircleIcon, path: '/about' },
-]
+const menuItems = computed(() => [
+  { value: 'home', label: t('menu.home'), icon: HomeIcon, path: '/' },
+  { value: 'users', label: t('menu.users'), icon: UserIcon, path: '/users' },
+  { value: 'settings', label: t('menu.settings'), icon: SettingIcon, path: '/settings' },
+  { value: 'about', label: t('menu.about'), icon: InfoCircleIcon, path: '/about' },
+])
 
 function onMenuChange(value: string) {
-  const item = menuItems.find(m => m.value === value)
+  const item = menuItems.value.find(m => m.value === value)
   if (item) {
     router.push(item.path)
   }
@@ -92,7 +97,7 @@ function toggleSidebar() {
         <component
           :is="settings.isSidebarCollapsed ? ChevronRightDoubleIcon : ChevronLeftDoubleIcon"
           class="text-[var(--td-text-color-secondary)]"
-          :size="20"
+          size="20"
         />
       </div>
     </aside>
@@ -105,12 +110,12 @@ function toggleSidebar() {
         style="--wails-draggable: drag; -webkit-app-region: drag; user-select: none;"
       >
         <h2 class="text-sm font-medium text-[var(--td-text-color-primary)]">
-          {{ route.meta?.title || 'MyApp2' }}
+          {{ $t(`menu.${activeMenu}`) }}
         </h2>
 
         <!-- 右侧主题切换 (不可拖拽) -->
         <div class="flex items-center gap-3" style="-webkit-app-region: no-drag">
-          <t-tooltip :content="settings.theme === 'dark' ? '切换到明亮模式' : '切换到黑暗模式'">
+          <t-tooltip :content="settings.theme === 'dark' ? $t('titlebar.toggleLight') : $t('titlebar.toggleDark')">
             <t-button
               variant="text"
               shape="square"

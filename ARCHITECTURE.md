@@ -1,6 +1,6 @@
 # MyApp2 — Wails 3 大型工程化最佳实践
 
-> 基于 **Wails v3 (Alpha)** + **Go 1.25** + **Vue 3** + **TypeScript** + **Vite** + **TDesign** + **Tailwind CSS 4** 的跨平台桌面应用模板工程。
+> 基于 **Wails v3 (Alpha)** + **Go 1.25** + **Vue 3** + **TypeScript** + **Vite** + **TDesign** + **Tailwind CSS 4** 的跨平台桌面应用模版工程。
 
 ---
 
@@ -11,6 +11,7 @@
 | 后端运行时 | Go 1.25+ | 核心业务逻辑与系统调用 |
 | 桌面框架 | Wails v3 (alpha.74) | 将 Go 后端与 Webview 前端合二为一 |
 | 前端框架 | Vue 3 (Composition API) | 界面构建 |
+| 国际化语言 | Vue I18n 11 | 全局多语言方案 |
 | 构建工具 | Vite 8 | 前端热重载与打包 |
 | UI 组件库 | TDesign Vue Next | 企业级 UI 组件 |
 | CSS 引擎 | Tailwind CSS 4 | 原子化样式 |
@@ -30,7 +31,7 @@
 myapp2/
 ├── main.go                          # 程序入口（依赖注入 & 框架启动）
 ├── go.mod / go.sum                  # Go 依赖声明
-├── Taskfile.yml                     # 构建任务
+├── Taskfile.yml                     # 构建任务 (含 build:prod 流水线)
 ├── docs/
 │   └── architecture.md              # 架构设计文档
 │
@@ -55,7 +56,6 @@ myapp2/
 │   │   ├── window_manager.go        # 多窗口管理器 + 系统托盘
 │   │   └── tray_icon.ico            # 嵌入式托盘图标
 │   ├── repository/
-│   │   ├── user.go                  # InMemory 实现（已弃用，保留参考）
 │   │   ├── sqlite_user.go           # SQLite User 仓储实现
 │   │   └── sqlite_setting.go        # SQLite Setting 仓储实现
 │   └── service/
@@ -67,24 +67,33 @@ myapp2/
 └── frontend/                        # 【Vue 3 前端工程】
     ├── bindings/                    # Wails 自动生成的 TS 绑定（勿手动编辑）
     ├── src/
-    │   ├── main.ts                  # 前端入口（Pinia/Router/TDesign 初始化）
-    │   ├── App.vue                  # 根组件（仅 <router-view />）
+    │   ├── main.ts                  # 前端入口（Pinia/Router/TDesign/i18n 初始化）
+    │   ├── App.vue                  # 根组件（含 t-config-provider 国际化容器）
     │   ├── api/
     │   │   └── user.ts              # API 防腐层（二次封装 Wails 绑定）
     │   ├── assets/
     │   │   └── main.css             # Tailwind 入口
-    │   ├── composables/             # （预留）Vue 组合式 API 工具库
+    │   ├── composables/             # 通用 Vue 组合式 API 工具箱
+    │   │   ├── useWailsEvent.ts     # Wails 事件安全订阅
+    │   │   ├── useWindowControl.ts  # 无状态窗口控制 API
+    │   │   ├── useAsyncAction.ts    # 异步 Loading/Error 封装
+    │   │   └── useDebounce.ts       # 防抖响应式代理
     │   ├── layouts/
-    │   │   └── DefaultLayout.vue    # 主布局（侧边栏 + 标题栏 + 内容区）
+    │   │   └── DefaultLayout.vue    # 主布局（侧边栏 + 拖拽栏 + 内容区）
+    │   ├── locales/
+    │   │   ├── index.ts             # vue-i18n 实例
+    │   │   ├── zh-CN.ts             # 中文语言包
+    │   │   └── en-US.ts             # 英文语言包
     │   ├── router/
     │   │   └── index.ts             # 路由配置（含独立窗口路由）
     │   ├── stores/
     │   │   └── settings.ts          # Pinia 设置 Store（自动同步至 SQLite）
     │   └── views/
-    │       ├── HomeView.vue         # 首页（用户注册/查询演示）
+    │       ├── HomeView.vue         # 首页视图
+    │       ├── UserManageView.vue   # 用户管理（完整 CRUD 范例）
     │       ├── SettingsView.vue     # 设置页面
     │       └── AboutView.vue        # 关于页面
-    ├── vite.config.ts               # Vite 配置
+    ├── vite.config.ts               # Vite 配置（含生产包 DevTools 隔离）
     └── package.json                 # 前端依赖
 ```
 
@@ -96,7 +105,7 @@ myapp2/
 
 请求流向：**前端 JS → Binding → Service → Repository → SQLite**
 
-```
+```text
 ┌──────────────┐
 │   Frontend   │  Vue 3 / TypeScript
 │  (Webview)   │
@@ -119,7 +128,7 @@ myapp2/
 └──────────────┘                       零依赖，全项目的核心
 ```
 
-**核心优势**：更换底层数据库（如从 SQLite 迁移到 MySQL）时，只需新增一个 Repository 实现，上层 Service/Binding 代码 **0 修改**。
+**核心优势**：更换底层数据库时，只需新增一个 Repository 实现，上层代码 **0 修改**。
 
 ### 3.2 依赖注入流水线 (`main.go`)
 
@@ -131,118 +140,60 @@ database.InitDB()             // 2. 连接 SQLite
   → repository.New...()       // 3. 创建数据仓储
     → service.New...()        // 4. 创建业务服务
       → binding.New...()      // 5. 创建前端桥接
-application.New(bindins...)   // 6. 组装 Wails 应用
+application.New(bindings...)  // 6. 组装 Wails 应用
 manager.NewWindowManager()    // 7. 创建窗口 & 托盘
 wailsApp.Run()                // 8. 阻塞运行
 ```
 
 ---
 
-## 四、已实现的核心功能
+## 四、核心特性沉淀
 
-### 4.1 SQLite + GORM 本地持久化
+### 1. 生产级构建流水线 (Taskfile)
+- 提供 `task build:prod` 和 `task package:prod` 指令。
+- **自动安全增强**：在 `vite.config.ts` 判断生产模式，直接剥离 Vue DevTools，防止内部状态泄露。
+- **编译时注入**：使用 `ldflags` 注入版本号和 `IsDev=false`，用户无法手动篡改系统环境标记。
+- **二进制优化**：启用 Go `-trimpath` 删除绝对路径，启用 `-s -w` 压缩符号表（减小约30%体积），启用 `-H windowsgui` 隐藏控制台黑窗。
 
-- **位置**：`internal/database/database.go`
-- 数据库文件存放在 OS 安全目录 (`AppData/MyApp2/data/app_data.db`)
-- 启动时自动执行 `AutoMigrate`，结构体新增字段时自动同步表结构
-- 已注册的领域模型：`User`、`Setting`
+### 2. 双语国际化闭环 (i18n)
+- 结合 `vue-i18n` 和 TDesign `<t-config-provider>` 实现了全局组件和私有业务文案的无缝中英切换。
+- **状态持久**：使用 `settings` 响应式 store，当变更语言时，不仅仅通知 DOM 发生变化，而且会经由 Wails Call 持久化入 GORM (SQLite)。
 
-### 4.2 结构化日志引擎 (Zap + Lumberjack)
+### 3. Vue Composables 业务工具箱
+专门消灭常见的前后端桥接样板代码：
+- `useAsyncAction(fn)`：无需手写 try/catch，自动维护 Loading 状态、捕获 Error String、并派发强类型 Data 结果。
+- `useWailsEvent(name)`：避免内存泄漏！在 `onMounted` 注册 Wails EventBus 监听，在 `onUnmounted` 自动执行 Off 取消订阅。
+- `useWindowControl()`：将 Wails API（最小化、全屏、拉伸等）无状态映射为简单的 Hooks 函数供模板调用。
+- `useDebounce(ref)`：防抖处理用户的即时输入（常用于搜素联想）。
 
-- **位置**：`internal/logger/logger.go`
-- 日志文件：`AppData/MyApp2/logs/app.log`
-- **开发模式**：控制台彩色输出 + 文件 JSON 双写
-- **生产模式**：仅写 JSON 文件，级别 >= Info
-- 单文件 50MB 自动切割，最多 10 个备份，保留 30 天，gzip 压缩
+### 4. 完整前后端 CRUD 范式实现
+- 在 `UserManageView.vue` 落地了包含：*条件检索防抖*、*服务端分页*、*TDesign 交互表格*、*新增/编辑聚合弹窗*、*二次确认删除拦截*的整套生命周期。
+- 后端完成了 GORM Offset/Limit 配合 Like 的分页聚合封装，返回标准结构 `UserListResult{Items, Total}`。
 
-### 4.3 全局 Panic 兜底恢复
+### 5. SQLite + GORM 本地持久化
+- 数据库落盘 `AppData/MyApp2/data/app_data.db`。采用 `AutoMigrate` 保障迭代时不卡阻表结构变化。内置记录了包含用户管理及设置同步在内的强约束关系。
 
-- **位置**：`main.go` 顶部 `defer func()`
-- 捕获所有未处理的 panic，写入日志
-- 弹出 Wails 原生 Error Dialog 通知用户，而非静默闪退
-- 引导用户将日志目录发送给开发团队
+### 6. 结构化日志引擎 (Zap + Lumberjack)
+- 日志文件落盘 `AppData/MyApp2/logs/app.log`。单文件 50MB 自动切割，最多备份 10 个，保留 30 天，gzip 压缩。生产仅写入特定等级，兼顾 I/O 性能。
 
-### 4.4 编译期环境隔离 (buildinfo)
+### 7. 全局 Panic 兜底恢复
+- `main.go` 引入 `defer recover`，发生致命报错时不造成静默崩溃。而是自动唤起 Wails Native Dialog 指引用户。
 
-- **位置**：`internal/buildinfo/buildinfo.go`
-- `IsDev` 和 `Version` 通过编译参数 `-ldflags` 注入，用户**无法**修改
-- 开发时默认 `IsDev=true`，正式打包时注入 `false`
-- 构建命令示例：
-  ```bash
-  go build -ldflags "-X myapp2/internal/buildinfo.Version=1.0.0 -X myapp2/internal/buildinfo.IsDev=false"
-  ```
+### 8. YAML 离线配置中心 (Viper)
+- 将运维型、环境主导型参数抽离成独立的 `config.yaml`。启动检查有无此项，若无则自动注入默认结构（极大增强桌面白盒分发体验）。
 
-### 4.5 YAML 配置中心 (Viper)
+### 9. 优雅停机 (Graceful Shutdown)
+- 关联 Wails Shutdown 生命周期。执行包括释放本地文件锁、停止 Logger 写盘或断开 SQLite 连接等安全断线工作。
 
-- **位置**：`internal/config/config.go`
-- 首次启动自动生成带注释的 `AppData/MyApp2/config.yaml`
-- 支持环境变量前缀 `MYAPP2_` 覆盖任意配置项
-- 配置项包括：应用名称、数据库驱动、日志策略、窗口尺寸等
-- **安全敏感项（is_dev/version）不在此文件中**
+### 10. 多窗口管理器与系统托盘
+- 在 Go 侧维持多独立形态的结构，包含：主控制窗、独立设置窗等。包含针对 OS 的托盘注册和右键触发菜单联调。
 
-### 4.6 优雅停机 (Graceful Shutdown)
+### 11. Pinia 状态持久化同步
+- **状态单源**：所有的前端状态变更是发起点，Pinia 保存实时缓存。
+- 当涉及到外观、主题、栏目折叠情况时，触发 `SettingBinding.Save()` 真正写入硬盘。下一次重启提取并还原现场。
 
-- **位置**：`internal/app/app.go` + `main.go` 中的 `defer`
-- 程序退出前自动调用 `coreApp.Shutdown()`
-- 可在此处安全关闭数据库连接池、释放文件锁、终止后台协程
-
-### 4.7 多窗口管理器 (WindowManager)
-
-- **位置**：`internal/manager/window_manager.go`
-- `CreateMainWindow()` — 主窗口（尺寸从配置文件读取）
-- `CreateSettingsWindow()` — 独立设置窗口（防重复创建）
-- `CreateAboutWindow()` — 独立关于窗口
-- 窗口参数（宽高、标题）从 YAML 配置中心注入
-
-### 4.8 系统托盘 (System Tray)
-
-- **位置**：`internal/manager/window_manager.go` 下半部分
-- 图标通过 `//go:embed` 嵌入编译产物
-- 右键菜单：显示主窗口 / 打开设置 / 关于 / 退出
-- 单击托盘图标：唤出主窗口
-
-### 4.9 Pinia 状态持久化同步
-
-- **前端**：`frontend/src/stores/settings.ts`
-- **后端**：`binding/setting.go` → `service/setting.go` → `repository/sqlite_setting.go`
-- 应用启动时从 SQLite 加载所有设置项到 Pinia Store
-- 用户修改设置（如主题切换）时，自动异步同步至 Go 后端 SQLite
-- 已实现的持久化设置项：
-  - `theme` (light / dark)
-  - `language` (zh-CN / en-US)
-  - `isSidebarCollapsed` (true / false)
-
-### 4.10 侧边栏导航布局
-
-- **位置**：`frontend/src/layouts/DefaultLayout.vue`
-- TDesign `<t-menu>` 驱动的可折叠侧边栏
-- 导航页面：首页 / 系统设置 / 关于
-- 折叠状态持久化（关联 Pinia → SQLite）
-- 顶部标题栏动态显示当前页面名称
-- 页面切换带 Fade 渐变动画
-- 窗口拖拽区域与可交互区域精确分离
-
-### 4.11 深色模式 / 明亮模式切换
-
-- 通过 Pinia `settings.theme` 控制
-- 修改 `<html>` 的 `theme-mode` 属性，TDesign 自动切换全局配色
-- 同时添加 Tailwind `dark` 类名
-- 切换后自动持久化到 SQLite，重启程序自动恢复
-
-### 4.12 前端 API 防腐层
-
-- **位置**：`frontend/src/api/user.ts`
-- 二次封装 Wails 自动生成的 Binding 接口
-- 统一错误捕获与日志记录
-- 便于接入 Mock 数据进行独立前端测试
-
-### 4.13 多窗口路由架构
-
-- **位置**：`frontend/src/router/index.ts`
-- 使用 Hash 模式 (`createWebHashHistory`)，兼容 Wails Webview
-- **主窗口路由**（含侧边栏）：`/`、`/settings`、`/about`
-- **独立窗口路由**（无侧边栏）：`/standalone/settings`、`/standalone/about`
-- Go 端 WindowManager 通过 URL 参数选择路由模式
+### 12. 路由多开与防腐隔离
+- 基于 Hash `/` 规避多窗口由于 History 引发的 HTTP Fallback 故障。并严格包装了 `api/` 目录将直接 Wails JS Binding 调用转化为带容错语义的前端 Async 函数。
 
 ---
 
@@ -250,7 +201,7 @@ wailsApp.Run()                // 8. 阻塞运行
 
 | 数据类型 | 存储位置 | 用户可改 | 示例 |
 |---|---|---|---|
-| 环境标识 / 版本号 | 🔒 编译期 ldflags | ❌ | `is_dev`, `version` |
+| 环境标识 / 版本号 | 🔒 编译期 ldflags | ❌ | `IsDev`, `Version` |
 | 运维部署参数 | 📄 config.yaml | ✅ | 窗口大小、日志级别 |
 | 用户偏好 | 🗂️ SQLite (Pinia) | ✅ | 主题、语言、布局 |
 | 业务数据 | 🗂️ SQLite (GORM) | ✅ | 用户表 |
@@ -260,24 +211,26 @@ wailsApp.Run()                // 8. 阻塞运行
 ## 六、开发命令参考
 
 ```bash
+# ============ 开发 ============ 
 # 完整开发模式（前后端热重载）
 wails3 dev
 # 或
 task dev
 
-# 仅前端开发
-cd frontend && pnpm dev
+# ============ 构建 ============ 
+# 一键生产构建 (注入版本、关闭控制台黑窗、极致体积压缩、屏蔽 DevTools)
+wails3 task build:prod
+# 指定版本构建
+wails3 task build:prod APP_VERSION=2.1.0
 
-# 生产构建
-wails3 build
+# 打包为 Windows NSIS 安装程序
+wails3 task package:prod
 
-# 生产构建 + 环境注入
-go build -ldflags "-X myapp2/internal/buildinfo.Version=1.0.0 -X myapp2/internal/buildinfo.IsDev=false"
+# ============ 辅助 ============ 
+# 重新生成前端 TS 绑定 (强制清理旧版)
+wails3 generate bindings --ts -clean=true
 
-# 重新生成前端绑定
-wails3 generate bindings --ts
-
-# 前端 lint & 格式化
+# 前端 lint & 格式化代码
 cd frontend && pnpm lint && pnpm format
 ```
 
@@ -286,22 +239,19 @@ cd frontend && pnpm lint && pnpm format
 ## 七、扩展指南
 
 ### 新增一个后端服务
-
-1. 在 `internal/domain/` 定义领域模型和 Repository 接口
-2. 在 `internal/repository/` 实现 GORM 版 Repository
-3. 在 `internal/service/` 编写业务逻辑（注入 Repository）
-4. 在 `internal/binding/` 创建前端桥接接口（注入 Service）
-5. 在 `main.go` 中组装依赖链并注册到 `application.NewService()`
-6. 运行 `wails3 generate bindings --ts` 自动生成前端 API
-7. 在 `frontend/src/api/` 中二次封装
+1. 在 `internal/domain/` 定义领域模型和 Repo 接口。
+2. 在 `internal/repository/` 撰写 GORM Repo 实现。
+3. 在 `internal/service/` 编写纯业务逻辑。
+4. 在 `internal/binding/` 封装可前端调用的结构。
+5. 在 `main.go` 注册。
+6. 行使 `wails3 generate bindings --ts -clean=true`。
+7. 在 `frontend/src/api/` 提供前端函数封装。
 
 ### 新增一个前端页面
-
-1. 在 `frontend/src/views/` 创建 `XxxView.vue`
-2. 在 `frontend/src/router/index.ts` 添加路由（放在 DefaultLayout children 下）
-3. 如需独立窗口模式，额外在 `/standalone/xxx` 下注册同一组件
-4. 在 Go 端 `WindowManager` 中添加 `CreateXxxWindow()` 方法
+1. 在 `frontend/src/views/` 创立 `*.vue`。
+2. 添加进入 `frontend/src/router/index.ts`（置于 `DefaultLayout` 之内）。
+3. 调整 `locales/` 与 `DefaultLayout.vue` 确保 Sidebar 多语言对应即可展现。
 
 ---
 
-*本文档自动生成于 2026-03-23，与项目代码同步维护。*
+*本文档基于最新项目结构自动产生于当前节点，并与所有实施功能保持强对应锚点关系。*

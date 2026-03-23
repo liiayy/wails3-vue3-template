@@ -5,29 +5,39 @@ import (
 	"myapp2/internal/service"
 )
 
-// UserBinding 专门暴漏给前端的 JS/TS 调用的入口
-// 它充当 Controller，主要接收解析参数及进行防错拦截
+// UserBinding 专门暴露给前端的 JS/TS 调用入口
 type UserBinding struct {
 	svc *service.UserService
 }
 
 func NewUserBinding(svc *service.UserService) *UserBinding {
-	return &UserBinding{
-		svc: svc,
-	}
+	return &UserBinding{svc: svc}
 }
 
-// GetProfile 供前端通过 Wails JS SDK 调用以获取用户信息
+// GetProfile 查询单个用户
 func (b *UserBinding) GetProfile(id int) (*domain.User, error) {
-	// 如果前端传入负数等边界条件，可在此 Controller 层先拦截，不漏给业务纯层
 	if id <= 0 {
-		return nil, nil // 或 return errors.New("参数不合法")
+		return nil, nil
 	}
-
 	return b.svc.GetUserProfile(id)
 }
 
-// Register 处理前端传来的注册请求
+// Register 新增用户
 func (b *UserBinding) Register(name, email string) (*domain.User, error) {
 	return b.svc.RegisterUser(name, email)
+}
+
+// Update 更新用户
+func (b *UserBinding) Update(id int, name, email string) (*domain.User, error) {
+	return b.svc.UpdateUser(id, name, email)
+}
+
+// Delete 删除用户
+func (b *UserBinding) Delete(id int) error {
+	return b.svc.DeleteUser(id)
+}
+
+// List 分页查询用户列表
+func (b *UserBinding) List(keyword string, page, pageSize int) (*domain.UserListResult, error) {
+	return b.svc.ListUsers(keyword, page, pageSize)
 }

@@ -1,55 +1,40 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { registerUser, fetchUserProfile } from '../api/user'
 import { useSettingsStore } from '../stores/settings'
-import { Events } from '@wailsio/runtime'
+import { useWailsEvent, useAsyncAction } from '../composables'
 
 const settings = useSettingsStore()
+const { t } = useI18n()
+
+// 【Composable 1】useWailsEvent — 自动管理事件订阅/卸载
+const { data: currentTime } = useWailsEvent<string>('time')
+
+// 【Composable 2】useAsyncAction — 注册操作
 const registerForm = ref({ name: '', email: '' })
-const queryId = ref<number>(1)
-const resultText = ref("Ready to interact with Go Mega-Structure Backend 🚀")
-const currentTime = ref("")
-
-// 订阅后端事件
-onMounted(() => {
-  Events.On('time', (time: unknown) => {
-    currentTime.value = time as string
-  })
-})
-onUnmounted(() => { Events.Off('time') })
-
-// 表单防抖提示
-const loading = ref(false)
-
-async function onRegister() {
+const {
+  execute: doRegister,
+  loading: registerLoading,
+  error: registerError,
+  data: registeredUser,
+} = useAsyncAction(async () => {
   if (!registerForm.value.name || !registerForm.value.email) {
-    resultText.value = 'Name and Email are required!'
-    return
+    throw new Error(t('common.required'))
   }
-  loading.value = true
-  try {
-    const user = await registerUser(registerForm.value.name, registerForm.value.email)
-    resultText.value = `Success! User [${user?.name}] created with ID: ${user?.id}`
-  } catch (err) {
-    resultText.value = "Register failed: " + String(err)
-  }
-  loading.value = false
-}
+  return await registerUser(registerForm.value.name, registerForm.value.email)
+})
 
-async function onQuery() {
-  loading.value = true
-  try {
-    const user = await fetchUserProfile(queryId.value)
-    if (user) {
-      resultText.value = `Found ID(${user.id}): ${user.name} <${user.email}>`
-    } else {
-      resultText.value = `User ID ${queryId.value} not found (Returned null)`
-    }
-  } catch (err) {
-    resultText.value = "Query failed: " + String(err)
-  }
-  loading.value = false
-}
+// 【Composable 2】useAsyncAction — 查询操作
+const queryId = ref<number>(1)
+const {
+  execute: doQuery,
+  loading: queryLoading,
+  error: queryError,
+  data: queriedUser,
+} = useAsyncAction(async () => {
+  return await fetchUserProfile(queryId.value)
+})
 </script>
 
 <template>
@@ -58,24 +43,35 @@ async function onQuery() {
       
       <div class="text-center space-y-2">
         <h2 class="text-2xl font-bold text-[var(--td-text-color-primary)]">
-          Wails 3 Mega-Structure Demo
+          {{ $t('home.title') }}
         </h2>
         <p class="text-[var(--td-text-color-secondary)]">
-          Testing App → Binding → Service → Repository Layers
+          {{ $t('home.subtitle') }}
         </p>
       </div>
 
+      <!-- 状态结果面板 -->
       <div class="w-full bg-[var(--td-bg-color-secondarycontainer)] p-4 rounded-md flex justify-between items-center text-[var(--td-brand-color)] font-medium">
-        <span>{{ resultText }}</span>
+        <span v-if="registeredUser">
+          ✅ {{ $t('home.registerSuccess') }}: {{ registeredUser.name }} (ID: {{ registeredUser.id }})
+        </span>
+        <span v-else-if="queriedUser">
+          🔍 {{ $t('home.found') }}: {{ queriedUser.name }} &lt;{{ queriedUser.email }}&gt;
+        </span>
+        <span v-else-if="registerError || queryError" class="text-[var(--td-error-color)]">
+          ❌ {{ registerError || queryError }}
+        </span>
+        <span v-else>{{ $t('home.ready') }}</span>
+
         <div class="flex items-center gap-2">
-          <span class="text-xs text-[var(--td-text-color-secondary)] uppercase">持久化主题:</span>
+          <span class="text-xs text-[var(--td-text-color-secondary)] uppercase">{{ $t('home.persistTheme') }}</span>
           <t-radio-group 
             variant="default-filled" 
             :value="settings.theme" 
             @change="(val: any) => settings.updateSetting('theme', val)"
           >
-            <t-radio-button value="light">明亮</t-radio-button>
-            <t-radio-button value="dark">黑暗</t-radio-button>
+            <t-radio-button value="light">{{ $t('home.themeLight') }}</t-radio-button>
+            <t-radio-button value="dark">{{ $t('home.themeDark') }}</t-radio-button>
           </t-radio-group>
         </div>
       </div>
@@ -83,23 +79,23 @@ async function onQuery() {
       <div class="w-full grid grid-cols-2 gap-8">
         <!-- Register Section -->
         <div class="space-y-4">
-          <h3 class="font-semibold text-lg">1. Register (Write)</h3>
-          <t-input v-model="registerForm.name" placeholder="Name" />
-          <t-input v-model="registerForm.email" placeholder="Email" />
-          <t-button block theme="primary" :loading="loading" @click="onRegister">Register User</t-button>
+          <h3 class="font-semibold text-lg">{{ $t('home.registerSection') }}</h3>
+          <t-input v-model="registerForm.name" :placeholder="$t('home.namePlaceholder')" />
+          <t-input v-model="registerForm.email" :placeholder="$t('home.emailPlaceholder')" />
+          <t-button block theme="primary" :loading="registerLoading" @click="doRegister()">{{ $t('home.registerBtn') }}</t-button>
         </div>
 
         <!-- Query Section -->
         <div class="space-y-4">
-          <h3 class="font-semibold text-lg">2. Lookup (Read)</h3>
-          <t-input-number v-model="queryId" :min="1" placeholder="User ID" class="w-full" />
-          <t-button block theme="default" :loading="loading" @click="onQuery">Fetch User</t-button>
+          <h3 class="font-semibold text-lg">{{ $t('home.lookupSection') }}</h3>
+          <t-input-number v-model="queryId" :min="1" placeholder="ID" class="w-full" />
+          <t-button block theme="default" :loading="queryLoading" @click="doQuery()">{{ $t('home.fetchBtn') }}</t-button>
         </div>
       </div>
 
       <t-alert theme="info" class="mt-8 w-full">
-        <template #title>Wails Event Bus Stream (App Hook):</template>
-        {{ currentTime || "Waiting for 'time' event from background goroutine..." }}
+        <template #title>{{ $t('home.eventBusTitle') }}</template>
+        {{ currentTime || $t('home.eventBusWaiting') }}
       </t-alert>
       
     </div>

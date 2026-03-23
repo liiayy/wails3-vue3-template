@@ -7,9 +7,17 @@ type User struct {
 	Email string `json:"email" gorm:"unique;not null"`       // 唯一索引约束
 }
 
+// UserListResult 分页查询结果
+type UserListResult struct {
+	Items []*User `json:"items"`
+	Total int64   `json:"total"`
+}
+
 // UserRepository 定义了用户的数据存取抽象接口
 // 不论底层使用的是 SQLite、MySQL、Redis 或是远程 API，Service 层仅依赖此接口
 type UserRepository interface {
 	FindByID(id int) (*User, error)
 	Save(user *User) error
+	Delete(id int) error
+	List(keyword string, page, pageSize int) (*UserListResult, error)
 }
