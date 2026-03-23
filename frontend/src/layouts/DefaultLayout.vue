@@ -28,15 +28,18 @@ const activeMenu = computed(() => {
 })
 
 // 菜单项定义
-const menuItems = computed(() => [
+const topMenuItems = computed(() => [
   { value: 'home', label: t('menu.home'), icon: HomeIcon, path: '/' },
   { value: 'users', label: t('menu.users'), icon: UserIcon, path: '/users' },
+])
+
+const bottomMenuItems = computed(() => [
   { value: 'settings', label: t('menu.settings'), icon: SettingIcon, path: '/settings' },
-  { value: 'about', label: t('menu.about'), icon: InfoCircleIcon, path: '/about' },
 ])
 
 function onMenuChange(value: string) {
-  const item = menuItems.value.find((m) => m.value === value)
+  const allItems = [...topMenuItems.value, ...bottomMenuItems.value]
+  const item = allItems.find((m) => m.value === value)
   if (item) {
     router.push(item.path)
   }
@@ -51,11 +54,12 @@ function toggleSidebar() {
   <div class="h-screen w-full flex overflow-hidden bg-[var(--td-bg-color-page)]">
     <!-- ========== 侧边栏 ========== -->
     <aside
-      class="sidebar flex flex-col h-full transition-all duration-300 bg-[var(--td-bg-color-container)]"
+      class="sidebar flex flex-col h-full transition-all duration-300 bg-[var(--td-bg-color-container)] border-r border-[var(--td-border-level-1-color)]"
+      :style="{ width: settings.isSidebarCollapsed ? '64px' : '200px' }"
     >
       <!-- Logo 区域 (可拖拽) -->
       <div
-        class="h-[50px] flex items-center gap-2 px-4 shrink-0 border-[var(--td-border-level-1-color)]"
+        class="h-[50px] flex items-center gap-2 px-4 shrink-0"
         style="--wails-draggable: drag; -webkit-app-region: drag; user-select: none"
       >
         <div
@@ -72,29 +76,41 @@ function toggleSidebar() {
       </div>
 
       <!-- 菜单导航 -->
-      <nav class="flex-1 overflow-y-auto py-2">
-        <t-menu :value="activeMenu" :collapsed="settings.isSidebarCollapsed" @change="onMenuChange">
-          <t-menu-item v-for="item in menuItems" :key="item.value" :value="item.value">
-            <template #icon>
-              <component :is="item.icon" />
-            </template>
-            {{ item.label }}
-          </t-menu-item>
-        </t-menu>
-      </nav>
+      <nav class="flex-1 flex flex-col overflow-x-hidden overflow-y-hidden" style="-webkit-app-region: no-drag">
+        <!-- 顶部主菜单 -->
+        <div class="flex-1 overflow-y-auto overflow-x-hidden">
+          <t-menu
+            :value="activeMenu"
+            :collapsed="settings.isSidebarCollapsed"
+            @change="onMenuChange"
+            style="width: 100%"
+          >
+            <t-menu-item v-for="item in topMenuItems" :key="item.value" :value="item.value">
+              <template #icon>
+                <component :is="item.icon" />
+              </template>
+              {{ item.label }}
+            </t-menu-item>
+          </t-menu>
+        </div>
 
-      <!-- 底部折叠按钮 -->
-      <!--      <div-->
-      <!--        class="h-[48px] flex items-center justify-center border-t border-[var(&#45;&#45;td-border-level-1-color)] cursor-pointer hover:bg-[var(&#45;&#45;td-bg-color-secondarycontainer)] transition-colors"-->
-      <!--        @click="toggleSidebar"-->
-      <!--        style="-webkit-app-region: no-drag"-->
-      <!--      >-->
-      <!--        <component-->
-      <!--          :is="settings.isSidebarCollapsed ? ChevronRightDoubleIcon : ChevronLeftDoubleIcon"-->
-      <!--          class="text-[var(&#45;&#45;td-text-color-secondary)]"-->
-      <!--          size="20"-->
-      <!--        />-->
-      <!--      </div>-->
+        <!-- 底部功能菜单 -->
+        <div class="shrink-0 border-t border-[var(--td-border-level-1-color)]/50 overflow-x-hidden">
+          <t-menu
+            :value="activeMenu"
+            :collapsed="settings.isSidebarCollapsed"
+            @change="onMenuChange"
+            style="width: 100%"
+          >
+            <t-menu-item v-for="item in bottomMenuItems" :key="item.value" :value="item.value">
+              <template #icon>
+                <component :is="item.icon" />
+              </template>
+              {{ item.label }}
+            </t-menu-item>
+          </t-menu>
+        </div>
+      </nav>
     </aside>
 
     <!-- ========== 右侧主区域 ========== -->
