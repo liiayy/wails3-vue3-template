@@ -12,6 +12,8 @@ vars:
   APP_NAME: "myapp2"
   BIN_DIR: "bin"
   VITE_PORT: '{{.WAILS_VITE_PORT | default 9245}}'
+  # 版本号：可在命令行通过 task build:prod APP_VERSION=2.0.0 覆盖
+  APP_VERSION: '{{.APP_VERSION | default "1.0.0"}}'
 
 tasks:
   build:
@@ -19,10 +21,46 @@ tasks:
     cmds:
       - task: "{{OS}}:build"
 
+  # ============ 生产构建流水线 ============
+
+  build:prod:
+    summary: 一键生产构建（注入版本号 + 关闭 DevTools + 关闭调试模式）
+    desc: |
+      用法：
+        task build:prod                    → 以默认版本 1.0.0 构建
+        task build:prod APP_VERSION=2.1.0  → 指定版本号
+      
+      该命令会：
+        1. 前端以 production 模式构建（剥离 Vue DevTools 插件）
+        2. Go 后端通过 -ldflags 注入 Version 和 IsDev=false
+        3. 开启 -trimpath 移除本地路径信息
+        4. 开启 -w -s 压缩符号表（减小二进制体积约 30%）
+        5. 设置 -H windowsgui 隐藏控制台黑窗
+    cmds:
+      - task: "{{OS}}:build"
+        vars:
+          DEV: "false"
+          APP_VERSION: "{{.APP_VERSION}}"
+
+  build:dev:
+    summary: 快速开发构建（保留 DevTools + 调试日志）
+    cmds:
+      - task: "{{OS}}:build"
+        vars:
+          DEV: "true"
+
   package:
     summary: Packages a production build of the application
     cmds:
       - task: "{{OS}}:package"
+
+  package:prod:
+    summary: 打包生产版安装包（NSIS 安装程序）
+    cmds:
+      - task: "{{OS}}:package"
+        vars:
+          DEV: "false"
+          APP_VERSION: "{{.APP_VERSION}}"
 
   run:
     summary: Runs the application
