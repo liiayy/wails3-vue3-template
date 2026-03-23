@@ -16,7 +16,7 @@ export const useSettingsStore = defineStore('settings', {
   state: (): SettingsState => ({
     theme: 'light',
     language: 'zh-CN',
-    isSidebarCollapsed: false,
+    isSidebarCollapsed: true,
   }),
 
   actions: {
@@ -106,4 +106,3 @@ export const useSettingsStore = defineStore('settings', {
     },
   },
 })
-
