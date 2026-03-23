@@ -55,7 +55,7 @@ function toggleSidebar() {
     >
       <!-- Logo 区域 (可拖拽) -->
       <div
-        class="h-[50px] flex items-center gap-2 px-4 shrink-0 border-b border-[var(--td-border-level-1-color)]"
+        class="h-[50px] flex items-center gap-2 px-4 shrink-0 border-[var(--td-border-level-1-color)]"
         style="--wails-draggable: drag; -webkit-app-region: drag; user-select: none"
       >
         <div
@@ -84,17 +84,17 @@ function toggleSidebar() {
       </nav>
 
       <!-- 底部折叠按钮 -->
-      <div
-        class="h-[48px] flex items-center justify-center border-t border-[var(--td-border-level-1-color)] cursor-pointer hover:bg-[var(--td-bg-color-secondarycontainer)] transition-colors"
-        @click="toggleSidebar"
-        style="-webkit-app-region: no-drag"
-      >
-        <component
-          :is="settings.isSidebarCollapsed ? ChevronRightDoubleIcon : ChevronLeftDoubleIcon"
-          class="text-[var(--td-text-color-secondary)]"
-          size="20"
-        />
-      </div>
+      <!--      <div-->
+      <!--        class="h-[48px] flex items-center justify-center border-t border-[var(&#45;&#45;td-border-level-1-color)] cursor-pointer hover:bg-[var(&#45;&#45;td-bg-color-secondarycontainer)] transition-colors"-->
+      <!--        @click="toggleSidebar"-->
+      <!--        style="-webkit-app-region: no-drag"-->
+      <!--      >-->
+      <!--        <component-->
+      <!--          :is="settings.isSidebarCollapsed ? ChevronRightDoubleIcon : ChevronLeftDoubleIcon"-->
+      <!--          class="text-[var(&#45;&#45;td-text-color-secondary)]"-->
+      <!--          size="20"-->
+      <!--        />-->
+      <!--      </div>-->
     </aside>
 
     <!-- ========== 右侧主区域 ========== -->
@@ -123,7 +123,7 @@ function toggleSidebar() {
       </header>
 
       <!-- 主内容区 -->
-      <main class="flex-1 overflow-auto p-5">
+      <main class="flex-1 overflow-auto p-2">
         <router-view v-slot="{ Component }">
           <transition name="fade" mode="out-in">
             <component :is="Component" />

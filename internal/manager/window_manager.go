@@ -96,7 +96,7 @@ func (wm *WindowManager) CreateAboutWindow() *application.WebviewWindow {
 		Name:             "about",
 		Title:            "关于 MyApp2",
 		Width:            400,
-		Height:           350,
+		Height:           400,
 		URL:              "/#/standalone/about",
 		BackgroundColour: application.NewRGB(27, 38, 54),
 		Frameless:        true,

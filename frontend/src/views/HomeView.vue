@@ -38,7 +38,7 @@ const {
 </script>
 
 <template>
-  <t-card :bordered="false" class="shadow-sm rounded-lg max-w-2xl mx-auto mt-8">
+  <t-card :bordered="false" class="shadow-sm rounded-lg mx-auto mt-8">
     <div class="space-y-8 flex flex-col items-center py-6">
       <div class="text-center space-y-2">
         <h2 class="text-2xl font-bold text-[var(--td-text-color-primary)]">
