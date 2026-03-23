@@ -100,6 +100,14 @@ func main() {
 		Mac: application.MacOptions{
 			ApplicationShouldTerminateAfterLastWindowClosed: true,
 		},
+		SingleInstance: &application.SingleInstanceOptions{
+			UniqueID: "com.myapp2.app",
+			OnSecondInstanceLaunch: func(data application.SecondInstanceData) {
+				if win, ok := application.Get().Window.GetByName("main"); ok {
+					win.Focus()
+				}
+			},
+		},
 	})
 
 	// 【3. 关联 Wails 全局生命周期事件】
