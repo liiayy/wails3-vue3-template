@@ -77,6 +77,7 @@ export default {
     themeMode: '主题模式',
     themeLight: '明亮模式',
     themeDark: '黑暗模式',
+    themeAuto: '跟随系统',
     languageLabel: '语言',
     displayLanguage: '显示语言',
     langDesc: '系统范围内的 UI 组件和工具语言。',

@@ -14,7 +14,7 @@ const SYNC_EVENT = 'app:settings-changed'
 
 export const useSettingsStore = defineStore('settings', {
   state: (): SettingsState => ({
-    theme: 'light',
+    theme: 'auto',
     language: 'zh-CN',
     isSidebarCollapsed: true,
   }),
@@ -52,6 +52,15 @@ export const useSettingsStore = defineStore('settings', {
           if (key === 'theme') this.applyTheme()
           if (key === 'language') this.applyLanguage()
         })
+
+        // 监听系统主题变化
+        window
+          .matchMedia('(prefers-color-scheme: dark)')
+          .addEventListener('change', () => {
+            if (this.theme === 'auto') {
+              this.applyTheme()
+            }
+          })
       } catch (err) {
         console.error('[Settings] 初始化失败:', err)
       }
@@ -89,7 +98,14 @@ export const useSettingsStore = defineStore('settings', {
      */
     applyTheme() {
       const doc = document.documentElement
-      if (this.theme === 'dark') {
+      let targetTheme = this.theme
+
+      if (targetTheme === 'auto') {
+        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+        targetTheme = isDark ? 'dark' : 'light'
+      }
+
+      if (targetTheme === 'dark') {
         doc.setAttribute('theme-mode', 'dark')
         doc.classList.add('dark')
       } else {

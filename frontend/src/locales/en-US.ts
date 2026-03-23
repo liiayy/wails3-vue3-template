@@ -78,6 +78,7 @@ export default {
     themeMode: 'Theme Mode',
     themeLight: 'Light Mode',
     themeDark: 'Dark Mode',
+    themeAuto: 'Follow System',
     languageLabel: 'Language',
     displayLanguage: 'Display Language',
     langDesc: 'System-wide language for UI components and tools.',
