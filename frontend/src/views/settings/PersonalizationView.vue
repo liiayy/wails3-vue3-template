@@ -50,10 +50,7 @@ const settings = useSettingsStore()
         </div>
 
         <!-- 黑暗模式预览卡片 -->
-        <div
-          class="group relative cursor-pointer"
-          @click="settings.updateSetting('theme', 'dark')"
-        >
+        <div class="group relative cursor-pointer" @click="settings.updateSetting('theme', 'dark')">
           <div
             class="aspect-[16/10] rounded-xl border-2 transition-all duration-300 p-2.5 bg-[#181818] shadow-sm overflow-hidden flex flex-col gap-1"
             :class="
@@ -64,9 +61,7 @@ const settings = useSettingsStore()
           >
             <!-- 模拟界面 -->
             <div class="h-1.5 w-1/3 bg-gray-800 rounded"></div>
-            <div
-              class="h-5 w-full bg-gray-800 border border-gray-700 rounded shadow-sm"
-            ></div>
+            <div class="h-5 w-full bg-gray-800 border border-gray-700 rounded shadow-sm"></div>
             <div class="flex gap-1 flex-1">
               <div class="w-1/3 bg-gray-800 rounded"></div>
               <div class="w-2/3 bg-gray-800 rounded"></div>
@@ -86,10 +81,7 @@ const settings = useSettingsStore()
         </div>
 
         <!-- 跟随系统预览卡片 (Split Design) -->
-        <div
-          class="group relative cursor-pointer"
-          @click="settings.updateSetting('theme', 'auto')"
-        >
+        <div class="group relative cursor-pointer" @click="settings.updateSetting('theme', 'auto')">
           <div
             class="aspect-[16/10] rounded-xl border-2 transition-all duration-300 shadow-sm overflow-hidden flex"
             :class="
@@ -131,9 +123,7 @@ const settings = useSettingsStore()
         class="bg-[var(--td-bg-color-container)] rounded-xl p-0.5 shadow-sm"
       >
         <div class="space-y-4">
-          <div
-            class="text-[10px] font-bold text-[var(--td-text-color-placeholder)] uppercase"
-          >
+          <div class="text-[10px] font-bold text-[var(--td-text-color-placeholder)] uppercase">
             {{ $t('settings.displayLanguage') }}
           </div>
           <t-select
@@ -158,9 +148,7 @@ const settings = useSettingsStore()
       >
         <div class="flex justify-between items-start mb-2">
           <div class="space-y-1">
-            <div
-              class="text-[10px] font-bold text-[var(--td-text-color-placeholder)] uppercase"
-            >
+            <div class="text-[10px] font-bold text-[var(--td-text-color-placeholder)] uppercase">
               {{ $t('settings.sidebarBehavior') }}
             </div>
             <div class="font-bold text-[var(--td-text-color-primary)] text-sm">
@@ -182,7 +170,7 @@ const settings = useSettingsStore()
 
 <style scoped>
 .animate-fade-in {
-  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: fadeIn 0.1s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes fadeIn {

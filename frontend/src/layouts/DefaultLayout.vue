@@ -2,19 +2,11 @@
 import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useSettingsStore } from '@/stores/settings'
-import {
-  HomeIcon,
-  UserIcon,
-  SettingIcon,
-  InfoCircleIcon,
-  ChevronLeftDoubleIcon,
-  ChevronRightDoubleIcon,
-  PlayCircleIcon,
-} from 'tdesign-icons-vue-next'
+import { Icon } from 'tdesign-icons-vue-next'
 
 import { useI18n } from 'vue-i18n'
 import { useWindowControl } from '@/composables'
-import { RectangleIcon, MinusIcon, CloseIcon, FullscreenIcon } from 'tdesign-icons-vue-next'
+import { RectangleIcon, MinusIcon, CloseIcon } from 'tdesign-icons-vue-next'
 
 const router = useRouter()
 const route = useRoute()
@@ -31,15 +23,6 @@ const activeMenu = computed(() => {
   return name || 'home'
 })
 
-// 图标映射表
-const menuIconMap: Record<string, any> = {
-  home: HomeIcon,
-  user: UserIcon,
-  setting: SettingIcon,
-  'info-circle': InfoCircleIcon,
-  'play-circle': PlayCircleIcon,
-}
-
 // 动态通过路由配置生成菜单
 const allRoutes = router.options.routes.find((r) => r.path === '/')?.children || []
 
@@ -50,7 +33,7 @@ const topMenuItems = computed(() => {
     .map((r) => ({
       value: r.name as string,
       label: t(r.meta?.title as string),
-      icon: menuIconMap[r.meta?.icon as string],
+      icon: r.meta?.icon as string,
       path: r.path === '' ? '/' : `/${r.path}`,
     }))
 })
@@ -62,7 +45,7 @@ const bottomMenuItems = computed(() => {
     .map((r) => ({
       value: r.name as string,
       label: t(r.meta?.title as string),
-      icon: menuIconMap[r.meta?.icon as string],
+      icon: r.meta?.icon as string,
       path: `/${r.path}`,
     }))
 })
@@ -120,7 +103,7 @@ function toggleSidebar() {
           >
             <t-menu-item v-for="item in topMenuItems" :key="item.value" :value="item.value">
               <template #icon>
-                <component :is="item.icon" />
+                <icon :name="item.icon" />
               </template>
               {{ item.label }}
             </t-menu-item>
@@ -137,7 +120,7 @@ function toggleSidebar() {
           >
             <t-menu-item v-for="item in bottomMenuItems" :key="item.value" :value="item.value">
               <template #icon>
-                <component :is="item.icon" />
+                <icon :name="item.icon" />
               </template>
               {{ item.label }}
             </t-menu-item>

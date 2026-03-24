@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { RootListIcon, FileIcon, CopyIcon, CloudUploadIcon, NotificationIcon } from 'tdesign-icons-vue-next'
+import { Icon } from 'tdesign-icons-vue-next'
 
 const route = useRoute()
 const router = useRouter()
@@ -20,10 +20,10 @@ const activeCategory = computed(() => {
 })
 
 const categories = [
-  { id: 'file', label: 'demo.fileOps', icon: FileIcon, path: 'file' },
-  { id: 'clipboard', label: 'demo.clipboardOps', icon: CopyIcon, path: 'clipboard' },
-  { id: 'dragdrop', label: 'demo.dragDropOps', icon: CloudUploadIcon, path: 'dragdrop' },
-  { id: 'notifications', label: 'demo.notificationOps', icon: NotificationIcon, path: 'notifications' },
+  { id: 'file', label: 'demo.fileOps', icon: 'file', path: 'file' },
+  { id: 'clipboard', label: 'demo.clipboardOps', icon: 'copy', path: 'clipboard' },
+  { id: 'dragdrop', label: 'demo.dragDropOps', icon: 'cloud-upload', path: 'dragdrop' },
+  { id: 'notifications', label: 'demo.notificationOps', icon: 'notification', path: 'notifications' },
 ]
 
 function navigateTo(path: string) {
@@ -51,7 +51,7 @@ function navigateTo(path: string) {
                   : 'text-[var(--td-text-color-secondary)] hover:bg-[var(--td-bg-color-secondarycontainer)]'
               "
             >
-              <component :is="cat.icon" size="16" />
+              <icon :name="cat.icon" size="16" />
               <span class="text-sm">
                 {{ $t(cat.label) }}
               </span>

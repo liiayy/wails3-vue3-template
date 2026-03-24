@@ -11,7 +11,7 @@ import { NotificationIcon } from 'tdesign-icons-vue-next'
 
 <style scoped>
 .animate-fade-in {
-  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: fadeIn 0.1s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes fadeIn {
