@@ -92,7 +92,7 @@
   --td-success-color-light-hover: var(--td-success-color-2);
   --td-mask-active: rgba(0, 0, 0, 0.6);
   --td-mask-disabled: rgba(255, 255, 255, 0.6);
-  --td-bg-color-page: var(--td-gray-color-2);
+  --td-bg-color-page: var(--td-gray-color-1);
   --td-bg-color-container: #fff;
   --td-bg-color-container-hover: var(--td-gray-color-1);
   --td-bg-color-container-active: var(--td-gray-color-3);
