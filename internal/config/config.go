@@ -120,6 +120,31 @@ func InitConfig(appName string) error {
 	return nil
 }
 
+// SaveConfig 将当前内存中的 Cfg 状态持久化回磁盘文件 (YAML)
+func SaveConfig() error {
+	// 将结构体同步回 Viper 内存
+	// 注意：Unmarshal 是从 Viper 到 Struct，保存时我们需要确保 Viper 知道最新的值
+	viper.Set("window.width", Cfg.Window.Width)
+	viper.Set("window.height", Cfg.Window.Height)
+
+	if err := viper.WriteConfig(); err != nil {
+		zap.S().Errorf("写入配置文件失败: %v", err)
+		return err
+	}
+	zap.S().Debugf("配置文件保存成功")
+	return nil
+}
+
+// UpdateWindowSize 快捷更新窗口尺寸并保存
+func UpdateWindowSize(width, height int) {
+	if Cfg.Window.Width == width && Cfg.Window.Height == height {
+		return
+	}
+	Cfg.Window.Width = width
+	Cfg.Window.Height = height
+	_ = SaveConfig()
+}
+
 // GetConfigDir 返回配置文件所在目录（供其他模块定位同级文件）
 func GetConfigDir(appName string) string {
 	configDir, err := os.UserConfigDir()

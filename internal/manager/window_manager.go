@@ -2,6 +2,7 @@ package manager
 
 import (
 	_ "embed"
+	"myapp2/internal/config"
 	"myapp2/internal/service"
 
 	"go.uber.org/zap"
@@ -57,6 +58,17 @@ func (wm *WindowManager) CreateMainWindow() *application.WebviewWindow {
 		zap.S().Infof("[WindowManager] 原生文件拖入: %v", files)
 		// 发送给前端通用事件总线
 		wm.app.Event.Emit("files-dropped", files)
+	})
+
+	// 【新增】监听窗口缩放结束事件，保存尺寸到配置文件
+	wm.mainWindow.OnWindowEvent(events.Common.WindowDidResize, func(ev *application.WindowEvent) {
+		// 如果窗口是最大化状态，我们通常不希望保存最大化的尺寸作为默认启动尺寸
+		if wm.mainWindow.IsMaximised() {
+			return
+		}
+		w, h := wm.mainWindow.Size()
+		zap.S().Infof("[WindowManager] 窗口缩放结束，保存新尺寸: %dx%d", w, h)
+		config.UpdateWindowSize(w, h)
 	})
 
 	return wm.mainWindow
