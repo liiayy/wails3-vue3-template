@@ -18,9 +18,9 @@ const emit = defineEmits<{
 
 <template>
   <aside
-    class="w-44 border-r border-[var(--td-border-level-1-color)] bg-[var(--td-bg-color-container)] shrink-0 flex flex-col"
+    class="w-52 border-r border-[var(--td-border-level-1-color)] bg-[var(--td-bg-color-container)] shrink-0 flex flex-col"
   >
-    <div class="p-2">
+    <div class="p-1">
       <nav class="space-y-1">
         <div
           v-for="cat in categories"

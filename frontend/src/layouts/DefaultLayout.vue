@@ -4,11 +4,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useSettingsStore } from '@/stores/settings'
 import { useI18n } from 'vue-i18n'
 import { useWindowControl } from '@/composables'
-import {
-  RectangleIcon,
-  MinusIcon,
-  CloseIcon,
-} from 'tdesign-icons-vue-next'
+import { RectangleIcon, MinusIcon, CloseIcon } from 'tdesign-icons-vue-next'
 
 const router = useRouter()
 const route = useRoute()
@@ -137,9 +133,14 @@ function toggleSidebar() {
         class="h-[40px] flex items-center justify-between pl-5 shrink-0 border-[var(--td-border-level-1-color)] bg-[var(--td-bg-color-container)]"
         style="--wails-draggable: drag; -webkit-app-region: drag; user-select: none"
       >
-        <h2 class="text-sm font-medium text-[var(--td-text-color-primary)]">
-          {{ $t(`menu.${activeMenu}`) }}
-        </h2>
+        <div class="flex items-center gap-3">
+          <div
+            class="h-5 w-1 rounded-full bg-gradient-to-b from-blue-500 to-purple-600 shadow-sm"
+          ></div>
+          <h1 class="text-base font-semibold text-[var(--td-text-color-primary)] tracking-wide">
+            {{ $t(`menu.${activeMenu}`) }}
+          </h1>
+        </div>
 
         <!-- 右侧窗口控制按钮 -->
         <div class="flex h-full items-stretch" style="-webkit-app-region: no-drag">
@@ -156,7 +157,7 @@ function toggleSidebar() {
       </header>
 
       <!-- 主内容区 -->
-      <main class="flex-1 overflow-auto p-2">
+      <main class="flex-1 overflow-auto p-1">
         <router-view v-slot="{ Component }">
           <Transition name="fade" mode="out-in">
             <keep-alive>
