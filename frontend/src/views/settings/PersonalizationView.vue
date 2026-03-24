@@ -164,6 +164,30 @@ const settings = useSettingsStore()
           {{ $t('settings.sidebarDesc') }}
         </p>
       </t-card>
+
+      <!-- 自启动设置 -->
+      <t-card
+        :bordered="false"
+        class="bg-[var(--td-bg-color-container)] rounded-xl p-0.5 shadow-sm"
+      >
+        <div class="flex justify-between items-start mb-2">
+          <div class="space-y-1">
+            <div class="text-[10px] font-bold text-[var(--td-text-color-placeholder)] uppercase">
+              {{ $t('common.confirm') }}
+            </div>
+            <div class="font-bold text-[var(--td-text-color-primary)] text-sm">
+              {{ $t('settings.isAutostart') }}
+            </div>
+          </div>
+          <t-switch
+            :value="settings.isAutostart"
+            @change="(val: any) => settings.updateSetting('isAutostart', val)"
+          />
+        </div>
+        <p class="text-[11px] text-[var(--td-text-color-secondary)]">
+          {{ $t('settings.isAutostartDesc') }}
+        </p>
+      </t-card>
     </div>
   </div>
 </template>

@@ -86,6 +86,8 @@ export default {
     sidebarBehavior: '侧边栏行为',
     autoHideSidebar: '自动折叠侧边栏',
     sidebarDesc: '在不使用时自动收起轨道以扩大工作区。',
+    isAutostart: '开机自启动',
+    isAutostartDesc: '开启后应用将在系统登录时自动运行。',
     notifications: '通知设置',
     comingSoon: '即将推出',
   },

@@ -80,6 +80,7 @@ func main() {
 	// -- 1.3 初始化 Wails 控制器 (暴露给前端 JS 的接口层，注入业务服务) --
 	userBinding := binding.NewUserBinding(userSvc)
 	settingBinding := binding.NewSettingBinding(settingSvc)
+	systemBinding := binding.NewSystemBinding(appName)
 
 	// -- 1.4 初始化主应用生命周期管家 --
 	coreApp := app.NewApp()
@@ -98,6 +99,7 @@ func main() {
 			application.NewService(userBinding),
 			application.NewService(settingBinding),
 			application.NewService(notificationBinding),
+			application.NewService(systemBinding),
 			application.NewService(notifier),
 		},
 		Assets: application.AssetOptions{

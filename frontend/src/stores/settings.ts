@@ -1,5 +1,9 @@
 import { defineStore } from 'pinia'
-import { NotificationBinding, SettingBinding } from '#/myapp2/internal/binding'
+import {
+  NotificationBinding,
+  SettingBinding,
+  SystemBinding,
+} from '#/myapp2/internal/binding'
 import { Events } from '@wailsio/runtime'
 import i18n from '@/locales'
 
@@ -7,6 +11,7 @@ interface SettingsState {
   theme: 'light' | 'dark' | 'auto'
   language: string
   isSidebarCollapsed: boolean
+  isAutostart: boolean
 }
 
 // 跨窗口同步事件名称
@@ -17,12 +22,20 @@ export const useSettingsStore = defineStore('settings', {
     theme: 'auto',
     language: 'zh-CN',
     isSidebarCollapsed: true,
+    isAutostart: false,
   }),
 
   actions: {
+    /**
+     * 从 Go 后端 (SQLite) 初始化加载所有设置
+     * 并开启 Wails 事件监听，实现多窗口实时同步
+     */
     async init() {
       try {
-        const remoteSettings = await SettingBinding.GetAll()
+        const [remoteSettings, autostart] = await Promise.all([
+          SettingBinding.GetAll(),
+          SystemBinding.IsAutostartEnabled(),
+        ])
 
         if (remoteSettings) {
           if (remoteSettings.theme) this.theme = remoteSettings.theme as any
@@ -31,6 +44,7 @@ export const useSettingsStore = defineStore('settings', {
             this.isSidebarCollapsed = remoteSettings.isSidebarCollapsed === 'true'
         }
 
+        this.isAutostart = autostart
         this.applyTheme()
         this.applyLanguage()
 
@@ -60,7 +74,11 @@ export const useSettingsStore = defineStore('settings', {
       this.$state[key] = value
 
       try {
-        await SettingBinding.Save(key, String(value))
+        if (key === 'isAutostart') {
+          await SystemBinding.SetAutostart(value as boolean)
+        } else {
+          await SettingBinding.Save(key, String(value))
+        }
 
         if (key === 'theme') {
           this.applyTheme()
