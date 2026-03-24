@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Icon } from 'tdesign-icons-vue-next'
+import CategorySidebar from '../../components/CategorySidebar.vue'
 
 const route = useRoute()
 const router = useRouter()
-
-// 演示路由根路径
 const baseUrl = '/demo'
 
 // 根据当前路由名称判断激活分类
@@ -35,30 +33,11 @@ function navigateTo(path: string) {
   <div class="h-full flex flex-col bg-[var(--td-bg-color-container)] overflow-hidden">
     <div class="flex-1 flex overflow-hidden">
       <!-- 第二栏：功能导航 -->
-      <aside
-        class="w-44 border-r border-[var(--td-border-level-1-color)] bg-[var(--td-bg-color-container)] shrink-0 flex flex-col"
-      >
-        <div class="p-2">
-          <nav class="space-y-1">
-            <div
-              v-for="cat in categories"
-              :key="cat.id"
-              @click="navigateTo(cat.path)"
-              class="flex items-center gap-2.5 px-3 py-2 rounded-lg cursor-pointer transition-all duration-200"
-              :class="
-                activeCategory === cat.id
-                  ? 'bg-[var(--td-brand-color-light)] text-[var(--td-brand-color)] font-medium shadow-sm'
-                  : 'text-[var(--td-text-color-secondary)] hover:bg-[var(--td-bg-color-secondarycontainer)]'
-              "
-            >
-              <icon :name="cat.icon" size="16" />
-              <span class="text-sm">
-                {{ $t(cat.label) }}
-              </span>
-            </div>
-          </nav>
-        </div>
-      </aside>
+      <CategorySidebar
+        :categories="categories"
+        :active-value="activeCategory"
+        @change="navigateTo"
+      />
 
       <!-- 第三栏：主演示区 -->
       <main class="flex-1 overflow-auto bg-[var(--td-bg-color-page)] relative">
