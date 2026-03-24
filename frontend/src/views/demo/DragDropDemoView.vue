@@ -47,7 +47,7 @@ function clearItems() {
 </script>
 
 <template>
-  <div class="space-y-6 animate-fade-in">
+  <div class="space-y-6">
     <!-- 说明 -->
     <div class="p-4 rounded-lg bg-[var(--td-brand-color-light)] text-[var(--td-brand-color)] text-sm leading-relaxed">
       {{ $t('demo.dragDropDesc') }}
@@ -83,49 +83,49 @@ function clearItems() {
         </t-link>
       </div>
 
-      <div class="space-y-2">
-        <transition-group name="list">
-          <div 
-            v-for="(path, idx) in droppedItems" 
-            :key="path + idx"
-            class="flex items-center gap-3 p-3 rounded-xl bg-[var(--td-bg-color-container)] border border-[var(--td-border-level-1-color)] hover:shadow-md transition-all duration-200"
-          >
-            <div class="p-2 rounded-lg bg-[var(--td-bg-color-secondarycontainer)] text-[var(--td-brand-color)]">
-              <FileIcon size="18" />
-            </div>
-            <div class="flex-1 min-w-0">
-              <p class="text-xs text-[var(--td-text-color-secondary)] truncate font-mono">
-                {{ path }}
-              </p>
-            </div>
-            <CheckCircleFilledIcon class="text-[var(--td-success-color)] opacity-60" size="14" />
+      <TransitionGroup 
+        name="list" 
+        tag="div" 
+        class="space-y-2 min-h-[100px]"
+      >
+        <div 
+          v-for="(path, idx) in droppedItems" 
+          :key="path + idx"
+          class="flex items-center gap-3 p-3 rounded-xl bg-[var(--td-bg-color-container)] border border-[var(--td-border-level-1-color)] hover:shadow-md transition-all duration-200"
+        >
+          <div class="p-2 rounded-lg bg-[var(--td-bg-color-secondarycontainer)] text-[var(--td-brand-color)]">
+            <FileIcon size="18" />
           </div>
-        </transition-group>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs text-[var(--td-text-color-secondary)] truncate font-mono">
+              {{ path }}
+            </p>
+          </div>
+          <CheckCircleFilledIcon class="text-[var(--td-success-color)] opacity-60" size="14" />
+        </div>
 
         <!-- 空状态 -->
-        <div v-if="!droppedItems.length" class="py-12 flex flex-col items-center justify-center text-[var(--td-text-color-placeholder)]">
+        <div 
+          v-if="!droppedItems.length" 
+          key="empty"
+          class="py-12 flex flex-col items-center justify-center text-[var(--td-text-color-placeholder)]"
+        >
           <FileIcon size="32" class="opacity-20 mb-2" />
           <p class="text-xs">{{ $t('demo.noDroppedItems') }}</p>
         </div>
-      </div>
+      </TransitionGroup>
     </div>
   </div>
 </template>
 
 <style scoped>
-.animate-fade-in {
-  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+/* 路由/整体淡入效果 */
+.fade-enter-active {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.fade-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
 }
 
 /* Wails 原生激活类 */

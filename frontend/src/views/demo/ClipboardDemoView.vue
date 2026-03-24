@@ -52,7 +52,7 @@ async function clearClipboard() {
 </script>
 
 <template>
-  <div class="space-y-6 animate-fade-in">
+  <div class="space-y-6">
     <!-- 写入区域 -->
     <t-card :title="$t('demo.clipboardWrite')" size="small">
       <div class="space-y-4">
@@ -95,18 +95,5 @@ async function clearClipboard() {
 </template>
 
 <style scoped>
-.animate-fade-in {
-  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+/* 剪贴板演示页样式 */
 </style>

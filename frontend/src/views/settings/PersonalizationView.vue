@@ -6,7 +6,7 @@ const settings = useSettingsStore()
 </script>
 
 <template>
-  <div class="space-y-6 animate-fade-in">
+  <div class="space-y-6">
     <!-- 主题模式 -->
     <section class="space-y-3">
       <div
@@ -169,21 +169,6 @@ const settings = useSettingsStore()
 </template>
 
 <style scoped>
-.animate-fade-in {
-  animation: fadeIn 0.1s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 :deep(.t-card) {
   transition: transform 0.2s;
 }

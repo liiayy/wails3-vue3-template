@@ -157,11 +157,11 @@ function toggleSidebar() {
       <!-- 主内容区 -->
       <main class="flex-1 overflow-auto p-2">
         <router-view v-slot="{ Component }">
-          <transition name="fade" mode="out-in">
+          <Transition name="fade" mode="out-in">
             <keep-alive>
               <component :is="Component" />
             </keep-alive>
-          </transition>
+          </Transition>
         </router-view>
       </main>
     </div>
@@ -172,11 +172,15 @@ function toggleSidebar() {
 /* 页面切换动画 */
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.1s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.fade-enter-from,
+.fade-enter-from {
+  opacity: 0;
+  transform: scale(0.99);
+}
 .fade-leave-to {
   opacity: 0;
+  transform: scale(1.01);
 }
 
 /* 侧边栏菜单样式微调 */

@@ -43,7 +43,7 @@ function navigateTo(path: string) {
       <main class="flex-1 overflow-auto bg-[var(--td-bg-color-page)] relative">
         <div class="max-w-4xl p-6 space-y-6">
           <!-- 头部标题 -->
-          <div class="space-y-1 animate-fade-in" :key="activeCategory">
+          <div class="space-y-1">
             <h1 class="text-xl font-bold text-[var(--td-text-color-primary)] tracking-tight">
               {{ $t(categories.find((c) => c.id === activeCategory)?.label || '') }}
             </h1>
@@ -54,11 +54,9 @@ function navigateTo(path: string) {
 
           <!-- 功能演示展示区 -->
           <router-view v-slot="{ Component }">
-            <transition name="fade-sub" mode="out-in">
-              <keep-alive>
-                <component :is="Component" />
-              </keep-alive>
-            </transition>
+            <keep-alive>
+              <component :is="Component" />
+            </keep-alive>
           </router-view>
         </div>
       </main>
@@ -67,32 +65,5 @@ function navigateTo(path: string) {
 </template>
 
 <style scoped>
-.animate-fade-in {
-  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* 子路由切换动画 */
-.fade-sub-enter-active,
-.fade-sub-leave-active {
-  transition: all 0.1s ease;
-}
-.fade-sub-enter-from {
-  opacity: 0;
-  transform: translateX(10px);
-}
-.fade-sub-leave-to {
-  opacity: 0;
-  transform: translateX(-10px);
-}
+/* 功能演示页样式微调 */
 </style>

@@ -61,7 +61,7 @@ async function sendInteractive() {
 </script>
 
 <template>
-  <div class="space-y-6 animate-fade-in">
+  <div class="space-y-6">
     <!-- 说明 -->
     <div
       class="p-4 rounded-lg bg-[var(--td-brand-color-light)] text-[var(--td-brand-color)] text-sm leading-relaxed"
@@ -146,69 +146,56 @@ async function sendInteractive() {
       <div
         class="p-4 rounded-xl border border-[var(--td-border-level-1-color)] bg-[var(--td-bg-color-container)] min-h-[120px] flex flex-col justify-center transition-all duration-300"
       >
-        <div v-if="lastResponse" class="space-y-3 animate-slide-up">
-          <div
-            class="flex items-center justify-between border-b border-[var(--td-border-level-1-color)] pb-2 mb-2"
-          >
-            <span class="text-xs font-bold text-[var(--td-brand-color)]"
-              >Action: {{ lastResponse.ActionIdentifier }}</span
+        <Transition name="fade-sub" mode="out-in">
+          <div v-if="lastResponse" :key="lastResponse.timestamp" class="space-y-3">
+            <div
+              class="flex items-center justify-between border-b border-[var(--td-border-level-1-color)] pb-2 mb-2"
             >
-            <span
-              class="text-[10px] text-[var(--td-text-color-placeholder)] flex items-center gap-1"
-            >
-              <TimeIcon size="12" /> {{ lastResponse.timestamp }}
-            </span>
-          </div>
-          <div class="grid grid-cols-2 gap-y-2 text-xs">
-            <div class="text-[var(--td-text-color-placeholder)]">Notification ID</div>
-            <div class="text-[var(--td-text-color-primary)] font-mono">{{ lastResponse.ID }}</div>
+              <span class="text-xs font-bold text-[var(--td-brand-color)]"
+                >Action: {{ lastResponse.ActionIdentifier }}</span
+              >
+              <span
+                class="text-[10px] text-[var(--td-text-color-placeholder)] flex items-center gap-1"
+              >
+                <TimeIcon size="12" /> {{ lastResponse.timestamp }}
+              </span>
+            </div>
+            <div class="grid grid-cols-2 gap-y-2 text-xs">
+              <div class="text-[var(--td-text-color-placeholder)]">Notification ID</div>
+              <div class="text-[var(--td-text-color-primary)] font-mono">{{ lastResponse.ID }}</div>
 
-            <div class="text-[var(--td-text-color-placeholder)]">User Text</div>
-            <div class="text-[var(--td-brand-color)] font-medium">
-              {{ lastResponse.UserText || '(None)' }}
+              <div class="text-[var(--td-text-color-placeholder)]">User Text</div>
+              <div class="text-[var(--td-brand-color)] font-medium">
+                {{ lastResponse.UserText || '(None)' }}
+              </div>
             </div>
           </div>
-        </div>
-        <div
-          v-else
-          class="flex flex-col items-center justify-center text-[var(--td-text-color-placeholder)] py-4"
-        >
-          <ChatIcon size="32" class="opacity-20 mb-2" />
-          <p class="text-xs">{{ $t('demo.noResponse') }}</p>
-        </div>
+          <div
+            v-else
+            key="empty"
+            class="flex flex-col items-center justify-center text-[var(--td-text-color-placeholder)] py-4"
+          >
+            <ChatIcon size="32" class="opacity-20 mb-2" />
+            <p class="text-xs">{{ $t('demo.noResponse') }}</p>
+          </div>
+        </Transition>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.animate-fade-in {
-  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+/* 状态切换淡入效果 (Sub-Transition) */
+.fade-sub-enter-active,
+.fade-sub-leave-active {
+  transition: all 0.2s ease;
 }
-
-.animate-slide-up {
-  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+.fade-sub-enter-from {
+  opacity: 0;
+  transform: translateY(5px);
 }
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.fade-sub-leave-to {
+  opacity: 0;
+  transform: translateY(-5px);
 }
 </style>
