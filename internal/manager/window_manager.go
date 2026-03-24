@@ -46,6 +46,8 @@ func (wm *WindowManager) CreateMainWindow() *application.WebviewWindow {
 		Title:            wm.winTitle,
 		Width:            wm.winWidth,
 		Height:           wm.winHeight,
+		MinWidth:         1024,
+		MinHeight:        800,
 		BackgroundColour: application.NewRGB(27, 38, 54),
 		URL:              "/",
 		EnableFileDrop:   true,
