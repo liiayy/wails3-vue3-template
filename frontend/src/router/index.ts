@@ -54,6 +54,12 @@ const router = createRouter({
               component: () => import('@/views/demo/DragDropDemoView.vue'),
               meta: { title: 'demo.dragDropOps', showInMenu: true },
             },
+            {
+              path: 'notifications',
+              name: 'demo-notifications',
+              component: () => import('@/views/demo/NotificationDemoView.vue'),
+              meta: { title: 'demo.notificationOps', showInMenu: true },
+            },
           ],
         },
         {

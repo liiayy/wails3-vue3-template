@@ -1,0 +1,214 @@
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue'
+import { Events } from '@wailsio/runtime'
+import { NotificationBinding } from '#/myapp2/internal/binding'
+import {
+  NotificationIcon,
+  ChatIcon,
+  CheckCircleFilledIcon,
+  TimeIcon,
+  UserIcon,
+  InfoCircleIcon,
+} from 'tdesign-icons-vue-next'
+import { MessagePlugin } from 'tdesign-vue-next'
+
+const lastResponse = ref<any>(null)
+let unsubscribeNotifications: (() => void) | null = null
+
+onMounted(() => {
+  // 监听通知点击/回复事件
+  unsubscribeNotifications = Events.On('notification-clicked', (event: any) => {
+    lastResponse.value = {
+      ...event.data,
+      timestamp: new Date().toLocaleTimeString(),
+    }
+    MessagePlugin.info(`收到通知响应: ${event.data.ActionIdentifier || '点击'}`)
+  })
+})
+
+onUnmounted(() => {
+  unsubscribeNotifications?.()
+})
+
+async function sendBasic() {
+  try {
+    await NotificationBinding.SendBasic('Hello Wails!', '这是一条最基础的原生系统通知。')
+  } catch (err) {
+    MessagePlugin.error(`发送失败: ${err}`)
+  }
+}
+
+async function sendSubtitle() {
+  try {
+    const title = '项目进度更新'
+    const subtitle = '后端重构模块'
+    const body = '目前进度已达到 85%，预计明日完成交付。'
+    await NotificationBinding.SendWithSubtitle(title, subtitle, body)
+  } catch (err) {
+    MessagePlugin.error(`发送失败: ${err}`)
+  }
+}
+
+async function sendInteractive() {
+  try {
+    const title = '审批申请'
+    const body = '来自 张三 的请假申请，请查收并处理。'
+    await NotificationBinding.SendInteractive(title, body)
+  } catch (err) {
+    MessagePlugin.error(`发送失败: ${err}`)
+  }
+}
+</script>
+
+<template>
+  <div class="space-y-6 animate-fade-in">
+    <!-- 说明 -->
+    <div
+      class="p-4 rounded-lg bg-[var(--td-brand-color-light)] text-[var(--td-brand-color)] text-sm leading-relaxed"
+    >
+      {{ $t('demo.notificationDesc') }}
+    </div>
+
+    <!-- 通知操作区 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- 基础通知 -->
+      <t-card :title="$t('demo.sendBasic')" header-bordered>
+        <div class="space-y-4">
+          <p class="text-xs text-[var(--td-text-color-secondary)]">最简单的跨平台即时提醒。</p>
+          <t-button block theme="primary" variant="outline" @click="sendBasic">
+            <template #prefixIcon><NotificationIcon /></template>
+            {{ $t('demo.sendBasic') }}
+          </t-button>
+        </div>
+      </t-card>
+
+      <!-- 带副标题通知 -->
+      <t-card :title="$t('demo.sendSubtitle')" header-bordered>
+        <div class="space-y-4">
+          <p class="text-xs text-[var(--td-text-color-secondary)]">
+            支持副标题的层次化信息展示 (针对部分系统优化)。
+          </p>
+          <t-button block theme="primary" variant="outline" @click="sendSubtitle">
+            <template #prefixIcon><InfoCircleIcon /></template>
+            {{ $t('demo.sendSubtitle') }}
+          </t-button>
+        </div>
+      </t-card>
+
+      <!-- 交互式通知 -->
+      <t-card :title="$t('demo.sendInteractive')" header-bordered class="md:col-span-2">
+        <div class="space-y-4">
+          <div
+            class="p-3 rounded-lg bg-[var(--td-bg-color-secondarycontainer)] border border-[var(--td-border-level-1-color)]"
+          >
+            <div class="flex items-start gap-3">
+              <t-avatar size="small" shape="round"><UserIcon /></t-avatar>
+              <div class="flex-1 min-w-0">
+                <p class="text-xs font-bold text-[var(--td-text-color-primary)]">模拟消息</p>
+                <p class="text-xs text-[var(--td-text-color-secondary)] mt-0.5">
+                  {{ $t('demo.interactiveBody') }}
+                </p>
+              </div>
+            </div>
+            <div class="mt-3 flex gap-2">
+              <div
+                class="px-2 py-0.5 rounded border border-[var(--td-brand-color)] text-[var(--td-brand-color)] text-[10px]"
+              >
+                {{ $t('demo.notifApprove') }}
+              </div>
+              <div
+                class="px-2 py-0.5 rounded border border-[var(--td-border-level-1-color)] text-[var(--td-text-color-placeholder)] text-[10px]"
+              >
+                {{ $t('demo.notifReject') }}
+              </div>
+              <div
+                class="flex-1 text-right text-[10px] text-[var(--td-text-color-placeholder)] italic"
+              >
+                {{ $t('demo.notifReply') }}...
+              </div>
+            </div>
+          </div>
+          <t-button block theme="primary" @click="sendInteractive">
+            <template #prefixIcon><ChatIcon /></template>
+            {{ $t('demo.sendInteractive') }}
+          </t-button>
+        </div>
+      </t-card>
+    </div>
+
+    <!-- 交互响应日志 -->
+    <div class="space-y-4">
+      <h3 class="text-sm font-medium text-[var(--td-text-color-primary)] flex items-center gap-2">
+        <CheckCircleFilledIcon class="text-[var(--td-brand-color)]" />
+        {{ $t('demo.lastResponse') }}
+      </h3>
+
+      <div
+        class="p-4 rounded-xl border border-[var(--td-border-level-1-color)] bg-[var(--td-bg-color-container)] min-h-[120px] flex flex-col justify-center transition-all duration-300"
+      >
+        <div v-if="lastResponse" class="space-y-3 animate-slide-up">
+          <div
+            class="flex items-center justify-between border-b border-[var(--td-border-level-1-color)] pb-2 mb-2"
+          >
+            <span class="text-xs font-bold text-[var(--td-brand-color)]"
+              >Action: {{ lastResponse.ActionIdentifier }}</span
+            >
+            <span
+              class="text-[10px] text-[var(--td-text-color-placeholder)] flex items-center gap-1"
+            >
+              <TimeIcon size="12" /> {{ lastResponse.timestamp }}
+            </span>
+          </div>
+          <div class="grid grid-cols-2 gap-y-2 text-xs">
+            <div class="text-[var(--td-text-color-placeholder)]">Notification ID</div>
+            <div class="text-[var(--td-text-color-primary)] font-mono">{{ lastResponse.ID }}</div>
+
+            <div class="text-[var(--td-text-color-placeholder)]">User Text</div>
+            <div class="text-[var(--td-brand-color)] font-medium">
+              {{ lastResponse.UserText || '(None)' }}
+            </div>
+          </div>
+        </div>
+        <div
+          v-else
+          class="flex flex-col items-center justify-center text-[var(--td-text-color-placeholder)] py-4"
+        >
+          <ChatIcon size="32" class="opacity-20 mb-2" />
+          <p class="text-xs">{{ $t('demo.noResponse') }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.animate-fade-in {
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>

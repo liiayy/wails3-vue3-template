@@ -20,6 +20,8 @@ import (
 	"myapp2/internal/manager"
 	"myapp2/internal/repository"
 	"myapp2/internal/service"
+
+	"github.com/wailsapp/wails/v3/pkg/services/notifications"
 )
 
 //go:embed all:frontend/dist
@@ -68,8 +70,6 @@ func main() {
 	}
 
 	// -- 1.1 初始化底层数据仓储 --
-	// 只需要把旧的 NewInMemoryUserRepository() 替换掉，上层的纯代码 0 修改！
-	// userRepo := repository.NewInMemoryUserRepository()
 	userRepo := repository.NewSqliteUserRepository(db)
 	settingRepo := repository.NewSqliteSettingRepository(db)
 
@@ -85,6 +85,10 @@ func main() {
 	coreApp := app.NewApp()
 	_ = coreApp
 
+	// 【1.5 初始化原生通知服务】
+	notifier := notifications.New()
+	notificationBinding := binding.NewNotificationBinding(notifier)
+
 	// 【2. 构建 Wails 应用实例】
 	wailsApp := application.New(application.Options{
 		Name:        cfg.App.Name,
@@ -93,6 +97,8 @@ func main() {
 		Services: []application.Service{
 			application.NewService(userBinding),
 			application.NewService(settingBinding),
+			application.NewService(notificationBinding),
+			application.NewService(notifier),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),

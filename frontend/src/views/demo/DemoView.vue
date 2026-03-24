@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { RootListIcon, FileIcon, CopyIcon, CloudUploadIcon } from 'tdesign-icons-vue-next'
+import { RootListIcon, FileIcon, CopyIcon, CloudUploadIcon, NotificationIcon } from 'tdesign-icons-vue-next'
 
 const route = useRoute()
 const router = useRouter()
@@ -15,6 +15,7 @@ const activeCategory = computed(() => {
   if (routeName.includes('demo-file')) return 'file'
   if (routeName.includes('demo-clipboard')) return 'clipboard'
   if (routeName.includes('demo-dragdrop')) return 'dragdrop'
+  if (routeName.includes('demo-notifications')) return 'notifications'
   return 'file' // 默认为文件演示
 })
 
@@ -22,6 +23,7 @@ const categories = [
   { id: 'file', label: 'demo.fileOps', icon: FileIcon, path: 'file' },
   { id: 'clipboard', label: 'demo.clipboardOps', icon: CopyIcon, path: 'clipboard' },
   { id: 'dragdrop', label: 'demo.dragDropOps', icon: CloudUploadIcon, path: 'dragdrop' },
+  { id: 'notifications', label: 'demo.notificationOps', icon: NotificationIcon, path: 'notifications' },
 ]
 
 function navigateTo(path: string) {
