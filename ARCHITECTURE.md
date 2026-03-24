@@ -95,6 +95,10 @@ myapp2/
     │       ├── settings/            # 【设置子页面】
     │       │   ├── PersonalizationView.vue  # 个性化
     │       │   └── NotificationsView.vue    # 通知设置
+    │       ├── DemoView.vue         # 演示页面布局容器
+    │       ├── demo/                # 【功能演示子页面】
+    │       │   ├── FileDemoView.vue     # 原生文件对话框演示
+    │       │   └── ClipboardDemoView.vue # 原生剪贴板操作演示
     │       └── AboutView.vue        # 关于页面
     ├── vite.config.ts               # Vite 配置（含生产包 DevTools 隔离）
     └── package.json                 # 前端依赖
@@ -207,6 +211,10 @@ wailsApp.Run()                // 8. 阻塞运行
 ### 13. 窗口状态同步控制
 - **状态感知图标**：窗口控制栏的最大化按钮具备状态感知能力。当窗口已最大化时，图标自动切换为“还原（双层方框）”，反之显示“最大化（单层方框）”。
 - **Wails 事件联动**：通过监听原生 `maximize` / `unmaximize` 事件，确保 UI 状态在用户通过系统边框或标题栏双击操作后也能实时对齐。
+
+### 14. 原生对话框演示 (Demo)
+- **零胶水代码交互**：通过 `@wailsio/runtime` 的 `Dialogs` 接口，前端可以直接调起操作系统的原生多选文件、单选文件、文件夹选择以及保存文件对话框。
+- **类型安全**：利用 Wails 3 提供的 TS 类型定义，确保了 `Filters` 和 `Options` 的参数严格性，并能正确处理返回的单字符串或字符串数组结果。
 
 ---
 

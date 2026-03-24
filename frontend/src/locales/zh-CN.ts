@@ -13,6 +13,7 @@ export default {
     success: '操作成功',
     failed: '操作失败',
     required: '此项为必填',
+    clear: '清空结果',
   },
 
   // ========== 侧边栏菜单 ==========
@@ -21,6 +22,7 @@ export default {
     users: '用户管理',
     settings: '系统设置',
     about: '关于',
+    demo: '功能演示',
   },
 
   // ========== 首页 ==========
@@ -100,5 +102,31 @@ export default {
   titlebar: {
     toggleDark: '切换到黑暗模式',
     toggleLight: '切换到明亮模式',
+  },
+  demo: {
+    title: '功能演示',
+    subtitle: '探索 Wails 3 与原生系统能力的深度集成机制。',
+    fileOps: '文件操作',
+    pickFile: '单个文件',
+    pickMultiple: '多个文件',
+    pickFolder: '选择文件夹',
+    saveFile: '保存文件',
+    results: '操作结果',
+    noResults: '暂无操作记录，请尝试上方功能',
+    selectedFiles: '已选文件列表',
+    selectedFolder: '当前选择目录',
+    savedPath: '确认保存路径',
+    clipboardOps: '剪贴板操作',
+    clipboardWrite: '写入剪贴板',
+    clipboardWritePlaceholder: '输入要写入剪贴板的内容...',
+    writeNow: '立即写入数据',
+    clearClipboard: '强制清空',
+    clipboardRead: '读取剪贴板',
+    clickReadToFetch: '点击下方按钮从系统读取文本内容...',
+    readNow: '从系统拉取数据',
+    lastSuccessAction: '操作反馈',
+    op_read: '读取成功',
+    op_write: '写入成功',
+    op_clear: '清空成功',
   },
 }

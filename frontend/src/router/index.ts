@@ -27,6 +27,29 @@ const router = createRouter({
           meta: { title: 'menu.users', icon: 'user', showInMenu: true, menuSection: 'top' },
         },
         {
+          path: 'demo',
+          component: () => import('@/views/demo/DemoView.vue'),
+          meta: { title: 'menu.demo', icon: 'play-circle', showInMenu: true, menuSection: 'top' },
+          children: [
+            {
+              path: '',
+              redirect: '/demo/file',
+            },
+            {
+              path: 'file',
+              name: 'demo-file',
+              component: () => import('@/views/demo/FileDemoView.vue'),
+              meta: { title: 'demo.fileOps', showInMenu: true },
+            },
+            {
+              path: 'clipboard',
+              name: 'demo-clipboard',
+              component: () => import('@/views/demo/ClipboardDemoView.vue'),
+              meta: { title: 'demo.clipboardOps', showInMenu: true },
+            },
+          ],
+        },
+        {
           path: 'settings',
           component: SettingsView,
           meta: {

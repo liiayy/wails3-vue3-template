@@ -9,6 +9,7 @@ import {
   InfoCircleIcon,
   ChevronLeftDoubleIcon,
   ChevronRightDoubleIcon,
+  PlayCircleIcon,
 } from 'tdesign-icons-vue-next'
 
 import { useI18n } from 'vue-i18n'
@@ -24,7 +25,9 @@ const { minimise, toggleMaximise, close } = useWindowControl()
 // 当前激活的菜单项
 const activeMenu = computed(() => {
   // 让 route name 映射到菜单的 value
-  return (route.name as string) || 'home'
+  const name = route.name as string
+  if (name?.startsWith('demo')) return 'demo'
+  return name || 'home'
 })
 
 // 图标映射表
@@ -33,6 +36,7 @@ const menuIconMap: Record<string, any> = {
   user: UserIcon,
   setting: SettingIcon,
   'info-circle': InfoCircleIcon,
+  'play-circle': PlayCircleIcon,
 }
 
 // 动态通过路由配置生成菜单

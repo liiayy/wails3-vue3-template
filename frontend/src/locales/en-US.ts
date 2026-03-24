@@ -13,6 +13,7 @@ export default {
     success: 'Success',
     failed: 'Failed',
     required: 'This field is required',
+    clear: 'Clear Results',
   },
 
   // ========== Sidebar Menu ==========
@@ -21,6 +22,7 @@ export default {
     users: 'User Manage',
     settings: 'Settings',
     about: 'About',
+    demo: 'Demo',
   },
 
   // ========== Home ==========
@@ -101,5 +103,31 @@ export default {
   titlebar: {
     toggleDark: 'Switch to dark mode',
     toggleLight: 'Switch to light mode',
+  },
+  demo: {
+    title: 'Demo',
+    subtitle: 'Explore the deep integration of Wails 3 with native system capabilities.',
+    fileOps: 'File Operations',
+    pickFile: 'Single File',
+    pickMultiple: 'Multiple Files',
+    pickFolder: 'Pick Folder',
+    saveFile: 'Save File',
+    results: 'Results',
+    noResults: 'No records yet, try the actions above',
+    selectedFiles: 'Selected Files',
+    selectedFolder: 'Selected Folder',
+    savedPath: 'Saved Path',
+    clipboardOps: 'Clipboard Operations',
+    clipboardWrite: 'Write to Clipboard',
+    clipboardWritePlaceholder: 'Enter content to write to clipboard...',
+    writeNow: 'Write Content',
+    clearClipboard: 'Clear Clipboard',
+    clipboardRead: 'Read from Clipboard',
+    clickReadToFetch: 'Click below to fetch system clipboard content...',
+    readNow: 'Fetch Data',
+    lastSuccessAction: 'Operation Feedback',
+    op_read: 'Read Success',
+    op_write: 'Write Success',
+    op_clear: 'Clear Success',
   },
 }
