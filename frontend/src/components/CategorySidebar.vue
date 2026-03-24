@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import { Icon } from 'tdesign-icons-vue-next'
-
 interface Category {
   id: string
   label: string
-  icon: string
+  icon: any // 此处接收图标组件对象，以支持离线按需加载
   path: string
 }
 
@@ -35,7 +33,8 @@ const emit = defineEmits<{
               : 'text-[var(--td-text-color-secondary)] hover:bg-[var(--td-bg-color-secondarycontainer)]'
           "
         >
-          <icon :name="cat.icon" size="16" />
+          <!-- 核心改动：使用动态组件渲染导入的对象 -->
+          <component :is="cat.icon" size="16" />
           <span class="text-sm">
             {{ $t(cat.label) }}
           </span>

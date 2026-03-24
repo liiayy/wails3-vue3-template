@@ -2,11 +2,13 @@
 import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useSettingsStore } from '@/stores/settings'
-import { Icon } from 'tdesign-icons-vue-next'
-
 import { useI18n } from 'vue-i18n'
 import { useWindowControl } from '@/composables'
-import { RectangleIcon, MinusIcon, CloseIcon } from 'tdesign-icons-vue-next'
+import {
+  RectangleIcon,
+  MinusIcon,
+  CloseIcon,
+} from 'tdesign-icons-vue-next'
 
 const router = useRouter()
 const route = useRoute()
@@ -16,7 +18,6 @@ const { minimise, toggleMaximise, close } = useWindowControl()
 
 // 当前激活的菜单项
 const activeMenu = computed(() => {
-  // 让 route name 映射到菜单的 value
   const name = route.name as string
   if (name?.startsWith('demo')) return 'demo'
   if (name?.startsWith('settings')) return 'settings'
@@ -33,7 +34,7 @@ const topMenuItems = computed(() => {
     .map((r) => ({
       value: r.name as string,
       label: t(r.meta?.title as string),
-      icon: r.meta?.icon as string,
+      icon: r.meta?.icon, // 直接透传组件
       path: r.path === '' ? '/' : `/${r.path}`,
     }))
 })
@@ -45,7 +46,7 @@ const bottomMenuItems = computed(() => {
     .map((r) => ({
       value: r.name as string,
       label: t(r.meta?.title as string),
-      icon: r.meta?.icon as string,
+      icon: r.meta?.icon, // 直接透传组件
       path: `/${r.path}`,
     }))
 })
@@ -103,7 +104,7 @@ function toggleSidebar() {
           >
             <t-menu-item v-for="item in topMenuItems" :key="item.value" :value="item.value">
               <template #icon>
-                <icon :name="item.icon" />
+                <component :is="item.icon" />
               </template>
               {{ item.label }}
             </t-menu-item>
@@ -120,7 +121,7 @@ function toggleSidebar() {
           >
             <t-menu-item v-for="item in bottomMenuItems" :key="item.value" :value="item.value">
               <template #icon>
-                <icon :name="item.icon" />
+                <component :is="item.icon" />
               </template>
               {{ item.label }}
             </t-menu-item>

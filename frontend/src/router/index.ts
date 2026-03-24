@@ -4,6 +4,12 @@ import HomeView from '@/views/HomeView.vue'
 import UserManageView from '@/views/UserManageView.vue'
 import SettingsView from '@/views/SettingsView.vue'
 import AboutView from '@/views/AboutView.vue'
+import {
+  HomeIcon,
+  AppIcon,
+  UserIcon,
+  SettingIcon,
+} from 'tdesign-icons-vue-next'
 
 const router = createRouter({
   // 使用 hash 模式，因为独立窗口通过 /#/settings 导航
@@ -18,19 +24,19 @@ const router = createRouter({
           path: '',
           name: 'home',
           component: HomeView,
-          meta: { title: 'menu.home', icon: 'home', showInMenu: true, menuSection: 'top' },
+          meta: { title: 'menu.home', icon: HomeIcon, showInMenu: true, menuSection: 'top' },
         },
         {
           path: 'users',
           name: 'users',
           component: UserManageView,
-          meta: { title: 'menu.users', icon: 'user', showInMenu: true, menuSection: 'top' },
+          meta: { title: 'menu.users', icon: UserIcon, showInMenu: true, menuSection: 'top' },
         },
         {
           path: 'demo',
           name: 'demo',
           component: () => import('@/views/demo/DemoView.vue'),
-          meta: { title: 'menu.demo', icon: 'play-circle', showInMenu: true, menuSection: 'top' },
+          meta: { title: 'menu.demo', icon: AppIcon, showInMenu: true, menuSection: 'top' },
           children: [
             {
               path: '',
@@ -68,7 +74,7 @@ const router = createRouter({
           component: SettingsView,
           meta: {
             title: 'menu.settings',
-            icon: 'setting',
+            icon: SettingIcon,
             showInMenu: true,
             menuSection: 'bottom',
           },

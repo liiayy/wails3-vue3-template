@@ -2,6 +2,12 @@
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import CategorySidebar from '../../components/CategorySidebar.vue'
+import {
+  FileIcon,
+  CopyIcon,
+  CloudUploadIcon,
+  NotificationIcon,
+} from 'tdesign-icons-vue-next'
 
 const route = useRoute()
 const router = useRouter()
@@ -18,10 +24,10 @@ const activeCategory = computed(() => {
 })
 
 const categories = [
-  { id: 'file', label: 'demo.fileOps', icon: 'file', path: 'file' },
-  { id: 'clipboard', label: 'demo.clipboardOps', icon: 'copy', path: 'clipboard' },
-  { id: 'dragdrop', label: 'demo.dragDropOps', icon: 'cloud-upload', path: 'dragdrop' },
-  { id: 'notifications', label: 'demo.notificationOps', icon: 'notification', path: 'notifications' },
+  { id: 'file', label: 'demo.fileOps', icon: FileIcon, path: 'file' },
+  { id: 'clipboard', label: 'demo.clipboardOps', icon: CopyIcon, path: 'clipboard' },
+  { id: 'dragdrop', label: 'demo.dragDropOps', icon: CloudUploadIcon, path: 'dragdrop' },
+  { id: 'notifications', label: 'demo.notificationOps', icon: NotificationIcon, path: 'notifications' },
 ]
 
 function navigateTo(path: string) {

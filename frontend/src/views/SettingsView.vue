@@ -4,6 +4,8 @@ import { useRoute, useRouter } from 'vue-router'
 import TitleBar from '../components/TitleBar.vue'
 import CategorySidebar from '../components/CategorySidebar.vue'
 
+import { PaletteIcon, NotificationIcon } from 'tdesign-icons-vue-next'
+
 const route = useRoute()
 const router = useRouter()
 const isStandalone = route.path.startsWith('/standalone')
@@ -20,8 +22,8 @@ const activeCategory = computed(() => {
 })
 
 const categories = [
-  { id: 'personalization', label: 'settings.personalization', icon: 'palette', path: 'personalization' },
-  { id: 'notifications', label: 'settings.notifications', icon: 'notification', path: 'notifications' },
+  { id: 'personalization', label: 'settings.personalization', icon: PaletteIcon, path: 'personalization' },
+  { id: 'notifications', label: 'settings.notifications', icon: NotificationIcon, path: 'notifications' },
 ]
 
 function navigateTo(path: string) {
