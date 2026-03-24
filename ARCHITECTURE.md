@@ -91,7 +91,10 @@ myapp2/
     │   └── views/
     │       ├── HomeView.vue         # 首页视图
     │       ├── UserManageView.vue   # 用户管理（完整 CRUD 范例）
-    │       ├── SettingsView.vue     # 设置页面
+    │       ├── SettingsView.vue     # 设置页面布局容器
+    │       ├── settings/            # 【设置子页面】
+    │       │   ├── PersonalizationView.vue  # 个性化
+    │       │   └── NotificationsView.vue    # 通知设置
     │       └── AboutView.vue        # 关于页面
     ├── vite.config.ts               # Vite 配置（含生产包 DevTools 隔离）
     └── package.json                 # 前端依赖
@@ -155,9 +158,10 @@ wailsApp.Run()                // 8. 阻塞运行
 - **编译时注入**：使用 `ldflags` 注入版本号和 `IsDev=false`，用户无法手动篡改系统环境标记。
 - **二进制优化**：启用 Go `-trimpath` 删除绝对路径，启用 `-s -w` 压缩符号表（减小约30%体积），启用 `-H windowsgui` 隐藏控制台黑窗。
 
-### 2. 双语国际化闭环 (i18n)
-- 结合 `vue-i18n` 和 TDesign `<t-config-provider>` 实现了全局组件和私有业务文案的无缝中英切换。
-- **状态持久**：使用 `settings` 响应式 store，当变更语言时，不仅仅通知 DOM 发生变化，而且会经由 Wails Call 持久化入 GORM (SQLite)。
+### 2. 多维度主题与国际化闭合
+- **跟随系统 (Follow System)**：支持 `light` | `dark` | `auto` 三种模式。切换至 `auto` 时，应用会通过媒体查询 `prefers-color-scheme` 实时同步操作系统的深浅色设置。
+- **双语国际化 (i18n)**：结合 `vue-i18n` 和 TDesign `<t-config-provider>` 实现了全局组件和私有业务文案的无缝中英切换。
+- **状态持久**：使用 `settings` 响应式 store，当变更语言或主题时，会经由 Wails Call 持久化入 GORM (SQLite)。
 
 ### 3. Vue Composables 业务工具箱
 专门消灭常见的前后端桥接样板代码：
@@ -192,8 +196,17 @@ wailsApp.Run()                // 8. 阻塞运行
 - **状态单源**：所有的前端状态变更是发起点，Pinia 保存实时缓存。
 - 当涉及到外观、主题、栏目折叠情况时，触发 `SettingBinding.Save()` 真正写入硬盘。下一次重启提取并还原现场。
 
-### 12. 路由多开与防腐隔离
-- 基于 Hash `/` 规避多窗口由于 History 引发的 HTTP Fallback 故障。并严格包装了 `api/` 目录将直接 Wails JS Binding 调用转化为带容错语义的前端 Async 函数。
+### 12. 路由多开、状态保持与动态菜单
+- **状态保持 (KeepAlive)**：主视图及设置子视图均启用了 `<keep-alive>`。切换路由时（如从用户管理切走再切回），页面状态（搜索词、滚动条、甚至未提交的表单项）将被完整保留。
+- **动态菜单配置**：侧边栏菜单不再硬编码，而是通过扫描 `router/index.ts` 中的 `meta` 配置动态生成：
+  - `showInMenu`: 控制是否在菜单中显示。
+  - `menuSection`: 控制显示在侧边栏的「顶部主菜单」还是「底部功能菜单」。
+  - `icon`: 关联图标映射表。
+- **路由多开防腐**：基于 Hash `/` 规避多窗口由于 History 引引发的 HTTP Fallback 故障。并严格包装了 `api/` 目录将直接 Wails JS Binding 调用转化为带容错语义的前端 Async 函数。
+
+### 13. 窗口状态同步控制
+- **状态感知图标**：窗口控制栏的最大化按钮具备状态感知能力。当窗口已最大化时，图标自动切换为“还原（双层方框）”，反之显示“最大化（单层方框）”。
+- **Wails 事件联动**：通过监听原生 `maximize` / `unmaximize` 事件，确保 UI 状态在用户通过系统边框或标题栏双击操作后也能实时对齐。
 
 ---
 
@@ -248,9 +261,14 @@ cd frontend && pnpm lint && pnpm format
 7. 在 `frontend/src/api/` 提供前端函数封装。
 
 ### 新增一个前端页面
-1. 在 `frontend/src/views/` 创立 `*.vue`。
+1. 在 `frontend/src/views/` 创立 `*.vue`。如果是设置子页，置于 `views/settings/`。
 2. 添加进入 `frontend/src/router/index.ts`（置于 `DefaultLayout` 之内）。
-3. 调整 `locales/` 与 `DefaultLayout.vue` 确保 Sidebar 多语言对应即可展现。
+3. **配置菜单元数据**：在路由的 `meta` 字段中设置：
+   - `showInMenu: true`: 允许在侧边栏显示。
+   - `menuSection: 'top' | 'bottom'`: 指定显示位置。
+   - `title`: 指定 i18n key（如 `menu.new_page`）。
+   - `icon`: 指定图标标识符（需在 `DefaultLayout.vue` 的 `menuIconMap` 中存在）。
+4. 调整 `locales/` 确保多语言文案对应即可展现。
 
 ---
 

@@ -166,6 +166,7 @@ const { execute: handleExport, loading: exportLoading } = useAsyncAction(async (
         hover
         :pagination="pagination"
         @page-change="onPageChange"
+        size="small"
       >
         <!-- 操作列 -->
         <template #operation="{ row }">
