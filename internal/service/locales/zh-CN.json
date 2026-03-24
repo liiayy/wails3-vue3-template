@@ -5,5 +5,8 @@
   "notif_reply_button": "提交变更",
   "notif_basic_title": "来自后端的问候",
   "notif_basic_body": "这是一条由 Go 语言包生成的国际化通知。",
-  "notif_subtitle_demo": "项目重构预览"
+  "notif_subtitle_demo": "项目重构预览",
+  "tray_show": "显示主窗口",
+  "tray_about": "关于 MyApp2",
+  "tray_exit": "彻底退出程序"
 }

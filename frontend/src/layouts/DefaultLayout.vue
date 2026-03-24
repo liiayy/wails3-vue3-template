@@ -65,7 +65,7 @@ function toggleSidebar() {
     <!-- ========== 侧边栏 ========== -->
     <aside
       class="sidebar flex flex-col h-full transition-all duration-300 bg-[var(--td-bg-color-container)] border-[var(--td-border-level-1-color)]"
-      :style="{ width: settings.isSidebarCollapsed ? '64px' : '200px' }"
+      :style="{ width: settings.isSidebarCollapsed ? '55px' : '200px' }"
     >
       <!-- Logo 区域 (可拖拽) -->
       <div
@@ -174,7 +174,7 @@ function toggleSidebar() {
 /* 页面切换动画 */
 .fade-enter-active,
 .fade-leave-active {
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.13s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .fade-enter-from {
   opacity: 0;

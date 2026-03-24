@@ -2,6 +2,7 @@ package manager
 
 import (
 	_ "embed"
+	"myapp2/internal/service"
 
 	"go.uber.org/zap"
 
@@ -12,8 +13,7 @@ import (
 //go:embed tray_icon.ico
 var trayIcon []byte
 
-// WindowManager 统一管控所有 Wails 窗口的创建、显示、隐藏与销毁。
-// 同时托管系统托盘的生命周期。
+// WindowManager 统一管控所有 Wails 窗口的创建、显示、隐藏与销毁。同时托管系统托盘的生命周期。
 type WindowManager struct {
 	app        *application.App
 	mainWindow *application.WebviewWindow
@@ -36,27 +36,22 @@ func NewWindowManager(app *application.App, width, height int, title string) *Wi
 
 // ---------- 窗口管理 ----------
 
-// CreateMainWindow 创建主窗口，只应调用一次
+// CreateMainWindow 创建主窗口
 func (wm *WindowManager) CreateMainWindow() *application.WebviewWindow {
 	zap.S().Info("[WindowManager] 创建主窗口...")
 
 	wm.mainWindow = wm.app.Window.NewWithOptions(application.WebviewWindowOptions{
-		Name:   "main",
-		Title:  wm.winTitle,
-		Width:  wm.winWidth,
-		Height: wm.winHeight,
-		Mac: application.MacWindow{
-			InvisibleTitleBarHeight: 50,
-			Backdrop:                application.MacBackdropTranslucent,
-			TitleBar:                application.MacTitleBarHiddenInset,
-		},
-		Frameless:        true,
+		Name:             "main",
+		Title:            wm.winTitle,
+		Width:            wm.winWidth,
+		Height:           wm.winHeight,
 		BackgroundColour: application.NewRGB(27, 38, 54),
 		URL:              "/",
 		EnableFileDrop:   true,
+		Frameless:        true,
 	})
 
-	// 监听原生文件拖放事件并转发给前端
+	// 监听原生文件拖放事件
 	wm.mainWindow.OnWindowEvent(events.Common.WindowFilesDropped, func(ev *application.WindowEvent) {
 		files := ev.Context().DroppedFiles()
 		zap.S().Infof("[WindowManager] 原生文件拖入: %v", files)
@@ -78,7 +73,7 @@ func (wm *WindowManager) CreateAboutWindow() *application.WebviewWindow {
 
 	aboutWin := wm.app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Name:             "about",
-		Title:            "关于 MyApp2",
+		Title:            service.GetI18n().T("about.title"),
 		Width:            400,
 		Height:           400,
 		URL:              "/#/standalone/about",
@@ -95,6 +90,7 @@ func (wm *WindowManager) CreateAboutWindow() *application.WebviewWindow {
 func (wm *WindowManager) ShowMainWindow() {
 	if wm.mainWindow != nil {
 		wm.mainWindow.Show()
+		wm.mainWindow.Focus()
 	}
 }
 
@@ -107,28 +103,54 @@ func (wm *WindowManager) SetupSystemTray() {
 	wm.tray = wm.app.SystemTray.New()
 	wm.tray.SetIcon(trayIcon)
 
-	// 构建托盘右键菜单
+	// 监听前端发出的语言变更
+	wm.app.Event.On("app:settings-changed", func(ev *application.CustomEvent) {
+		zap.S().Infof("[Tray] 捕获到设置变更事件: %v", ev.Data)
+		data, ok := ev.Data.(map[string]interface{})
+		if !ok {
+			zap.S().Warn("[Tray] 事件数据类型转换失败")
+			return
+		}
+
+		if data["key"] == "language" {
+			lang := data["value"].(string)
+			zap.S().Infof("[Tray] 正在将后端语言同步至: %s 并刷新菜单", lang)
+			// 核心修复：在这里也显式同步一次，确保单例状态最新
+			service.GetI18n().SetLanguage(lang)
+			wm.RefreshTrayMenu()
+		}
+	})
+
+	wm.RefreshTrayMenu()
+
+	// 单击托盘图标
+	wm.tray.OnClick(func() {
+		wm.ShowMainWindow()
+	})
+}
+
+// RefreshTrayMenu 构建并重置托盘右键菜单 (用于 I18n 反馈)
+func (wm *WindowManager) RefreshTrayMenu() {
+	i18n := service.GetI18n()
 	trayMenu := application.NewMenu()
 
-	trayMenu.Add("显示主窗口").OnClick(func(ctx *application.Context) {
+	// 动态显示主窗口
+	trayMenu.Add(i18n.T("tray_show")).OnClick(func(ctx *application.Context) {
 		wm.ShowMainWindow()
 	})
 
-	trayMenu.Add("关于").OnClick(func(ctx *application.Context) {
+	// 动态关于
+	trayMenu.Add(i18n.T("tray_about")).OnClick(func(ctx *application.Context) {
 		wm.CreateAboutWindow()
 	})
 
 	trayMenu.AddSeparator()
 
-	trayMenu.Add("退出程序").OnClick(func(ctx *application.Context) {
+	// 彻底退出
+	trayMenu.Add(i18n.T("tray_exit")).OnClick(func(ctx *application.Context) {
 		zap.S().Info("[Tray] 用户点击了退出菜单...")
 		wm.app.Quit()
 	})
 
 	wm.tray.SetMenu(trayMenu)
-
-	// 单击托盘图标：显示/隐藏主窗口
-	wm.tray.OnClick(func() {
-		wm.ShowMainWindow()
-	})
 }
