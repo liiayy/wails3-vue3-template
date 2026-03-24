@@ -5,12 +5,22 @@ import { useSettingsStore } from '@/stores/settings'
 import { useI18n } from 'vue-i18n'
 import { useWindowControl } from '@/composables'
 import { RectangleIcon, MinusIcon, CloseIcon } from 'tdesign-icons-vue-next'
+import { Window } from '@wailsio/runtime'
 
 const router = useRouter()
 const route = useRoute()
 const settings = useSettingsStore()
 const { t } = useI18n()
-const { minimise, toggleMaximise, close } = useWindowControl()
+const { minimise } = useWindowControl() // Only minimise is needed from useWindowControl
+
+// Custom window control functions
+const close = () => {
+  // 按照需求：点击关闭按钮仅隐藏窗口到托盘，不退出程序
+  Window.Hide()
+}
+const toggleMaximise = () => {
+  Window.ToggleMaximise()
+}
 
 // 当前激活的菜单项
 const activeMenu = computed(() => {
