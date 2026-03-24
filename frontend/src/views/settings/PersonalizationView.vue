@@ -6,7 +6,7 @@ const settings = useSettingsStore()
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div class="w-full max-w-6xl mx-auto px-4 py-2 space-y-6">
     <!-- 主题模式 -->
     <section class="space-y-3">
       <div
@@ -14,10 +14,10 @@ const settings = useSettingsStore()
       >
         {{ $t('settings.themeMode') }}
       </div>
-      <div class="grid grid-cols-3 gap-3">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         <!-- 明亮模式预览卡片 -->
         <div
-          class="group relative cursor-pointer"
+          class="group relative cursor-pointer w-full"
           @click="settings.updateSetting('theme', 'light')"
         >
           <div
@@ -50,7 +50,7 @@ const settings = useSettingsStore()
         </div>
 
         <!-- 黑暗模式预览卡片 -->
-        <div class="group relative cursor-pointer" @click="settings.updateSetting('theme', 'dark')">
+        <div class="group relative cursor-pointer w-full" @click="settings.updateSetting('theme', 'dark')">
           <div
             class="aspect-[16/10] rounded-xl border-2 transition-all duration-300 p-2.5 bg-[#181818] shadow-sm overflow-hidden flex flex-col gap-1"
             :class="
@@ -81,7 +81,7 @@ const settings = useSettingsStore()
         </div>
 
         <!-- 跟随系统预览卡片 (Split Design) -->
-        <div class="group relative cursor-pointer" @click="settings.updateSetting('theme', 'auto')">
+        <div class="group relative cursor-pointer w-full" @click="settings.updateSetting('theme', 'auto')">
           <div
             class="aspect-[16/10] rounded-xl border-2 transition-all duration-300 shadow-sm overflow-hidden flex"
             :class="
@@ -116,7 +116,7 @@ const settings = useSettingsStore()
       </div>
     </section>
 
-    <div class="grid grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
       <!-- 语言设置简版 -->
       <t-card
         :bordered="false"
@@ -174,5 +174,12 @@ const settings = useSettingsStore()
 }
 :deep(.t-card:hover) {
   transform: translateY(-2px);
+}
+
+/* 响应式优化：小屏幕时减少内边距 */
+@media (max-width: 640px) {
+  div[class*="aspect-[16/10]"] {
+    aspect-ratio: 16/9;
+  }
 }
 </style>
