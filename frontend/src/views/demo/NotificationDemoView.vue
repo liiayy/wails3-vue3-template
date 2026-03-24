@@ -12,6 +12,9 @@ import {
 } from 'tdesign-icons-vue-next'
 import { MessagePlugin } from 'tdesign-vue-next'
 
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 const lastResponse = ref<any>(null)
 let unsubscribeNotifications: (() => void) | null = null
 
@@ -22,7 +25,8 @@ onMounted(() => {
       ...event.data,
       timestamp: new Date().toLocaleTimeString(),
     }
-    MessagePlugin.info(`收到通知响应: ${event.data.ActionIdentifier || '点击'}`)
+    const action = event.data.ActionIdentifier || t('common.confirm')
+    MessagePlugin.info(`${t('demo.lastSuccessAction')}: ${action}`)
   })
 })
 
@@ -32,30 +36,29 @@ onUnmounted(() => {
 
 async function sendBasic() {
   try {
-    await NotificationBinding.SendBasic('Hello Wails!', '这是一条最基础的原生系统通知。')
+    await NotificationBinding.SendBasic(t('demo.sendBasicTitle'), t('demo.sendBasicBody'))
   } catch (err) {
-    MessagePlugin.error(`发送失败: ${err}`)
+    MessagePlugin.error(`${t('common.failed')}: ${err}`)
   }
 }
 
 async function sendSubtitle() {
   try {
-    const title = '项目进度更新'
-    const subtitle = '后端重构模块'
-    const body = '目前进度已达到 85%，预计明日完成交付。'
-    await NotificationBinding.SendWithSubtitle(title, subtitle, body)
+    await NotificationBinding.SendWithSubtitle(
+      t('demo.sendSubtitleTitle'),
+      t('demo.sendSubtitleSub'),
+      t('demo.sendSubtitleBody')
+    )
   } catch (err) {
-    MessagePlugin.error(`发送失败: ${err}`)
+    MessagePlugin.error(`${t('common.failed')}: ${err}`)
   }
 }
 
 async function sendInteractive() {
   try {
-    const title = '审批申请'
-    const body = '来自 张三 的请假申请，请查收并处理。'
-    await NotificationBinding.SendInteractive(title, body)
+    await NotificationBinding.SendInteractive(t('demo.sendInteractiveTitle'), t('demo.interactiveBody'))
   } catch (err) {
-    MessagePlugin.error(`发送失败: ${err}`)
+    MessagePlugin.error(`${t('common.failed')}: ${err}`)
   }
 }
 </script>
@@ -74,7 +77,7 @@ async function sendInteractive() {
       <!-- 基础通知 -->
       <t-card :title="$t('demo.sendBasic')" header-bordered>
         <div class="space-y-4">
-          <p class="text-xs text-[var(--td-text-color-secondary)]">最简单的跨平台即时提醒。</p>
+          <p class="text-xs text-[var(--td-text-color-secondary)]">{{ $t('demo.sendBasicDesc') }}</p>
           <t-button block theme="primary" variant="outline" @click="sendBasic">
             <template #prefixIcon><NotificationIcon /></template>
             {{ $t('demo.sendBasic') }}
@@ -86,7 +89,7 @@ async function sendInteractive() {
       <t-card :title="$t('demo.sendSubtitle')" header-bordered>
         <div class="space-y-4">
           <p class="text-xs text-[var(--td-text-color-secondary)]">
-            支持副标题的层次化信息展示 (针对部分系统优化)。
+            {{ $t('demo.sendSubtitleDesc') }}
           </p>
           <t-button block theme="primary" variant="outline" @click="sendSubtitle">
             <template #prefixIcon><InfoCircleIcon /></template>
@@ -104,7 +107,7 @@ async function sendInteractive() {
             <div class="flex items-start gap-3">
               <t-avatar size="small" shape="round"><UserIcon /></t-avatar>
               <div class="flex-1 min-w-0">
-                <p class="text-xs font-bold text-[var(--td-text-color-primary)]">模拟消息</p>
+                <p class="text-xs font-bold text-[var(--td-text-color-primary)]">{{ $t('demo.mockMsg') }}</p>
                 <p class="text-xs text-[var(--td-text-color-secondary)] mt-0.5">
                   {{ $t('demo.interactiveBody') }}
                 </p>

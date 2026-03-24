@@ -3,9 +3,11 @@ module myapp2
 go 1.25.0
 
 require (
+	github.com/nicksnyder/go-i18n/v2 v2.6.1
 	github.com/spf13/viper v1.21.0
 	github.com/wailsapp/wails/v3 v3.0.0-alpha.74
 	go.uber.org/zap v1.27.1
+	golang.org/x/text v0.35.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gorm.io/driver/sqlite v1.6.0
 	gorm.io/gorm v1.31.1
@@ -64,6 +66,5 @@ require (
 	golang.org/x/crypto v0.49.0 // indirect
 	golang.org/x/net v0.52.0 // indirect
 	golang.org/x/sys v0.42.0 // indirect
-	golang.org/x/text v0.35.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 )

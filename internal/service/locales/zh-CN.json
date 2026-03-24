@@ -1,0 +1,9 @@
+{
+  "notif_approve": "同意审批",
+  "notif_reject": "驳回申请",
+  "notif_reply_placeholder": "在此输入您的意见...",
+  "notif_reply_button": "提交变更",
+  "notif_basic_title": "来自后端的问候",
+  "notif_basic_body": "这是一条由 Go 语言包生成的国际化通知。",
+  "notif_subtitle_demo": "项目重构预览"
+}
