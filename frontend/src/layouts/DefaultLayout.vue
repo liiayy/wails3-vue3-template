@@ -27,6 +27,7 @@ const activeMenu = computed(() => {
   // 让 route name 映射到菜单的 value
   const name = route.name as string
   if (name?.startsWith('demo')) return 'demo'
+  if (name?.startsWith('settings')) return 'settings'
   return name || 'home'
 })
 

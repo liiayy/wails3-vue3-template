@@ -129,5 +129,11 @@ export default {
     op_read: 'Read Success',
     op_write: 'Write Success',
     op_clear: 'Clear Success',
+    dragDropOps: 'Native Drag & Drop',
+    dragDropDesc: 'Wails 3 supports low-level file drag and drop. You can drag files or folders directly to the area below, and the app will capture full paths via its event bus.',
+    dragFilesHere: 'Drag files or folders here',
+    dropNow: 'Drop to capture',
+    droppedList: 'Captured Paths',
+    noDroppedItems: 'No items dropped yet',
   },
 }

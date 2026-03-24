@@ -28,6 +28,7 @@ const router = createRouter({
         },
         {
           path: 'demo',
+          name: 'demo',
           component: () => import('@/views/demo/DemoView.vue'),
           meta: { title: 'menu.demo', icon: 'play-circle', showInMenu: true, menuSection: 'top' },
           children: [
@@ -47,10 +48,17 @@ const router = createRouter({
               component: () => import('@/views/demo/ClipboardDemoView.vue'),
               meta: { title: 'demo.clipboardOps', showInMenu: true },
             },
+            {
+              path: 'dragdrop',
+              name: 'demo-dragdrop',
+              component: () => import('@/views/demo/DragDropDemoView.vue'),
+              meta: { title: 'demo.dragDropOps', showInMenu: true },
+            },
           ],
         },
         {
           path: 'settings',
+          name: 'settings',
           component: SettingsView,
           meta: {
             title: 'menu.settings',
@@ -65,7 +73,7 @@ const router = createRouter({
             },
             {
               path: 'personalization',
-              name: 'settings',
+              name: 'settings-personalization',
               component: () => import('@/views/settings/PersonalizationView.vue'),
               meta: { title: 'settings.personalization', showInMenu: true },
             },

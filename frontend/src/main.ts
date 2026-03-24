@@ -7,6 +7,7 @@ import App from './App.vue'
 import router from './router'
 import { useSettingsStore } from './stores/settings'
 import i18n from './locales'
+import { WML } from '@wailsio/runtime'
 
 const app = createApp(App)
 
@@ -14,6 +15,9 @@ app.use(createPinia())
 app.use(router)
 app.use(i18n)
 app.use(TDesign)
+
+// 启用 Wails 3 特性宏 (如 data-wails-drop)
+WML.Enable()
 
 // 初始化加载持久化设置
 const settings = useSettingsStore()

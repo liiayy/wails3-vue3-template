@@ -6,6 +6,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
+	"github.com/wailsapp/wails/v3/pkg/events"
 )
 
 //go:embed tray_icon.ico
@@ -52,6 +53,15 @@ func (wm *WindowManager) CreateMainWindow() *application.WebviewWindow {
 		Frameless:        true,
 		BackgroundColour: application.NewRGB(27, 38, 54),
 		URL:              "/",
+		EnableFileDrop:   true,
+	})
+
+	// 监听原生文件拖放事件并转发给前端
+	wm.mainWindow.OnWindowEvent(events.Common.WindowFilesDropped, func(ev *application.WindowEvent) {
+		files := ev.Context().DroppedFiles()
+		zap.S().Infof("[WindowManager] 原生文件拖入: %v", files)
+		// 发送给前端通用事件总线
+		wm.app.Event.Emit("files-dropped", files)
 	})
 
 	return wm.mainWindow

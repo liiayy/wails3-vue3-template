@@ -128,5 +128,11 @@ export default {
     op_read: '读取成功',
     op_write: '写入成功',
     op_clear: '清空成功',
+    dragDropOps: '原生拖拽',
+    dragDropDesc: 'Wails 3 支持底层文件拖放。您可以直接从桌面或文件夹拖动文件到下方区域，应用将通过系统 EventBus 捕获文件完整路径。',
+    dragFilesHere: '拖拽文件或文件夹到此处',
+    dropNow: '松开即可捕获',
+    droppedList: '已捕获的路径列表',
+    noDroppedItems: '暂无投放记录',
   },
 }
