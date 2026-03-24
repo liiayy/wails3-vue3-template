@@ -6,6 +6,7 @@ import (
 	_ "embed"
 	"fmt"
 	"log"
+	"runtime"
 	"runtime/debug"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
@@ -87,21 +88,45 @@ func main() {
 	_ = coreApp
 
 	// 【1.5 初始化原生通知服务】
-	notifier := notifications.New()
-	notificationBinding := binding.NewNotificationBinding(notifier)
+	var notifier *notifications.NotificationService
+	var notificationBinding *binding.NotificationBinding
+
+	// 检查是否需要跳过通知初始化（仅开发环境 + macOS）
+	skipNotification := buildinfo.IsDevMode() && runtime.GOOS == "darwin"
+
+	if !skipNotification {
+		// 生产环境 或 非 macOS 平台：正常初始化通知系统
+		if buildinfo.IsDevMode() {
+			zap.S().Infof("开发环境 (%s)：正在初始化通知系统...", runtime.GOOS)
+		} else {
+			zap.S().Info("生产环境：正在初始化通知系统...")
+		}
+		notifier = notifications.New()
+		notificationBinding = binding.NewNotificationBinding(notifier)
+	} else {
+		// 开发环境 + macOS：跳过通知系统初始化，防止 bundle 崩溃
+		zap.S().Warn("开发环境 (macOS)：跳过通知系统初始化（直接运行二进制文件缺少 Bundle ID）")
+	}
 
 	// 【2. 构建 Wails 应用实例】
+	services := []application.Service{
+		application.NewService(userBinding),
+		application.NewService(settingBinding),
+		application.NewService(systemBinding),
+	}
+	// 仅在生产环境注册通知服务
+	if notifier != nil && notificationBinding != nil {
+		services = append(services,
+			application.NewService(notificationBinding),
+			application.NewService(notifier),
+		)
+	}
+
 	wailsApp := application.New(application.Options{
 		Name:        cfg.App.Name,
 		Description: "A demo application with large-scale architecture best-practices",
 		// 【注册所有想要暴露给前台调用的 Bindings】
-		Services: []application.Service{
-			application.NewService(userBinding),
-			application.NewService(settingBinding),
-			application.NewService(notificationBinding),
-			application.NewService(systemBinding),
-			application.NewService(notifier),
-		},
+		Services: services,
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
 		},
