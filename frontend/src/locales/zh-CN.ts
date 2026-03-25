@@ -156,5 +156,8 @@ export default {
     notifApprove: '通过',
     notifReject: '驳回',
     notifReply: '回复',
+    screenOps: '显示布局',
+    screenDesc: '多显示器布局感知：展示系统当前的物理显示器分布、虚拟坐标系和 DPI 缩放信息。Wails 3 能够精确计算逻辑位置。',
+    screenList: '显示器详情',
   },
 }

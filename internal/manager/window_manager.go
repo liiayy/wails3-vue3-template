@@ -44,11 +44,30 @@ func (wm *WindowManager) CreateMainWindow() *application.WebviewWindow {
 	// 确定初始位置控制逻辑
 	initialPos := application.WindowCentered
 	winX, winY := 0, 0
-	if config.Cfg.Window.X != -1 && config.Cfg.Window.Y != -1 {
-		initialPos = application.WindowXY
-		winX = config.Cfg.Window.X
-		winY = config.Cfg.Window.Y
-		zap.S().Infof("[WindowManager] 恢复窗口位置: (%d, %d)", winX, winY)
+	restoreX, restoreY := config.Cfg.Window.X, config.Cfg.Window.Y
+
+	if restoreX != -1 && restoreY != -1 {
+		// 【增强】坐标有效性校验：检查保存的坐标是否在任何当前活跃的屏幕范围内
+		screens := wm.app.Screen.GetAll()
+		foundValidScreen := false
+		for _, s := range screens {
+			// 如果保存的 X,Y 在任意屏幕矩形区域内，则视为合法
+			if restoreX >= s.X && restoreX < (s.X+s.Size.Width) &&
+				restoreY >= s.Y && restoreY < (s.Y+s.Size.Height) {
+				foundValidScreen = true
+				break
+			}
+		}
+
+		if foundValidScreen {
+			initialPos = application.WindowXY
+			winX = restoreX
+			winY = restoreY
+			zap.S().Infof("[WindowManager] 恢复窗口位置: (%d, %d)", winX, winY)
+		} else {
+			zap.S().Warnf("[WindowManager] 检测到保存的坐标 (%d, %d) 已超出当前显示器范围，将重置居中", restoreX, restoreY)
+			// initialPos 保持 WindowCentered 即可
+		}
 	}
 
 	wm.mainWindow = wm.app.Window.NewWithOptions(application.WebviewWindowOptions{

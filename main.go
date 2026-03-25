@@ -143,7 +143,10 @@ func main() {
 		},
 	})
 
-	// 【3. 关联 Wails 全局生命周期事件】
+	// 【3. 注册屏幕信息服务】
+	wailsApp.RegisterService(application.NewService(binding.NewScreenService(wailsApp)))
+
+	// 【4. 关联 Wails 全局生命周期事件】
 	// 在退出主函数前，调用了我们自定义的优雅停机代码
 	defer coreApp.Shutdown(context.Background())
 

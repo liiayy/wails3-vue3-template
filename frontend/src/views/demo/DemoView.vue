@@ -7,6 +7,7 @@ import {
   CopyIcon,
   CloudUploadIcon,
   NotificationIcon,
+  DesktopIcon,
 } from 'tdesign-icons-vue-next'
 
 const route = useRoute()
@@ -20,6 +21,7 @@ const activeCategory = computed(() => {
   if (routeName.includes('demo-clipboard')) return 'clipboard'
   if (routeName.includes('demo-dragdrop')) return 'dragdrop'
   if (routeName.includes('demo-notifications')) return 'notifications'
+  if (routeName.includes('demo-screen')) return 'screen'
   return 'file' // 默认为文件演示
 })
 
@@ -28,6 +30,7 @@ const categories = [
   { id: 'clipboard', label: 'demo.clipboardOps', icon: CopyIcon, path: 'clipboard' },
   { id: 'dragdrop', label: 'demo.dragDropOps', icon: CloudUploadIcon, path: 'dragdrop' },
   { id: 'notifications', label: 'demo.notificationOps', icon: NotificationIcon, path: 'notifications' },
+  { id: 'screen', label: 'demo.screenOps', icon: DesktopIcon, path: 'screen' },
 ]
 
 function navigateTo(path: string) {

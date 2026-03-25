@@ -157,5 +157,8 @@ export default {
     notifApprove: 'Approve',
     notifReject: 'Reject',
     notifReply: 'Reply',
+    screenOps: 'Monitor Layout',
+    screenDesc: 'Multi-monitor Layout Awareness: Display current monitor distribution, virtual coordinates and DPI scaling. Wails 3 precisely computes logical positions.',
+    screenList: 'Monitor Details',
   },
 }

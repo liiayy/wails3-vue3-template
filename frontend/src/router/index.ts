@@ -66,6 +66,12 @@ const router = createRouter({
               component: () => import('@/views/demo/NotificationDemoView.vue'),
               meta: { title: 'demo.notificationOps', showInMenu: true },
             },
+            {
+              path: 'screen',
+              name: 'demo-screen',
+              component: () => import('@/views/demo/ScreenDemoView.vue'),
+              meta: { title: 'demo.screenOps', showInMenu: true },
+            },
           ],
         },
         {
