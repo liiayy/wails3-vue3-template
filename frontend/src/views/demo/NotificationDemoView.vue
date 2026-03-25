@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onActivated, onDeactivated } from 'vue'
 import { Events } from '@wailsio/runtime'
 import { NotificationBinding } from '#/myapp2/internal/binding'
 import {
@@ -18,8 +18,9 @@ const { t } = useI18n()
 const lastResponse = ref<any>(null)
 let unsubscribeNotifications: (() => void) | null = null
 
-onMounted(() => {
-  // 监听通知点击/回复事件
+onActivated(() => {
+  // 适配 KeepAlive：当进入此页面（激活）时开启监听
+  console.log('[Notification] Component activated, subscribing to events')
   unsubscribeNotifications = Events.On('notification-clicked', (event: any) => {
     lastResponse.value = {
       ...event.data,
@@ -30,8 +31,14 @@ onMounted(() => {
   })
 })
 
-onUnmounted(() => {
-  unsubscribeNotifications?.()
+onDeactivated(() => {
+  // 适配 KeepAlive：当切离此页面（停用）时立即取消监听
+  // 这是解决 KeepAlive 模式下 EventListener 重复堆叠的最佳实践
+  if (unsubscribeNotifications) {
+    unsubscribeNotifications()
+    unsubscribeNotifications = null
+    console.log('[Notification] Component deactivated, unsubscribed')
+  }
 })
 
 async function sendBasic() {

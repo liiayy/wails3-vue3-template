@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onActivated, onDeactivated } from 'vue'
 import { Events } from '@wailsio/runtime'
 import {
   CloudUploadIcon,
@@ -12,9 +12,9 @@ import { MessagePlugin } from 'tdesign-vue-next'
 const droppedItems = ref<string[]>([])
 let unsubscribeDrops: (() => void) | null = null
 
-onMounted(() => {
-  // 监听从 Go 后端转发过来的原生拖放事件
-  // Wails JS runtime 的 Events.On 产生的回调参数是一个事件对象 { name, data, sender }
+onActivated(() => {
+  // 适配 KeepAlive：当进入该页面（激活）时开启监听
+  console.log('[DragDrop] Component activated, subscribing to events')
   unsubscribeDrops = Events.On('files-dropped', (event: any) => {
     console.log('[DragDrop] Got files-dropped event:', event)
     
@@ -37,8 +37,14 @@ onMounted(() => {
   })
 })
 
-onUnmounted(() => {
-  unsubscribeDrops?.()
+onDeactivated(() => {
+  // 适配 KeepAlive：当离开该页面（停用）时立即取消监听
+  // 这样可以彻底解决由于组件未销毁导致的监听器累加问题
+  if (unsubscribeDrops) {
+    unsubscribeDrops()
+    unsubscribeDrops = null
+    console.log('[DragDrop] Component deactivated, unsubscribed')
+  }
 })
 
 function clearItems() {
