@@ -1,18 +1,52 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useSettingsStore } from '../../stores/settings'
+import SettingSection from '@/views/settings/components/SettingSection.vue'
 
 const settings = useSettingsStore()
+const { t } = useI18n()
+
+// 通用设置项配置
+const generalItems = computed(() => [
+  {
+    key: 'language',
+    label: t('settings.displayLanguage'),
+    type: 'select',
+    value: settings.language,
+    options: [
+      { value: 'zh-CN', label: '简体中文' },
+      { value: 'en-US', label: 'English (United States)' },
+    ],
+  },
+  {
+    key: 'isSidebarCollapsed',
+    label: t('settings.autoHideSidebar'),
+    type: 'switch',
+    value: settings.isSidebarCollapsed,
+  },
+  {
+    key: 'isAutostart',
+    label: t('settings.isAutostart'),
+    description: t('settings.isAutostartDesc'),
+    type: 'switch',
+    value: settings.isAutostart,
+  },
+])
+
+function handleSettingChange(key: string, value: any) {
+  settings.updateSetting(key, value)
+}
 </script>
 
 <template>
   <div class="w-full max-w-4xl mx-auto space-y-5 rounded-lg text-[var(--td-text-color-primary)]">
-    
     <!-- 外观设置 -->
     <section class="space-y-2">
       <div class="text-[15px] font-bold px-6">
         {{ $t('settings.themeMode') }}
       </div>
-      
+
       <div class="bg-[var(--td-bg-color-container)] p-4 rounded-2xl shadow-sm flex gap-8">
         <!-- 明亮模式预览卡片 -->
         <div
@@ -91,53 +125,13 @@ const settings = useSettingsStore()
           </span>
         </div>
       </div>
-      
     </section>
 
-    <section class="space-y-2">
-      <div class="text-[15px] font-bold px-6">
-        {{ $t('settings.general') }}
-      </div>
-      
-      <div class="bg-[var(--td-bg-color-container)] rounded-2xl shadow-sm px-6 py-2">
-        
-        <!-- 语言设置 -->
-        <div class="flex items-center justify-between py-2 border-b border-[var(--td-component-border)] last:border-0">
-          <span class="text-[14px]">{{ $t('settings.displayLanguage') }}</span>
-          <t-select
-            :value="settings.language"
-            @change="(val: any) => settings.updateSetting('language', val)"
-            class="!w-[200px]"
-            variant="outline"
-            size="small"
-          >
-            <t-option value="zh-CN" label="简体中文 (Chinese)" />
-            <t-option value="en-US" label="English (United States)" />
-          </t-select>
-        </div>
-
-        <!-- 侧边栏设置 -->
-        <div class="flex items-center justify-between py-2 border-b border-[var(--td-component-border)] last:border-0">
-          <span class="text-[14px]">{{ $t('settings.autoHideSidebar') }}</span>
-          <t-switch
-            :value="settings.isSidebarCollapsed"
-            @change="(val: any) => settings.updateSetting('isSidebarCollapsed', val)"
-            size="large"
-          />
-        </div>
-
-        <!-- 自启动设置 -->
-        <div class="flex items-center justify-between py-2 border-b border-[var(--td-component-border)] last:border-0">
-          <span class="text-[14px]">{{ $t('settings.isAutostart') }}</span>
-          <t-switch
-            :value="settings.isAutostart"
-            @change="(val: any) => settings.updateSetting('isAutostart', val)"
-            size="large"
-          />
-        </div>
-
-      </div>
-    </section>
+    <SettingSection
+      :title="$t('settings.general')"
+      :items="generalItems"
+      @change="handleSettingChange"
+    />
   </div>
 </template>
 
