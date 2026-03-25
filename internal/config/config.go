@@ -38,6 +38,8 @@ type LogConf struct {
 type WindowConf struct {
 	Width  int    `mapstructure:"width"`
 	Height int    `mapstructure:"height"`
+	X      int    `mapstructure:"x"`
+	Y      int    `mapstructure:"y"`
 	Title  string `mapstructure:"title"`
 }
 
@@ -65,6 +67,8 @@ log:
 window:
   width: 1280
   height: 800
+  x: -1
+  y: -1
   title: "Wails 3 Mega-Structure Dashboard"
 `
 
@@ -104,6 +108,10 @@ func InitConfig(appName string) error {
 	viper.SetEnvPrefix("MYAPP2")
 	viper.AutomaticEnv()
 
+	// 设置默认值（防止升级用户配置文件缺失字段导致 0 坐标到左上角）
+	viper.SetDefault("window.x", -1)
+	viper.SetDefault("window.y", -1)
+
 	// 读取
 	if err := viper.ReadInConfig(); err != nil {
 		return fmt.Errorf("读取配置文件失败: %w", err)
@@ -123,9 +131,10 @@ func InitConfig(appName string) error {
 // SaveConfig 将当前内存中的 Cfg 状态持久化回磁盘文件 (YAML)
 func SaveConfig() error {
 	// 将结构体同步回 Viper 内存
-	// 注意：Unmarshal 是从 Viper 到 Struct，保存时我们需要确保 Viper 知道最新的值
 	viper.Set("window.width", Cfg.Window.Width)
 	viper.Set("window.height", Cfg.Window.Height)
+	viper.Set("window.x", Cfg.Window.X)
+	viper.Set("window.y", Cfg.Window.Y)
 
 	if err := viper.WriteConfig(); err != nil {
 		zap.S().Errorf("写入配置文件失败: %v", err)
@@ -142,6 +151,16 @@ func UpdateWindowSize(width, height int) {
 	}
 	Cfg.Window.Width = width
 	Cfg.Window.Height = height
+	_ = SaveConfig()
+}
+
+// UpdateWindowPosition 快捷更新窗口位置并保存
+func UpdateWindowPosition(x, y int) {
+	if Cfg.Window.X == x && Cfg.Window.Y == y {
+		return
+	}
+	Cfg.Window.X = x
+	Cfg.Window.Y = y
 	_ = SaveConfig()
 }
 

@@ -41,6 +41,16 @@ func NewWindowManager(app *application.App, width, height int, title string) *Wi
 func (wm *WindowManager) CreateMainWindow() *application.WebviewWindow {
 	zap.S().Info("[WindowManager] 创建主窗口...")
 
+	// 确定初始位置控制逻辑
+	initialPos := application.WindowCentered
+	winX, winY := 0, 0
+	if config.Cfg.Window.X != -1 && config.Cfg.Window.Y != -1 {
+		initialPos = application.WindowXY
+		winX = config.Cfg.Window.X
+		winY = config.Cfg.Window.Y
+		zap.S().Infof("[WindowManager] 恢复窗口位置: (%d, %d)", winX, winY)
+	}
+
 	wm.mainWindow = wm.app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Name:             "main",
 		Title:            wm.winTitle,
@@ -48,6 +58,9 @@ func (wm *WindowManager) CreateMainWindow() *application.WebviewWindow {
 		Height:           wm.winHeight,
 		MinWidth:         1024,
 		MinHeight:        800,
+		InitialPosition:  initialPos,
+		X:                winX,
+		Y:                winY,
 		BackgroundColour: application.NewRGB(27, 38, 54),
 		URL:              "/",
 		EnableFileDrop:   true,
@@ -62,7 +75,14 @@ func (wm *WindowManager) CreateMainWindow() *application.WebviewWindow {
 		wm.app.Event.Emit("files-dropped", files)
 	})
 
-	// 【新增】监听窗口缩放结束事件，保存尺寸到配置文件
+	// 【新增】监听窗口位移事件，保存坐标
+	wm.mainWindow.OnWindowEvent(events.Common.WindowDidMove, func(ev *application.WindowEvent) {
+		x, y := wm.mainWindow.Position()
+		zap.S().Debugf("[WindowManager] 窗口移动，新坐标: (%d, %d)", x, y)
+		config.UpdateWindowPosition(x, y)
+	})
+
+	// 【修改】监听窗口缩放结束事件，保存尺寸到配置文件
 	wm.mainWindow.OnWindowEvent(events.Common.WindowDidResize, func(ev *application.WindowEvent) {
 		// 如果窗口是最大化状态，我们通常不希望保存最大化的尺寸作为默认启动尺寸
 		if wm.mainWindow.IsMaximised() {
