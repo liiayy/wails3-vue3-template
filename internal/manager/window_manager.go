@@ -67,12 +67,21 @@ func (wm *WindowManager) CreateMainWindow() *application.WebviewWindow {
 		Frameless:        true,
 	})
 
+	// 【新增】显式强制设置最小尺寸约束，确保在某些系统状态切换后依然有效
+	wm.mainWindow.SetMinSize(1024, 800)
+
 	// 监听原生文件拖放事件
 	wm.mainWindow.OnWindowEvent(events.Common.WindowFilesDropped, func(ev *application.WindowEvent) {
 		files := ev.Context().DroppedFiles()
 		zap.S().Infof("[WindowManager] 原生文件拖入: %v", files)
 		// 发送给前端通用事件总线
 		wm.app.Event.Emit("files-dropped", files)
+	})
+
+	// 【新增】监听窗口从最大化/最小化还原事件，再次补强约束逻辑
+	wm.mainWindow.OnWindowEvent(events.Common.WindowRestore, func(ev *application.WindowEvent) {
+		zap.S().Debug("[WindowManager] 窗口已还原，重新应用尺寸约束")
+		wm.mainWindow.SetMinSize(1024, 800)
 	})
 
 	// 【新增】监听窗口位移事件，保存坐标
