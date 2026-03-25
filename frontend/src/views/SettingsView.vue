@@ -44,7 +44,7 @@ function navigateTo(path: string) {
 
       <!-- 第三栏：主内容区 (Content Area) -->
       <main class="flex-1 overflow-auto bg-[var(--td-bg-color-page)] relative">
-        <div class="p-6 space-y-6">
+        <div class="p-4 space-y-6">
           <!-- 头部标题 -->
           <div class="space-y-1">
             <h1 class="text-xl font-bold text-[var(--td-text-color-primary)] tracking-tight">

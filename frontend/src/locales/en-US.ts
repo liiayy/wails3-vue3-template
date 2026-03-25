@@ -91,6 +91,8 @@ export default {
     isAutostartDesc: 'Automatically start the application when you log in to the system.',
     notifications: 'Notifications',
     comingSoon: 'Coming Soon',
+    general: 'General Settings',
+    appearance: 'Appearance Settings',
   },
 
   // ========== About ==========

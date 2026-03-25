@@ -90,6 +90,9 @@ export default {
     isAutostartDesc: '开启后应用将在系统登录时自动运行。',
     notifications: '通知设置',
     comingSoon: '即将推出',
+    appearance: '外观设置',
+    general: '通用设置',
+    chat: '聊天',
   },
 
   // ========== 关于 ==========

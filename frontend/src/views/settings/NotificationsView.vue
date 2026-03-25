@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { NotificationIcon } from 'tdesign-icons-vue-next'
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center py-10 opacity-30 grayscale">
-    <NotificationIcon size="60" />
-    <p class="mt-4 text-lg font-medium">{{ $t('settings.comingSoon') }}</p>
+  <div class="h-full flex items-center justify-center py-20">
+    <t-space direction="vertical" align="center">
+      <t-empty :description="$t('settings.comingSoon')" />
+    </t-space>
   </div>
 </template>
 
 <style scoped>
-/* 设置项样式 */
 </style>
