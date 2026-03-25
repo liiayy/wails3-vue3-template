@@ -184,7 +184,7 @@ function toggleSidebar() {
 /* 页面切换动画 */
 .fade-enter-active,
 .fade-leave-active {
-  transition: all 0.13s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.11s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .fade-enter-from {
   opacity: 0;
