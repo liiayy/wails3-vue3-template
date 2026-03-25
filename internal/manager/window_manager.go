@@ -50,12 +50,19 @@ func (wm *WindowManager) CreateMainWindow() *application.WebviewWindow {
 		// 【增强】坐标有效性校验：检查保存的坐标是否在任何当前活跃的屏幕范围内
 		screens := wm.app.Screen.GetAll()
 		foundValidScreen := false
-		for _, s := range screens {
-			// 如果保存的 X,Y 在任意屏幕矩形区域内，则视为合法
-			if restoreX >= s.X && restoreX < (s.X+s.Size.Width) &&
-				restoreY >= s.Y && restoreY < (s.Y+s.Size.Height) {
-				foundValidScreen = true
-				break
+
+		// 如果在启动早期还没拿到屏幕信息（数组为空），我们暂时信任坐标
+		if len(screens) == 0 {
+			zap.S().Debug("[WindowManager] 启动早期暂未获取到屏幕列表，信任保存坐标")
+			foundValidScreen = true
+		} else {
+			for _, s := range screens {
+				// 如果保存的 X,Y 在任意屏幕矩形区域内，则视为合法
+				if restoreX >= s.X && restoreX < (s.X+s.Bounds.Width) &&
+					restoreY >= s.Y && restoreY < (s.Y+s.Bounds.Height) {
+					foundValidScreen = true
+					break
+				}
 			}
 		}
 
@@ -85,9 +92,6 @@ func (wm *WindowManager) CreateMainWindow() *application.WebviewWindow {
 		EnableFileDrop:   true,
 		Frameless:        true,
 	})
-
-	// 【新增】显式强制设置最小尺寸约束，确保在某些系统状态切换后依然有效
-	wm.mainWindow.SetMinSize(1024, 800)
 
 	// 监听原生文件拖放事件
 	wm.mainWindow.OnWindowEvent(events.Common.WindowFilesDropped, func(ev *application.WindowEvent) {
