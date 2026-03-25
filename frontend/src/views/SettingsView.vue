@@ -33,8 +33,6 @@ function navigateTo(path: string) {
 
 <template>
   <div class="h-full flex flex-col bg-[var(--td-bg-color-container)] overflow-hidden">
-    <!-- 无边框窗口标题栏 -->
-    <TitleBar v-if="isStandalone" :title="$t('settings.title')" no-minimize no-maximize />
 
     <div class="flex-1 flex overflow-hidden">
       <!-- 第二栏：分类导航 (Independent Component) -->
@@ -46,7 +44,7 @@ function navigateTo(path: string) {
 
       <!-- 第三栏：主内容区 (Content Area) -->
       <main class="flex-1 overflow-auto bg-[var(--td-bg-color-page)] relative">
-        <div class="max-w-4xl p-6 space-y-6">
+        <div class="p-6 space-y-6">
           <!-- 头部标题 -->
           <div class="space-y-1">
             <h1 class="text-xl font-bold text-[var(--td-text-color-primary)] tracking-tight">

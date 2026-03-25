@@ -60,67 +60,80 @@ function clearItems() {
       <p class="mt-2 text-xs opacity-70">注：Wails 会在原生拖拽进入该区域时自动添加 <code>.file-drop-target-active</code> 类。</p>
     </div>
 
-    <!-- 拖拽投放区 -->
-    <div 
-      id="native-drop-zone"
-      class="drop-zone h-48 border-2 border-dashed rounded-2xl flex flex-col items-center justify-center transition-all duration-300"
-      data-file-drop-target="true"
-    >
-      <div class="flex flex-col items-center pointer-events-none">
-        <CloudUploadIcon 
-          size="48" 
-          class="drop-icon text-[var(--td-text-color-placeholder)]"
-        />
-        <p class="mt-4 text-sm font-medium text-[var(--td-text-color-secondary)] drop-text">
-          {{ $t('demo.dragFilesHere') }}
-        </p>
-      </div>
-    </div>
-
-    <!-- 结果列表 -->
-    <div class="space-y-4">
-      <div class="flex items-center justify-between">
-        <h3 class="text-sm font-medium text-[var(--td-text-color-primary)]">
-          {{ $t('demo.droppedList') }} ({{ droppedItems.length }})
-        </h3>
-        <t-link theme="primary" size="small" @click="clearItems" v-if="droppedItems.length">
-          <template #prefix-icon><DeleteIcon /></template>
-          {{ $t('common.clear') }}
-        </t-link>
-      </div>
-
-      <TransitionGroup 
-        name="list" 
-        tag="div" 
-        class="space-y-2 min-h-[100px]"
-      >
-        <div 
-          v-for="(path, idx) in droppedItems" 
-          :key="path + idx"
-          class="flex items-center gap-3 p-3 rounded-xl bg-[var(--td-bg-color-container)] border border-[var(--td-border-level-1-color)] hover:shadow-md transition-all duration-200"
-        >
-          <div class="p-2 rounded-lg bg-[var(--td-bg-color-secondarycontainer)] text-[var(--td-brand-color)]">
-            <FileIcon size="18" />
+    <t-row :gutter="[24, 24]">
+      <!-- 左栏：投放区 -->
+      <t-col :xs="12" :md="5">
+        <div class="space-y-4 h-full flex flex-col pt-2">
+          <div 
+            id="native-drop-zone"
+            class="drop-zone flex-1 min-h-[240px] border-2 border-dashed rounded-2xl flex flex-col items-center justify-center transition-all duration-300 shadow-inner"
+            data-file-drop-target="true"
+          >
+            <div class="flex flex-col items-center pointer-events-none p-6 text-center">
+              <CloudUploadIcon 
+                size="64" 
+                class="drop-icon text-[var(--td-text-color-placeholder)] mb-4"
+              />
+              <p class="text-sm font-bold text-[var(--td-text-color-primary)] drop-text">
+                {{ $t('demo.dragFilesHere') }}
+              </p>
+              <p class="mt-2 text-xs text-[var(--td-text-color-placeholder)] opacity-70">
+                支持直接从文件资源管理器拖入
+              </p>
+            </div>
           </div>
-          <div class="flex-1 min-w-0">
-            <p class="text-xs text-[var(--td-text-color-secondary)] truncate font-mono">
-              {{ path }}
-            </p>
-          </div>
-          <CheckCircleFilledIcon class="text-[var(--td-success-color)] opacity-60" size="14" />
         </div>
+      </t-col>
 
-        <!-- 空状态 -->
-        <div 
-          v-if="!droppedItems.length" 
-          key="empty"
-          class="py-12 flex flex-col items-center justify-center text-[var(--td-text-color-placeholder)]"
-        >
-          <FileIcon size="32" class="opacity-20 mb-2" />
-          <p class="text-xs">{{ $t('demo.noDroppedItems') }}</p>
+      <!-- 右栏：结果列表 -->
+      <t-col :xs="12" :md="7">
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-medium text-[var(--td-text-color-primary)]">
+              {{ $t('demo.droppedList') }} ({{ droppedItems.length }})
+            </h3>
+            <t-link theme="primary" size="small" @click="clearItems" v-if="droppedItems.length">
+              <template #prefix-icon><DeleteIcon /></template>
+              {{ $t('common.clear') }}
+            </t-link>
+          </div>
+
+          <div class="max-h-[460px] overflow-y-auto pr-2 custom-scrollbar">
+            <TransitionGroup 
+              name="list" 
+              tag="div" 
+              class="space-y-2 min-h-[100px]"
+            >
+              <div 
+                v-for="(path, idx) in droppedItems" 
+                :key="path + idx"
+                class="flex items-center gap-3 p-3 rounded-xl bg-[var(--td-bg-color-container)] border border-[var(--td-border-level-1-color)] hover:shadow-md transition-all duration-200"
+              >
+                <div class="p-2 rounded-lg bg-[var(--td-bg-color-secondarycontainer)] text-[var(--td-brand-color)]">
+                  <FileIcon size="18" />
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-[11px] text-[var(--td-text-color-secondary)] truncate font-mono">
+                    {{ path }}
+                  </p>
+                </div>
+                <CheckCircleFilledIcon class="text-[var(--td-success-color)] opacity-60" size="14" />
+              </div>
+
+              <!-- 空状态 -->
+              <div 
+                v-if="!droppedItems.length" 
+                key="empty"
+                class="py-20 flex flex-col items-center justify-center text-[var(--td-text-color-placeholder)] border-2 border-dashed border-[var(--td-component-border)] rounded-2xl"
+              >
+                <FileIcon size="32" class="opacity-20 mb-2" />
+                <p class="text-xs">{{ $t('demo.noDroppedItems') }}</p>
+              </div>
+            </TransitionGroup>
+          </div>
         </div>
-      </TransitionGroup>
-    </div>
+      </t-col>
+    </t-row>
   </div>
 </template>
 

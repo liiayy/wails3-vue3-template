@@ -129,31 +129,39 @@ const { execute: handleExport, loading: exportLoading } = useAsyncAction(async (
 
 <template>
   <div class="space-y-5">
-    <!-- 页面标题 + 操作栏 -->
-    <div class="flex items-center justify-between">
-      <h2 class="text-xl font-bold text-[var(--td-text-color-primary)]">{{ $t('users.title') }}</h2>
+    <!-- 页面标题 + 操作栏 (栅格化) -->
+    <t-row justify="space-between" align="center" :gutter="[16, 16]">
+      <t-col :xs="12" :sm="4" :md="3">
+        <h2 class="text-xl font-bold text-[var(--td-text-color-primary)]">{{ $t('users.title') }}</h2>
+      </t-col>
 
-      <div class="flex items-center gap-3">
-        <t-input
-          v-model="keyword"
-          :placeholder="$t('users.searchPlaceholder')"
-          clearable
-          style="width: 260px"
-        >
-          <template #prefixIcon><SearchIcon /></template>
-        </t-input>
-
-        <t-button variant="outline" theme="default" :loading="exportLoading" @click="handleExport">
-          <template #icon><DownloadIcon /></template>
-          {{ $t('users.exportBtn') }}
-        </t-button>
-
-        <t-button theme="primary" @click="openCreateDialog">
-          <template #icon><AddIcon /></template>
-          {{ $t('users.addUser') }}
-        </t-button>
-      </div>
-    </div>
+      <t-col :xs="12" :sm="8" :md="9">
+        <t-row :gutter="[12, 12]" justify="end">
+          <t-col :span="true">
+            <t-input
+              v-model="keyword"
+              :placeholder="$t('users.searchPlaceholder')"
+              clearable
+              style="width: 240px"
+            >
+              <template #prefixIcon><SearchIcon /></template>
+            </t-input>
+          </t-col>
+          <t-col :span="true">
+            <t-button variant="outline" theme="default" :loading="exportLoading" @click="handleExport">
+              <template #icon><DownloadIcon /></template>
+              {{ $t('users.exportBtn') }}
+            </t-button>
+          </t-col>
+          <t-col :span="true">
+            <t-button theme="primary" @click="openCreateDialog">
+              <template #icon><AddIcon /></template>
+              {{ $t('users.addUser') }}
+            </t-button>
+          </t-col>
+        </t-row>
+      </t-col>
+    </t-row>
 
     <!-- 数据表格 -->
     <t-card :bordered="false" class="shadow-sm">

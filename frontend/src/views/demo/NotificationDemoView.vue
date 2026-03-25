@@ -79,72 +79,78 @@ async function sendInteractive() {
       {{ $t('demo.notificationDesc') }}
     </div>
 
-    <!-- 通知操作区 -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <!-- 通知操作区 (栅格化) -->
+    <t-row :gutter="[16, 16]">
       <!-- 基础通知 -->
-      <t-card :title="$t('demo.sendBasic')" header-bordered>
-        <div class="space-y-4">
-          <p class="text-xs text-[var(--td-text-color-secondary)]">{{ $t('demo.sendBasicDesc') }}</p>
-          <t-button block theme="primary" variant="outline" @click="sendBasic">
-            <template #prefixIcon><NotificationIcon /></template>
-            {{ $t('demo.sendBasic') }}
-          </t-button>
-        </div>
-      </t-card>
+      <t-col :xs="12" :md="6">
+        <t-card :title="$t('demo.sendBasic')" header-bordered class="h-full">
+          <div class="space-y-4">
+            <p class="text-xs text-[var(--td-text-color-secondary)]">{{ $t('demo.sendBasicDesc') }}</p>
+            <t-button block theme="primary" variant="outline" @click="sendBasic">
+              <template #prefixIcon><NotificationIcon /></template>
+              {{ $t('demo.sendBasic') }}
+            </t-button>
+          </div>
+        </t-card>
+      </t-col>
 
       <!-- 带副标题通知 -->
-      <t-card :title="$t('demo.sendSubtitle')" header-bordered>
-        <div class="space-y-4">
-          <p class="text-xs text-[var(--td-text-color-secondary)]">
-            {{ $t('demo.sendSubtitleDesc') }}
-          </p>
-          <t-button block theme="primary" variant="outline" @click="sendSubtitle">
-            <template #prefixIcon><InfoCircleIcon /></template>
-            {{ $t('demo.sendSubtitle') }}
-          </t-button>
-        </div>
-      </t-card>
+      <t-col :xs="12" :md="6">
+        <t-card :title="$t('demo.sendSubtitle')" header-bordered class="h-full">
+          <div class="space-y-4">
+            <p class="text-xs text-[var(--td-text-color-secondary)]">
+              {{ $t('demo.sendSubtitleDesc') }}
+            </p>
+            <t-button block theme="primary" variant="outline" @click="sendSubtitle">
+              <template #prefixIcon><InfoCircleIcon /></template>
+              {{ $t('demo.sendSubtitle') }}
+            </t-button>
+          </div>
+        </t-card>
+      </t-col>
 
       <!-- 交互式通知 -->
-      <t-card :title="$t('demo.sendInteractive')" header-bordered class="md:col-span-2">
-        <div class="space-y-4">
-          <div
-            class="p-3 rounded-lg bg-[var(--td-bg-color-secondarycontainer)] border border-[var(--td-border-level-1-color)]"
-          >
-            <div class="flex items-start gap-3">
-              <t-avatar size="small" shape="round"><UserIcon /></t-avatar>
-              <div class="flex-1 min-w-0">
-                <p class="text-xs font-bold text-[var(--td-text-color-primary)]">{{ $t('demo.mockMsg') }}</p>
-                <p class="text-xs text-[var(--td-text-color-secondary)] mt-0.5">
-                  {{ $t('demo.interactiveBody') }}
-                </p>
+      <t-col :span="12">
+        <t-card :title="$t('demo.sendInteractive')" header-bordered>
+          <div class="space-y-4">
+            <div
+              class="p-4 rounded-lg bg-[var(--td-bg-color-secondarycontainer)] border border-[var(--td-border-level-1-color)]"
+            >
+              <div class="flex items-start gap-4">
+                <t-avatar size="medium" shape="round"><UserIcon /></t-avatar>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-bold text-[var(--td-text-color-primary)]">{{ $t('demo.mockMsg') }}</p>
+                  <p class="text-xs text-[var(--td-text-color-secondary)] mt-1">
+                    {{ $t('demo.interactiveBody') }}
+                  </p>
+                </div>
+              </div>
+              <div class="mt-4 flex gap-3">
+                <div
+                  class="px-3 py-1 rounded border border-[var(--td-brand-color)] text-[var(--td-brand-color)] text-xs font-medium"
+                >
+                  {{ $t('demo.notifApprove') }}
+                </div>
+                <div
+                  class="px-3 py-1 rounded border border-[var(--td-border-level-1-color)] text-[var(--td-text-color-placeholder)] text-xs"
+                >
+                  {{ $t('demo.notifReject') }}
+                </div>
+                <div
+                  class="flex-1 text-right text-xs text-[var(--td-text-color-placeholder)] italic pt-1"
+                >
+                  {{ $t('demo.notifReply') }}...
+                </div>
               </div>
             </div>
-            <div class="mt-3 flex gap-2">
-              <div
-                class="px-2 py-0.5 rounded border border-[var(--td-brand-color)] text-[var(--td-brand-color)] text-[10px]"
-              >
-                {{ $t('demo.notifApprove') }}
-              </div>
-              <div
-                class="px-2 py-0.5 rounded border border-[var(--td-border-level-1-color)] text-[var(--td-text-color-placeholder)] text-[10px]"
-              >
-                {{ $t('demo.notifReject') }}
-              </div>
-              <div
-                class="flex-1 text-right text-[10px] text-[var(--td-text-color-placeholder)] italic"
-              >
-                {{ $t('demo.notifReply') }}...
-              </div>
-            </div>
+            <t-button block theme="primary" size="large" @click="sendInteractive">
+              <template #prefixIcon><ChatIcon /></template>
+              {{ $t('demo.sendInteractive') }}
+            </t-button>
           </div>
-          <t-button block theme="primary" @click="sendInteractive">
-            <template #prefixIcon><ChatIcon /></template>
-            {{ $t('demo.sendInteractive') }}
-          </t-button>
-        </div>
-      </t-card>
-    </div>
+        </t-card>
+      </t-col>
+    </t-row>
 
     <!-- 交互响应日志 -->
     <div class="space-y-4">

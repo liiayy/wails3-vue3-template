@@ -69,27 +69,35 @@ function clearResults() {
 
 <template>
   <div class="space-y-6">
-    <!-- 操作按钮组 -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <t-button variant="outline" @click="pickFile">
-        <template #icon><FileIcon /></template>
-        {{ $t('demo.pickFile') }}
-      </t-button>
-      <t-button variant="outline" @click="pickMultipleFiles">
-        <template #icon><FileCopyIcon /></template>
-        {{ $t('demo.pickMultiple') }}
-      </t-button>
-      <t-button variant="outline" @click="pickDirectory">
-        <template #icon><FolderOpenIcon /></template>
-        {{ $t('demo.pickFolder') }}
-      </t-button>
-      <t-button variant="outline" @click="saveFile">
-        <template #icon><SaveIcon /></template>
-        {{ $t('demo.saveFile') }}
-      </t-button>
-    </div>
+    <!-- 操作按钮组 (栅格化) -->
+    <t-row :gutter="[16, 16]">
+      <t-col :xs="6" :md="3">
+        <t-button block variant="outline" @click="pickFile">
+          <template #icon><FileIcon /></template>
+          {{ $t('demo.pickFile') }}
+        </t-button>
+      </t-col>
+      <t-col :xs="6" :md="3">
+        <t-button block variant="outline" @click="pickMultipleFiles">
+          <template #icon><FileCopyIcon /></template>
+          {{ $t('demo.pickMultiple') }}
+        </t-button>
+      </t-col>
+      <t-col :xs="6" :md="3">
+        <t-button block variant="outline" @click="pickDirectory">
+          <template #icon><FolderOpenIcon /></template>
+          {{ $t('demo.pickFolder') }}
+        </t-button>
+      </t-col>
+      <t-col :xs="6" :md="3">
+        <t-button block variant="outline" @click="saveFile">
+          <template #icon><SaveIcon /></template>
+          {{ $t('demo.saveFile') }}
+        </t-button>
+      </t-col>
+    </t-row>
 
-    <!-- 结果回显区 -->
+    <!-- 结果回显区 (栅格化) -->
     <div class="space-y-4">
       <div class="flex items-center justify-between">
         <h3 class="text-sm font-medium text-[var(--td-text-color-primary)]">
@@ -101,31 +109,40 @@ function clearResults() {
         </t-link>
       </div>
 
-      <!-- 文件列表 -->
-      <t-card v-if="selectedFiles.length" :title="$t('demo.selectedFiles')" size="small" class="bg-[var(--td-bg-color-container)]">
-        <ul class="text-xs space-y-1 overflow-hidden">
-          <li v-for="file in selectedFiles" :key="file" class="truncate text-[var(--td-text-color-secondary)]">
-            {{ file }}
-          </li>
-        </ul>
-      </t-card>
+      <t-row :gutter="[16, 16]">
+        <!-- 文件列表 -->
+        <t-col v-if="selectedFiles.length" :span="12">
+          <t-card :title="$t('demo.selectedFiles')" size="small" class="bg-[var(--td-bg-color-container)]">
+            <ul class="text-xs space-y-1 overflow-hidden">
+              <li v-for="file in selectedFiles" :key="file" class="truncate text-[var(--td-text-color-secondary)]">
+                {{ file }}
+              </li>
+            </ul>
+          </t-card>
+        </t-col>
 
-      <!-- 文件夹 -->
-      <t-card v-if="selectedFolder" :title="$t('demo.selectedFolder')" size="small" class="bg-[var(--td-bg-color-container)]">
-        <p class="text-xs truncate text-[var(--td-text-color-secondary)]">{{ selectedFolder }}</p>
-      </t-card>
+        <!-- 文件夹 -->
+        <t-col v-if="selectedFolder" :xs="12" :md="6">
+          <t-card :title="$t('demo.selectedFolder')" size="small" class="bg-[var(--td-bg-color-container)]">
+            <p class="text-xs truncate text-[var(--td-text-color-secondary)]">{{ selectedFolder }}</p>
+          </t-card>
+        </t-col>
 
-      <!-- 保存路径 -->
-      <t-card v-if="savedPath" :title="$t('demo.savedPath')" size="small" class="bg-[var(--td-bg-color-container)]">
-        <p class="text-xs truncate text-[var(--td-text-color-secondary)]">{{ savedPath }}</p>
-      </t-card>
+        <!-- 保存路径 -->
+        <t-col v-if="savedPath" :xs="12" :md="6">
+          <t-card :title="$t('demo.savedPath')" size="small" class="bg-[var(--td-bg-color-container)]">
+            <p class="text-xs truncate text-[var(--td-text-color-secondary)]">{{ savedPath }}</p>
+          </t-card>
+        </t-col>
 
-      <!-- 无结果占位 -->
-      <div v-if="!selectedFiles.length && !selectedFolder && !savedPath" 
-           class="py-12 border-2 border-dashed border-[var(--td-component-border)] rounded-xl flex flex-col items-center justify-center text-[var(--td-text-color-placeholder)]">
-        <FileIcon size="40" class="opacity-20 mb-2" />
-        <p class="text-sm">{{ $t('demo.noResults') }}</p>
-      </div>
+        <!-- 无结果占位 -->
+        <t-col v-if="!selectedFiles.length && !selectedFolder && !savedPath" :span="12">
+          <div class="py-12 border-2 border-dashed border-[var(--td-component-border)] rounded-xl flex flex-col items-center justify-center text-[var(--td-text-color-placeholder)]">
+            <FileIcon size="40" class="opacity-20 mb-2" />
+            <p class="text-sm">{{ $t('demo.noResults') }}</p>
+          </div>
+        </t-col>
+      </t-row>
     </div>
   </div>
 </template>

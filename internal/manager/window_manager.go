@@ -83,7 +83,7 @@ func (wm *WindowManager) CreateMainWindow() *application.WebviewWindow {
 		Width:            wm.winWidth,
 		Height:           wm.winHeight,
 		MinWidth:         1024,
-		MinHeight:        800,
+		MinHeight:        750,
 		InitialPosition:  initialPos,
 		X:                winX,
 		Y:                winY,
@@ -104,7 +104,7 @@ func (wm *WindowManager) CreateMainWindow() *application.WebviewWindow {
 	// 【新增】监听窗口从最大化/最小化还原事件，再次补强约束逻辑
 	wm.mainWindow.OnWindowEvent(events.Common.WindowRestore, func(ev *application.WindowEvent) {
 		zap.S().Debug("[WindowManager] 窗口已还原，重新应用尺寸约束")
-		wm.mainWindow.SetMinSize(1024, 800)
+		wm.mainWindow.SetMinSize(1024, 750)
 	})
 
 	// 【新增】监听窗口位移事件，保存坐标

@@ -80,31 +80,45 @@ const {
         </div>
       </div>
 
-      <div class="w-full grid grid-cols-2 gap-8">
+      <!-- 栅格化布局区域 -->
+      <t-row :gutter="[32, 32]" class="w-full">
         <!-- Register Section -->
-        <div class="space-y-4">
-          <h3 class="font-semibold text-lg">{{ $t('home.registerSection') }}</h3>
-          <t-input v-model="registerForm.name" :placeholder="$t('home.namePlaceholder')" />
-          <t-input v-model="registerForm.email" :placeholder="$t('home.emailPlaceholder')" />
-          <t-button block theme="primary" :loading="registerLoading" @click="doRegister()">{{
-            $t('home.registerBtn')
-          }}</t-button>
-        </div>
+        <t-col :xs="12" :md="6">
+          <div class="space-y-4 p-4 rounded-xl border border-[var(--td-border-level-1-color)]">
+            <h3 class="font-semibold text-lg flex items-center gap-2">
+              <span class="w-1 h-5 bg-[var(--td-brand-color)] rounded-full"></span>
+              {{ $t('home.registerSection') }}
+            </h3>
+            <t-input v-model="registerForm.name" :placeholder="$t('home.namePlaceholder')" />
+            <t-input v-model="registerForm.email" :placeholder="$t('home.emailPlaceholder')" />
+            <t-button block theme="primary" :loading="registerLoading" @click="doRegister()">
+              {{ $t('home.registerBtn') }}
+            </t-button>
+          </div>
+        </t-col>
 
         <!-- Query Section -->
-        <div class="space-y-4">
-          <h3 class="font-semibold text-lg">{{ $t('home.lookupSection') }}</h3>
-          <t-input-number v-model="queryId" :min="1" placeholder="ID" class="w-full" />
-          <t-button block theme="default" :loading="queryLoading" @click="doQuery()">{{
-            $t('home.fetchBtn')
-          }}</t-button>
-        </div>
-      </div>
+        <t-col :xs="12" :md="6">
+          <div class="space-y-4 p-4 rounded-xl border border-[var(--td-border-level-1-color)]">
+            <h3 class="font-semibold text-lg flex items-center gap-2">
+              <span class="w-1 h-5 bg-[var(--td-brand-color)] rounded-full"></span>
+              {{ $t('home.lookupSection') }}
+            </h3>
+            <t-input-number v-model="queryId" :min="1" placeholder="ID" class="w-full" />
+            <t-button block theme="default" variant="outline" :loading="queryLoading" @click="doQuery()">
+              {{ $t('home.fetchBtn') }}
+            </t-button>
+          </div>
+        </t-col>
 
-      <t-alert theme="info" class="mt-8 w-full">
-        <template #title>{{ $t('home.eventBusTitle') }}</template>
-        {{ currentTime || $t('home.eventBusWaiting') }}
-      </t-alert>
+        <!-- 事件总线展示区 -->
+        <t-col :span="12">
+          <t-alert theme="info" class="mt-4">
+            <template #title>{{ $t('home.eventBusTitle') }}</template>
+            {{ currentTime || $t('home.eventBusWaiting') }}
+          </t-alert>
+        </t-col>
+      </t-row>
     </div>
   </t-card>
 </template>
