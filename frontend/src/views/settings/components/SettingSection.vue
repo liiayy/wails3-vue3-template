@@ -3,9 +3,13 @@ export interface SettingItem {
   key: string
   label: string
   description?: string
-  type?: 'select' | 'switch' | 'slot'
+  type?: 'select' | 'switch' | 'input-number' | 'slot'
   value?: any
   options?: Array<{ value: string; label: string }>
+  min?: number
+  max?: number
+  step?: number
+  suffix?: string
 }
 
 interface Props {
@@ -59,6 +63,19 @@ defineProps<Props>()
             v-else-if="item.type === 'switch'"
             :value="item.value"
             size="large"
+            @change="$emit('change', item.key, $event)"
+          />
+
+          <!-- InputNumber 类型 -->
+          <t-input-number
+            v-else-if="item.type === 'input-number'"
+            :value="item.value"
+            :min="item.min"
+            :max="item.max"
+            :step="item.step"
+            :suffix="item.suffix"
+            theme="row"
+            class="!w-[150px]"
             @change="$emit('change', item.key, $event)"
           />
 

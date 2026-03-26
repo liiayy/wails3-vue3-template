@@ -93,6 +93,8 @@ export default {
     appearance: '外观设置',
     general: '通用设置',
     chat: '聊天',
+    zoom: '界面缩放',
+    zoomDesc: '调整全局界面大小，适合不同分辨率',
   },
 
   // ========== 关于 ==========

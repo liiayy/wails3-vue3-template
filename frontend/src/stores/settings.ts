@@ -12,6 +12,7 @@ interface SettingsState {
   language: string
   isSidebarCollapsed: boolean
   isAutostart: boolean
+  zoom: number
 }
 
 // 跨窗口同步事件名称
@@ -23,6 +24,7 @@ export const useSettingsStore = defineStore('settings', {
     language: 'zh-CN',
     isSidebarCollapsed: true,
     isAutostart: false,
+    zoom: 100,
   }),
 
   actions: {
@@ -42,11 +44,14 @@ export const useSettingsStore = defineStore('settings', {
           if (remoteSettings.language) this.language = remoteSettings.language
           if (remoteSettings.isSidebarCollapsed)
             this.isSidebarCollapsed = remoteSettings.isSidebarCollapsed === 'true'
+          if (remoteSettings.zoom)
+            this.zoom = Number(remoteSettings.zoom) || 100
         }
 
         this.isAutostart = autostart
         this.applyTheme()
         this.applyLanguage()
+        this.applyZoom()
 
         // 注册跨窗口同步监听器
         Events.On(SYNC_EVENT, (ev: any) => {
@@ -57,6 +62,7 @@ export const useSettingsStore = defineStore('settings', {
 
           if (key === 'theme') this.applyTheme()
           if (key === 'language') this.applyLanguage()
+          if (key === 'zoom') this.applyZoom()
         })
 
         // 监听系统主题变化
@@ -85,6 +91,9 @@ export const useSettingsStore = defineStore('settings', {
         }
         if (key === 'language') {
           this.applyLanguage()
+        }
+        if (key === 'zoom') {
+          this.applyZoom()
         }
 
         // 广播变更
@@ -122,6 +131,11 @@ export const useSettingsStore = defineStore('settings', {
       NotificationBinding.SetLanguage(this.language).catch((err) => {
         console.error('[Settings] 同步后端语言失败:', err)
       })
+    },
+
+    applyZoom() {
+      // 通过设置 body 的 CSS zoom 属性来实现全局缩放
+      ;(document.body.style as any).zoom = `${this.zoom}%`
     },
   },
 })

@@ -93,6 +93,8 @@ export default {
     comingSoon: 'Coming Soon',
     general: 'General Settings',
     appearance: 'Appearance Settings',
+    zoom: 'Interface Zoom',
+    zoomDesc: 'Adjust global interface size for different displays',
   },
 
   // ========== About ==========

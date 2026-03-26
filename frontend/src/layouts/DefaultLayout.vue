@@ -71,7 +71,7 @@ function toggleSidebar() {
 </script>
 
 <template>
-  <div class="h-screen w-full flex overflow-hidden bg-[var(--td-bg-color-page)]">
+  <div class="h-full w-full flex overflow-hidden bg-[var(--td-bg-color-page)]">
     <!-- ========== 侧边栏 ========== -->
     <aside
       class="sidebar flex flex-col h-full transition-all duration-300 bg-[var(--td-bg-color-container)] border-[var(--td-border-level-1-color)]"

@@ -2,13 +2,13 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useSettingsStore } from '../../stores/settings'
-import SettingSection from '@/views/settings/components/SettingSection.vue'
+import SettingSection, { type SettingItem } from '@/views/settings/components/SettingSection.vue'
 
 const settings = useSettingsStore()
 const { t } = useI18n()
 
 // 通用设置项配置
-const generalItems = computed(() => [
+const generalItems = computed<SettingItem[]>(() => [
   {
     key: 'language',
     label: t('settings.displayLanguage'),
@@ -31,6 +31,17 @@ const generalItems = computed(() => [
     description: t('settings.isAutostartDesc'),
     type: 'switch',
     value: settings.isAutostart,
+  },
+  {
+    key: 'zoom',
+    label: t('settings.zoom'),
+    description: t('settings.zoomDesc'),
+    type: 'input-number',
+    value: settings.zoom,
+    min: 50,
+    max: 200,
+    step: 10,
+    suffix: '%',
   },
 ])
 
