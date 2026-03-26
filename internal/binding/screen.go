@@ -1,6 +1,8 @@
 package binding
 
 import (
+	"context"
+
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
@@ -28,7 +30,7 @@ type ScreenInfo struct {
 }
 
 // GetAllScreens 获取所有显示器详细信息
-func (s *ScreenService) GetAllScreens() []ScreenInfo {
+func (s *ScreenService) GetAllScreens(ctx context.Context) []ScreenInfo {
 	screens := s.app.Screen.GetAll()
 	var result []ScreenInfo
 
@@ -52,7 +54,7 @@ func (s *ScreenService) GetAllScreens() []ScreenInfo {
 }
 
 // GetPrimaryScreen 获取主显示器
-func (s *ScreenService) GetPrimaryScreen() ScreenInfo {
+func (s *ScreenService) GetPrimaryScreen(ctx context.Context) ScreenInfo {
 	screen := s.app.Screen.GetPrimary()
 	return ScreenInfo{
 		ID:          screen.ID,

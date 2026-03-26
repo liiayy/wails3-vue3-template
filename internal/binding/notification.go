@@ -1,5 +1,7 @@
 package binding
 
+import "context"
+
 import (
 	"myapp2/internal/service"
 
@@ -39,7 +41,7 @@ func NewNotificationBinding(notifier *notifications.NotificationService) *Notifi
 }
 
 // SetLanguage 供前端调用同步语言环境
-func (b *NotificationBinding) SetLanguage(lang string) {
+func (b *NotificationBinding) SetLanguage(ctx context.Context, lang string) {
 	zap.S().Infof("[I18n] 后端语言切换至: %s", lang)
 	service.GetI18n().SetLanguage(lang)
 	b.RefreshCategories() // 核心：重新注册分类以刷新按钮标题
@@ -72,7 +74,7 @@ func (b *NotificationBinding) RefreshCategories() {
 }
 
 // SendBasic 发送最基础的通知
-func (b *NotificationBinding) SendBasic(title, body string) error {
+func (b *NotificationBinding) SendBasic(ctx context.Context, title, body string) error {
 	i18n := service.GetI18n()
 	// 如果前端没传参数，使用后端默认的翻译 Key
 	if title == "" {
@@ -92,7 +94,7 @@ func (b *NotificationBinding) SendBasic(title, body string) error {
 }
 
 // SendWithSubtitle 发送带副标题的通知
-func (b *NotificationBinding) SendWithSubtitle(title, subtitle, body string) error {
+func (b *NotificationBinding) SendWithSubtitle(ctx context.Context, title, subtitle, body string) error {
 	i18n := service.GetI18n()
 	if subtitle == "" {
 		subtitle = i18n.T("notif_subtitle_demo")
@@ -108,7 +110,7 @@ func (b *NotificationBinding) SendWithSubtitle(title, subtitle, body string) err
 }
 
 // SendInteractive 发送带有操作按钮和回复框的通知
-func (b *NotificationBinding) SendInteractive(title, body string) error {
+func (b *NotificationBinding) SendInteractive(ctx context.Context, title, body string) error {
 	err := b.notifier.SendNotificationWithActions(notifications.NotificationOptions{
 		ID:         "interactive-demo",
 		Title:      title,

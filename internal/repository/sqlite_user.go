@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"errors"
 
 	"go.uber.org/zap"
@@ -20,9 +21,9 @@ func NewSqliteUserRepository(db *gorm.DB) *SqliteUserRepository {
 }
 
 // FindByID 根据主键查询 User 对象
-func (r *SqliteUserRepository) FindByID(id int) (*domain.User, error) {
+func (r *SqliteUserRepository) FindByID(ctx context.Context, id int) (*domain.User, error) {
 	var user domain.User
-	result := r.db.First(&user, id)
+	result := r.db.WithContext(ctx).First(&user, id)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			zap.S().Warnf("数据库查询 User 失败：未找到 ID=%d 的用户", id)
@@ -35,8 +36,8 @@ func (r *SqliteUserRepository) FindByID(id int) (*domain.User, error) {
 }
 
 // Save 新增或更新数据
-func (r *SqliteUserRepository) Save(user *domain.User) error {
-	result := r.db.Save(user)
+func (r *SqliteUserRepository) Save(ctx context.Context, user *domain.User) error {
+	result := r.db.WithContext(ctx).Save(user)
 	if result.Error != nil {
 		zap.S().Errorf("保存数据写入 SQLite 失败: %v", result.Error)
 		return result.Error
@@ -45,8 +46,8 @@ func (r *SqliteUserRepository) Save(user *domain.User) error {
 }
 
 // Delete 根据主键删除用户
-func (r *SqliteUserRepository) Delete(id int) error {
-	result := r.db.Delete(&domain.User{}, id)
+func (r *SqliteUserRepository) Delete(ctx context.Context, id int) error {
+	result := r.db.WithContext(ctx).Delete(&domain.User{}, id)
 	if result.Error != nil {
 		zap.S().Errorf("删除用户失败 ID=%d: %v", id, result.Error)
 		return result.Error
@@ -58,11 +59,11 @@ func (r *SqliteUserRepository) Delete(id int) error {
 }
 
 // List 分页 + 关键词模糊搜索
-func (r *SqliteUserRepository) List(keyword string, page, pageSize int) (*domain.UserListResult, error) {
+func (r *SqliteUserRepository) List(ctx context.Context, keyword string, page, pageSize int) (*domain.UserListResult, error) {
 	var users []*domain.User
 	var total int64
 
-	query := r.db.Model(&domain.User{})
+	query := r.db.WithContext(ctx).Model(&domain.User{})
 
 	// 模糊搜索（名称或邮箱）
 	if keyword != "" {
@@ -88,9 +89,9 @@ func (r *SqliteUserRepository) List(keyword string, page, pageSize int) (*domain
 }
 
 // GetAll 获取所有用户数据 (用于导出等全量场景)
-func (r *SqliteUserRepository) GetAll() ([]*domain.User, error) {
+func (r *SqliteUserRepository) GetAll(ctx context.Context) ([]*domain.User, error) {
 	var users []*domain.User
-	if err := r.db.Order("id ASC").Find(&users).Error; err != nil {
+	if err := r.db.WithContext(ctx).Order("id ASC").Find(&users).Error; err != nil {
 		zap.S().Errorf("查询全量 User 数据错误: %v", err)
 		return nil, err
 	}

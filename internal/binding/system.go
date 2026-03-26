@@ -1,5 +1,7 @@
 package binding
 
+import "context"
+
 import (
 	"myapp2/internal/system"
 )
@@ -15,11 +17,11 @@ func NewSystemBinding(appName string) *SystemBinding {
 }
 
 // SetAutostart 设置开机自启动
-func (b *SystemBinding) SetAutostart(enabled bool) error {
+func (b *SystemBinding) SetAutostart(ctx context.Context, enabled bool) error {
 	return system.SetAutostart(b.appName, enabled)
 }
 
 // IsAutostartEnabled 检查当前是否已开启自启动
-func (b *SystemBinding) IsAutostartEnabled() (bool, error) {
+func (b *SystemBinding) IsAutostartEnabled(ctx context.Context) (bool, error) {
 	return system.IsAutostartEnabled(b.appName)
 }

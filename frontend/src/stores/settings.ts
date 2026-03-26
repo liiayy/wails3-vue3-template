@@ -5,7 +5,6 @@ import {
   SystemBinding,
 } from '#/myapp2/internal/binding'
 import { Events } from '@wailsio/runtime'
-import i18n from '@/locales'
 
 interface SettingsState {
   theme: 'light' | 'dark' | 'auto'
@@ -49,27 +48,12 @@ export const useSettingsStore = defineStore('settings', {
         }
 
         this.isAutostart = autostart
-        this.applyTheme()
-        this.applyLanguage()
-        this.applyZoom()
 
         // 注册跨窗口同步监听器
         Events.On(SYNC_EVENT, (ev: any) => {
           const { key, value } = ev.data
           if ((this.$state as any)[key] === value) return
-
           ;(this.$state as any)[key] = value
-
-          if (key === 'theme') this.applyTheme()
-          if (key === 'language') this.applyLanguage()
-          if (key === 'zoom') this.applyZoom()
-        })
-
-        // 监听系统主题变化
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-          if (this.theme === 'auto') {
-            this.applyTheme()
-          }
         })
       } catch (err) {
         console.error('[Settings] 初始化失败:', err)
@@ -86,14 +70,9 @@ export const useSettingsStore = defineStore('settings', {
           await SettingBinding.Save(key, String(value))
         }
 
-        if (key === 'theme') {
-          this.applyTheme()
-        }
         if (key === 'language') {
-          this.applyLanguage()
-        }
-        if (key === 'zoom') {
-          this.applyZoom()
+          // 同步给后端的国际化服务 (逻辑同步，非 UI)
+          await NotificationBinding.SetLanguage(value as string)
         }
 
         // 广播变更
@@ -103,39 +82,5 @@ export const useSettingsStore = defineStore('settings', {
       }
     },
 
-    applyTheme() {
-      const doc = document.documentElement
-      let targetTheme = this.theme
-
-      if (targetTheme === 'auto') {
-        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-        targetTheme = isDark ? 'dark' : 'light'
-      }
-
-      if (targetTheme === 'dark') {
-        doc.setAttribute('theme-mode', 'dark')
-        doc.classList.add('dark')
-      } else {
-        doc.removeAttribute('theme-mode')
-        doc.classList.remove('dark')
-      }
-    },
-
-    applyLanguage() {
-      // 1. 更新前端 Vue-i18n
-      if (i18n.global.locale) {
-        ;(i18n.global.locale as any).value = this.language
-      }
-      
-      // 2. 同步给后端的国际化服务
-      NotificationBinding.SetLanguage(this.language).catch((err) => {
-        console.error('[Settings] 同步后端语言失败:', err)
-      })
-    },
-
-    applyZoom() {
-      // 通过设置 body 的 CSS zoom 属性来实现全局缩放
-      ;(document.body.style as any).zoom = `${this.zoom}%`
-    },
   },
 })

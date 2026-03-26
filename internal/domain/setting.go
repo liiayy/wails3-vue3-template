@@ -1,5 +1,7 @@
 package domain
 
+import "context"
+
 // Setting 领域模型：用于存放应用级的键值对设置信息
 type Setting struct {
 	Key   string `json:"key" gorm:"primaryKey"` // 设置项的名称
@@ -8,7 +10,7 @@ type Setting struct {
 
 // SettingRepository 定义了设置信息的持久化抽象
 type SettingRepository interface {
-	Get(key string) (string, error)
-	Set(key, value string) error
-	GetAll() (map[string]string, error)
+	Get(ctx context.Context, key string) (string, error)
+	Set(ctx context.Context, key, value string) error
+	GetAll(ctx context.Context) (map[string]string, error)
 }

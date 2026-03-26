@@ -1,6 +1,7 @@
 package binding
 
 import (
+	"context"
 	"myapp2/internal/service"
 )
 
@@ -14,11 +15,11 @@ func NewSettingBinding(svc *service.SettingService) *SettingBinding {
 }
 
 // GetAll 获取当前 SQLite 中存储的所有设置对
-func (b *SettingBinding) GetAll() (map[string]string, error) {
-	return b.svc.GetSettings()
+func (b *SettingBinding) GetAll(ctx context.Context) (map[string]string, error) {
+	return b.svc.GetSettings(ctx)
 }
 
 // Save 将单个状态推送到 Go 端持久化
-func (b *SettingBinding) Save(key, value string) error {
-	return b.svc.SaveSetting(key, value)
+func (b *SettingBinding) Save(ctx context.Context, key, value string) error {
+	return b.svc.SaveSetting(ctx, key, value)
 }
