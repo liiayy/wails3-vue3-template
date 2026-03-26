@@ -6,7 +6,7 @@ export type { User, UserListResult }
 
 /** 注册新用户 */
 export async function registerUser(name: string, email: string): Promise<User> {
-  const res = await UserBinding.Register(name, email)
+  const res = await UserBinding.Register({ name, email })
   return handleResult<User>(res)
 }
 
@@ -32,7 +32,7 @@ export async function listUsers(
 
 /** 更新用户 */
 export async function updateUser(id: number, name: string, email: string): Promise<User> {
-  const res = await UserBinding.Update(id, name, email)
+  const res = await UserBinding.Update({ id, name, email })
   return handleResult<User>(res)
 }
 

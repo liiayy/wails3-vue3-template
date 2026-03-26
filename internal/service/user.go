@@ -3,30 +3,57 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"os"
+	"strings"
 
+	"github.com/go-playground/validator/v10"
 	"myapp2/internal/domain"
 )
 
 // UserService 处理关于用户的纯粹核心逻辑
 type UserService struct {
-	repo   domain.UserRepository
-	logger domain.Logger
+	repo      domain.UserRepository
+	logger    domain.Logger
+	validator *validator.Validate
 }
 
 func NewUserService(repo domain.UserRepository, logger domain.Logger) *UserService {
-	return &UserService{repo: repo, logger: logger}
+	v := validator.New()
+	return &UserService{repo: repo, logger: logger, validator: v}
+}
+
+// validate 内部通用校验工具
+func (s *UserService) validateStruct(data interface{}) error {
+	err := s.validator.Struct(data)
+	if err == nil {
+		return nil
+	}
+
+	var validationErrors validator.ValidationErrors
+	if !errors.As(err, &validationErrors) {
+		return domain.ErrInternal("数据校验底层异常", err)
+	}
+
+	// 将多条错误转为一条易读的信息
+	var errMsgs []string
+	for _, ve := range validationErrors {
+		// 这里可以根据 ve.Tag() 实现更多的国际化映射
+		msg := fmt.Sprintf("字段 [%s] 校验不通过 (%s)", ve.Field(), ve.Tag())
+		errMsgs = append(errMsgs, msg)
+	}
+
+	return domain.ErrValidation(strings.Join(errMsgs, "; "))
 }
 
 // RegisterUser 新增用户
-func (s *UserService) RegisterUser(ctx context.Context, name, email string) (*domain.User, error) {
-	if name == "" {
-		return nil, domain.ErrValidation("用户名不能为空")
+func (s *UserService) RegisterUser(ctx context.Context, req domain.UserRegisterRequest) (*domain.User, error) {
+	if err := s.validateStruct(req); err != nil {
+		return nil, err
 	}
-	if email == "" {
-		return nil, domain.ErrValidation("邮箱不能为空")
-	}
-	user := &domain.User{Name: name, Email: email}
+
+	user := &domain.User{Name: req.Name, Email: req.Email}
 	err := s.repo.Save(ctx, user)
 	if err != nil {
 		return nil, domain.ErrInternal("注册入库失败", err)
@@ -40,17 +67,23 @@ func (s *UserService) GetUserProfile(ctx context.Context, id int) (*domain.User,
 }
 
 // UpdateUser 更新用户信息
-func (s *UserService) UpdateUser(ctx context.Context, id int, name, email string) (*domain.User, error) {
-	user, err := s.repo.FindByID(ctx, id)
+func (s *UserService) UpdateUser(ctx context.Context, req domain.UserUpdateRequest) (*domain.User, error) {
+	if err := s.validateStruct(req); err != nil {
+		return nil, err
+	}
+
+	user, err := s.repo.FindByID(ctx, req.ID)
 	if err != nil {
 		return nil, err
 	}
-	if name != "" {
-		user.Name = name
+
+	if req.Name != "" {
+		user.Name = req.Name
 	}
-	if email != "" {
-		user.Email = email
+	if req.Email != "" {
+		user.Email = req.Email
 	}
+
 	if err := s.repo.Save(ctx, user); err != nil {
 		return nil, domain.ErrInternal("更新用户失败", err)
 	}

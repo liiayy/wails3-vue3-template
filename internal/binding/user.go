@@ -31,8 +31,8 @@ func (b *UserBinding) GetProfile(ctx context.Context, id int) *Result {
 }
 
 // Register 新增用户
-func (b *UserBinding) Register(ctx context.Context, name, email string) *Result {
-	user, err := b.svc.RegisterUser(ctx, name, email)
+func (b *UserBinding) Register(ctx context.Context, req domain.UserRegisterRequest) *Result {
+	user, err := b.svc.RegisterUser(ctx, req)
 	if err != nil {
 		return Failure(err)
 	}
@@ -40,8 +40,8 @@ func (b *UserBinding) Register(ctx context.Context, name, email string) *Result 
 }
 
 // Update 更新用户
-func (b *UserBinding) Update(ctx context.Context, id int, name, email string) *Result {
-	user, err := b.svc.UpdateUser(ctx, id, name, email)
+func (b *UserBinding) Update(ctx context.Context, req domain.UserUpdateRequest) *Result {
+	user, err := b.svc.UpdateUser(ctx, req)
 	if err != nil {
 		return Failure(err)
 	}
