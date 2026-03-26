@@ -36,11 +36,12 @@ type LogConf struct {
 }
 
 type WindowConf struct {
-	Width  int    `mapstructure:"width"`
-	Height int    `mapstructure:"height"`
-	X      int    `mapstructure:"x"`
-	Y      int    `mapstructure:"y"`
-	Title  string `mapstructure:"title"`
+	Width       int    `mapstructure:"width"`
+	Height      int    `mapstructure:"height"`
+	X           int    `mapstructure:"x"`
+	Y           int    `mapstructure:"y"`
+	IsMaximized bool   `mapstructure:"is_maximized"`
+	Title       string `mapstructure:"title"`
 }
 
 // defaultYAML 是首次启动时自动写出的默认配置内容
@@ -68,7 +69,7 @@ window:
   width: 1280
   height: 800
   x: -1
-  y: -1
+  is_maximized: false
   title: "Wails 3 Mega-Structure Dashboard"
 `
 
@@ -135,6 +136,7 @@ func SaveConfig() error {
 	viper.Set("window.height", Cfg.Window.Height)
 	viper.Set("window.x", Cfg.Window.X)
 	viper.Set("window.y", Cfg.Window.Y)
+	viper.Set("window.is_maximized", Cfg.Window.IsMaximized)
 
 	if err := viper.WriteConfig(); err != nil {
 		zap.S().Errorf("写入配置文件失败: %v", err)
@@ -161,6 +163,15 @@ func UpdateWindowPosition(x, y int) {
 	}
 	Cfg.Window.X = x
 	Cfg.Window.Y = y
+	_ = SaveConfig()
+}
+
+// UpdateWindowMaximizedState 更新并保存窗口最大化状态
+func UpdateWindowMaximizedState(isMaximized bool) {
+	if Cfg.Window.IsMaximized == isMaximized {
+		return
+	}
+	Cfg.Window.IsMaximized = isMaximized
 	_ = SaveConfig()
 }
 

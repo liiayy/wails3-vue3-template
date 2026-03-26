@@ -105,10 +105,17 @@ func (wm *WindowManager) CreateMainWindow() *application.WebviewWindow {
 		wm.app.Event.Emit("files-dropped", files)
 	})
 
-	// 【新增】监听窗口从最大化/最小化还原事件，再次补强约束逻辑
+	// 【新增】监听窗口从最大化/最小化还原事件
 	wm.mainWindow.OnWindowEvent(events.Common.WindowRestore, func(ev *application.WindowEvent) {
-		zap.S().Debug("[WindowManager] 窗口已还原，重新应用尺寸约束")
+		zap.S().Debug("[WindowManager] 窗口已还原，重新应用尺寸约束并更新状态")
 		wm.mainWindow.SetMinSize(1024, 750)
+		config.UpdateWindowMaximizedState(false)
+	})
+
+	// 【新增】监听窗口最大化事件
+	wm.mainWindow.OnWindowEvent(events.Common.WindowMaximise, func(ev *application.WindowEvent) {
+		zap.S().Debug("[WindowManager] 窗口已最大化，更新状态")
+		config.UpdateWindowMaximizedState(true)
 	})
 
 	// 【新增】监听窗口位移事件，保存坐标
@@ -125,7 +132,7 @@ func (wm *WindowManager) CreateMainWindow() *application.WebviewWindow {
 
 	// 【修改】监听窗口缩放结束事件，保存尺寸到配置文件
 	wm.mainWindow.OnWindowEvent(events.Common.WindowDidResize, func(ev *application.WindowEvent) {
-		// 如果窗口是最大化状态，我们通常不希望保存最大化的尺寸作为默认启动尺寸
+		// 重要：如果窗口当前是最大化状态，不保存尺寸（防止把全屏尺寸存为默认尺寸）
 		if wm.mainWindow.IsMaximised() {
 			return
 		}
@@ -133,6 +140,12 @@ func (wm *WindowManager) CreateMainWindow() *application.WebviewWindow {
 		zap.S().Infof("[WindowManager] 窗口缩放结束，保存新尺寸: %dx%d", w, h)
 		config.UpdateWindowSize(w, h)
 	})
+
+	// 【新增】根据配置决定是否启动即最大化
+	if config.Cfg.Window.IsMaximized {
+		zap.S().Info("[WindowManager] 根据配置，启动即最大化主窗口")
+		wm.mainWindow.Maximise()
+	}
 
 	return wm.mainWindow
 }
