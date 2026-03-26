@@ -9,11 +9,12 @@ import (
 
 // SqliteSettingRepository 使用 GORM 存储设置数据
 type SqliteSettingRepository struct {
-	db *gorm.DB
+	db     *gorm.DB
+	logger domain.Logger
 }
 
-func NewSqliteSettingRepository(db *gorm.DB) *SqliteSettingRepository {
-	return &SqliteSettingRepository{db: db}
+func NewSqliteSettingRepository(db *gorm.DB, logger domain.Logger) *SqliteSettingRepository {
+	return &SqliteSettingRepository{db: db, logger: logger}
 }
 
 func (r *SqliteSettingRepository) Get(ctx context.Context, key string) (string, error) {

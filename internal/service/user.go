@@ -12,11 +12,12 @@ import (
 
 // UserService 处理关于用户的纯粹核心逻辑
 type UserService struct {
-	repo domain.UserRepository
+	repo   domain.UserRepository
+	logger domain.Logger
 }
 
-func NewUserService(repo domain.UserRepository) *UserService {
-	return &UserService{repo: repo}
+func NewUserService(repo domain.UserRepository, logger domain.Logger) *UserService {
+	return &UserService{repo: repo, logger: logger}
 }
 
 // RegisterUser 新增用户

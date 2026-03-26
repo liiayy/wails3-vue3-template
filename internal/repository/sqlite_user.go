@@ -4,20 +4,19 @@ import (
 	"context"
 	"errors"
 
-	"go.uber.org/zap"
 	"gorm.io/gorm"
-
 	"myapp2/internal/domain"
 )
 
 // SqliteUserRepository 依靠 GORM 实现领域层的 User 仓储接口
 type SqliteUserRepository struct {
-	db *gorm.DB
+	db     *gorm.DB
+	logger domain.Logger
 }
 
-// NewSqliteUserRepository 注入已经连接好的 gorm 引擎
-func NewSqliteUserRepository(db *gorm.DB) *SqliteUserRepository {
-	return &SqliteUserRepository{db: db}
+// NewSqliteUserRepository 注入已经连接好的 gorm 引擎与 Logger
+func NewSqliteUserRepository(db *gorm.DB, logger domain.Logger) *SqliteUserRepository {
+	return &SqliteUserRepository{db: db, logger: logger}
 }
 
 // FindByID 根据主键查询 User 对象
@@ -26,10 +25,10 @@ func (r *SqliteUserRepository) FindByID(ctx context.Context, id int) (*domain.Us
 	result := r.db.WithContext(ctx).First(&user, id)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			zap.S().Warnf("数据库查询 User 失败：未找到 ID=%d 的用户", id)
+			r.logger.Warnf("数据库查询 User 失败：未找到 ID=%d 的用户", id)
 			return nil, errors.New("user not found")
 		}
-		zap.S().Errorf("查询数据库遇见系统错: %v", result.Error)
+		r.logger.Errorf("查询数据库遇见系统错: %v", result.Error)
 		return nil, result.Error
 	}
 	return &user, nil
@@ -39,7 +38,7 @@ func (r *SqliteUserRepository) FindByID(ctx context.Context, id int) (*domain.Us
 func (r *SqliteUserRepository) Save(ctx context.Context, user *domain.User) error {
 	result := r.db.WithContext(ctx).Save(user)
 	if result.Error != nil {
-		zap.S().Errorf("保存数据写入 SQLite 失败: %v", result.Error)
+		r.logger.Errorf("保存数据写入 SQLite 失败: %v", result.Error)
 		return result.Error
 	}
 	return nil
@@ -49,7 +48,7 @@ func (r *SqliteUserRepository) Save(ctx context.Context, user *domain.User) erro
 func (r *SqliteUserRepository) Delete(ctx context.Context, id int) error {
 	result := r.db.WithContext(ctx).Delete(&domain.User{}, id)
 	if result.Error != nil {
-		zap.S().Errorf("删除用户失败 ID=%d: %v", id, result.Error)
+		r.logger.Errorf("删除用户失败 ID=%d: %v", id, result.Error)
 		return result.Error
 	}
 	if result.RowsAffected == 0 {
@@ -92,7 +91,7 @@ func (r *SqliteUserRepository) List(ctx context.Context, keyword string, page, p
 func (r *SqliteUserRepository) GetAll(ctx context.Context) ([]*domain.User, error) {
 	var users []*domain.User
 	if err := r.db.WithContext(ctx).Order("id ASC").Find(&users).Error; err != nil {
-		zap.S().Errorf("查询全量 User 数据错误: %v", err)
+		r.logger.Errorf("查询全量 User 数据错误: %v", err)
 		return nil, err
 	}
 	return users, nil

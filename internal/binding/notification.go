@@ -7,16 +7,18 @@ import (
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 	"github.com/wailsapp/wails/v3/pkg/services/notifications"
-	"go.uber.org/zap"
+	"myapp2/internal/domain"
 )
 
 type NotificationBinding struct {
 	notifier *notifications.NotificationService
+	logger   domain.Logger
 }
 
-func NewNotificationBinding(notifier *notifications.NotificationService) *NotificationBinding {
+func NewNotificationBinding(notifier *notifications.NotificationService, logger domain.Logger) *NotificationBinding {
 	b := &NotificationBinding{
 		notifier: notifier,
+		logger:   logger,
 	}
 
 	// 初始化翻译并注册分类
@@ -25,12 +27,12 @@ func NewNotificationBinding(notifier *notifications.NotificationService) *Notifi
 	// 监听通知响应
 	notifier.OnNotificationResponse(func(result notifications.NotificationResult) {
 		if result.Error != nil {
-			zap.S().Errorf("[Notification] 响应错误: %v", result.Error)
+			b.logger.Errorf("[Notification] 响应错误: %v", result.Error)
 			return
 		}
 
 		resp := result.Response
-		zap.S().Infof("[Notification] 收到交互响应 ID=%s, Action=%s, Text=%s",
+		b.logger.Infof("[Notification] 收到交互响应 ID=%s, Action=%s, Text=%s",
 			resp.ID, resp.ActionIdentifier, resp.UserText)
 
 		// 转发给前端处理
@@ -42,7 +44,7 @@ func NewNotificationBinding(notifier *notifications.NotificationService) *Notifi
 
 // SetLanguage 供前端调用同步语言环境
 func (b *NotificationBinding) SetLanguage(ctx context.Context, lang string) {
-	zap.S().Infof("[I18n] 后端语言切换至: %s", lang)
+	b.logger.Infof("[I18n] 后端语言切换至: %s", lang)
 	service.GetI18n().SetLanguage(lang)
 	b.RefreshCategories() // 核心：重新注册分类以刷新按钮标题
 }
@@ -84,7 +86,7 @@ func (b *NotificationBinding) SendBasic(ctx context.Context, title, body string)
 		body = i18n.T("notif_basic_body")
 	}
 
-	zap.S().Infof("[Notification] 发送基础通知: %s", title)
+	b.logger.Infof("[Notification] 发送基础通知: %s", title)
 	err := b.notifier.SendNotification(notifications.NotificationOptions{
 		ID:    "basic-demo",
 		Title: title,

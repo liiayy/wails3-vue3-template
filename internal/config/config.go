@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/spf13/viper"
-	"go.uber.org/zap"
+	"myapp2/internal/domain"
 )
 
 // AppConfig 代表应用的全部 YAML 配置项（结构化映射）
@@ -74,13 +74,17 @@ window:
 `
 
 // Cfg 全局配置单例（初始化后可在任何地方通过 config.Cfg 访问）
-var Cfg AppConfig
+var (
+	Cfg AppConfig
+	log domain.Logger
+)
 
 // InitConfig 初始化配置中心
 // 1. 定位配置文件存放目录（AppData/appName/）
 // 2. 若不存在则自动生成带注释的默认 YAML
 // 3. 反序列化进 Cfg 结构体
-func InitConfig(appName string) error {
+func InitConfig(logger domain.Logger, appName string) error {
+	log = logger
 	configDir, err := os.UserConfigDir()
 	if err != nil {
 		configDir = "."
@@ -95,7 +99,9 @@ func InitConfig(appName string) error {
 
 	// 首次启动：自动生成默认配置文件
 	if _, err := os.Stat(configFilePath); os.IsNotExist(err) {
-		zap.S().Infof("首次启动，生成默认配置文件: %s", configFilePath)
+		if log != nil {
+			log.Infof("首次启动，生成默认配置文件: %s", configFilePath)
+		}
 		if err := os.WriteFile(configFilePath, []byte(defaultYAML), 0644); err != nil {
 			return fmt.Errorf("写入默认配置失败: %w", err)
 		}
@@ -123,8 +129,10 @@ func InitConfig(appName string) error {
 		return fmt.Errorf("解析配置结构失败: %w", err)
 	}
 
-	zap.S().Infof("配置中心加载成功: %s", viper.ConfigFileUsed())
-	zap.S().Debugf("当前配置: %+v", Cfg)
+	if log != nil {
+		log.Infof("配置中心加载成功: %s", viper.ConfigFileUsed())
+		log.Debugf("当前配置: %+v", Cfg)
+	}
 
 	return nil
 }
@@ -139,10 +147,14 @@ func SaveConfig() error {
 	viper.Set("window.is_maximized", Cfg.Window.IsMaximized)
 
 	if err := viper.WriteConfig(); err != nil {
-		zap.S().Errorf("写入配置文件失败: %v", err)
+		if log != nil {
+			log.Errorf("写入配置文件失败: %v", err)
+		}
 		return err
 	}
-	zap.S().Debugf("配置文件保存成功")
+	if log != nil {
+		log.Debugf("配置文件保存成功")
+	}
 	return nil
 }
 

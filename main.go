@@ -51,7 +51,9 @@ func main() {
 	// 【1. 配置中心 → 日志 → 数据库（严格按顺序初始化）】
 
 	// -- 1.0 加载 YAML 配置文件 (首次启动自动生成默认值) --
-	if err := config.InitConfig(appName); err != nil {
+	// 此时日志系统尚未初始化，我们先给 Config 传入一个基于 zap.S() 的基础 Logger (或者是 nil)
+	// 等 Logger 初始化后再赋值给 Config 也是一种方案，或者 InitConfig 内部判断 nil
+	if err := config.InitConfig(zap.S(), appName); err != nil {
 		log.Fatalf("配置中心初始化失败: %v", err)
 	}
 	cfg := config.Cfg
@@ -62,21 +64,23 @@ func main() {
 	}
 	defer zap.L().Sync()
 
-	zap.S().Infof("应用环境: isDev=%v, version=%s", buildinfo.IsDevMode(), buildinfo.Version)
+	// 获取初始化完毕后的全局 SugaredLogger 传给各层进行 DI
+	appLogger := zap.S()
+	appLogger.Infof("应用环境: isDev=%v, version=%s", buildinfo.IsDevMode(), buildinfo.Version)
 
 	// -- 1.2 初始化 SQLite 数据库及 GORM 对象 --
-	db, err := database.InitDB(appName)
+	db, err := database.InitDB(appName, appLogger)
 	if err != nil {
-		zap.S().Fatalf("核心数据库引擎启动失败，终止此应用: %v", err)
+		appLogger.Fatalf("核心数据库引擎启动失败，终止此应用: %v", err)
 	}
 
-	// -- 1.1 初始化底层数据仓储 --
-	userRepo := repository.NewSqliteUserRepository(db)
-	settingRepo := repository.NewSqliteSettingRepository(db)
+	// -- 1.1 初始化底层数据仓储 (注入 Repo + Logger) --
+	userRepo := repository.NewSqliteUserRepository(db, appLogger)
+	settingRepo := repository.NewSqliteSettingRepository(db, appLogger)
 
-	// -- 1.2 初始化业务逻辑服务层 (注入 Repo) --
-	userSvc := service.NewUserService(userRepo)
-	settingSvc := service.NewSettingService(settingRepo)
+	// -- 1.2 初始化业务逻辑服务层 (注入 Repo + Logger) --
+	userSvc := service.NewUserService(userRepo, appLogger)
+	settingSvc := service.NewSettingService(settingRepo, appLogger)
 
 	// -- 1.3 初始化 Wails 控制器 (暴露给前端 JS 的接口层，注入业务服务) --
 	userBinding := binding.NewUserBinding(userSvc)
@@ -84,7 +88,7 @@ func main() {
 	systemBinding := binding.NewSystemBinding(appName)
 
 	// -- 1.4 初始化主应用生命周期管家 --
-	coreApp := app.NewApp()
+	coreApp := app.NewApp(appLogger)
 	_ = coreApp
 
 	// 【1.5 初始化原生通知服务】
@@ -97,15 +101,15 @@ func main() {
 	if !skipNotification {
 		// 生产环境 或 非 macOS 平台：正常初始化通知系统
 		if buildinfo.IsDevMode() {
-			zap.S().Infof("开发环境 (%s)：正在初始化通知系统...", runtime.GOOS)
+			appLogger.Infof("开发环境 (%s)：正在初始化通知系统...", runtime.GOOS)
 		} else {
-			zap.S().Info("生产环境：正在初始化通知系统...")
+			appLogger.Info("生产环境：正在初始化通知系统...")
 		}
 		notifier = notifications.New()
-		notificationBinding = binding.NewNotificationBinding(notifier)
+		notificationBinding = binding.NewNotificationBinding(notifier, appLogger)
 	} else {
 		// 开发环境 + macOS：跳过通知系统初始化，防止 bundle 崩溃
-		zap.S().Warn("开发环境 (macOS)：跳过通知系统初始化（直接运行二进制文件缺少 Bundle ID）")
+		appLogger.Warn("开发环境 (macOS)：跳过通知系统初始化（直接运行二进制文件缺少 Bundle ID）")
 	}
 
 	// 【2. 构建 Wails 应用实例】
@@ -153,13 +157,13 @@ func main() {
 	defer coreApp.Shutdown(context.Background())
 
 	// 【4. 窗口管理器 & 系统托盘初始化】
-	winManager := manager.NewWindowManager(wailsApp, cfg.Window.Width, cfg.Window.Height, cfg.Window.Title)
+	winManager := manager.NewWindowManager(wailsApp, appLogger, cfg.Window.Width, cfg.Window.Height, cfg.Window.Title)
 	winManager.CreateMainWindow() // 创建主窗口
 	winManager.SetupSystemTray()  // 挂载系统托盘图标和菜单
 	_ = winManager
 
 	// 【5. 阻塞式运行启动】
-	zap.S().Info("Wails主进程启动中...")
+	appLogger.Info("Wails主进程启动中...")
 	err = wailsApp.Run()
 	if err != nil {
 		zap.S().Fatal("运行中崩溃退出: ", err)
