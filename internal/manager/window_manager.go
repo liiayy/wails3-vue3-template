@@ -66,13 +66,17 @@ func (wm *WindowManager) CreateMainWindow() *application.WebviewWindow {
 			}
 		}
 
-		if foundValidScreen {
+		if foundValidScreen && restoreX > -10000 && restoreY > -10000 {
 			initialPos = application.WindowXY
 			winX = restoreX
 			winY = restoreY
 			zap.S().Infof("[WindowManager] 恢复窗口位置: (%d, %d)", winX, winY)
 		} else {
-			zap.S().Warnf("[WindowManager] 检测到保存的坐标 (%d, %d) 已超出当前显示器范围，将重置居中", restoreX, restoreY)
+			if !foundValidScreen {
+				zap.S().Warnf("[WindowManager] 检测到保存的坐标 (%d, %d) 已超出当前显示器范围，将重置居中", restoreX, restoreY)
+			} else {
+				zap.S().Warnf("[WindowManager] 检测到保存的坐标为 Windows 最小化状态 (-32000)，将重置居中以防止窗口丢失")
+			}
 			// initialPos 保持 WindowCentered 即可
 		}
 	}
@@ -110,6 +114,11 @@ func (wm *WindowManager) CreateMainWindow() *application.WebviewWindow {
 	// 【新增】监听窗口位移事件，保存坐标
 	wm.mainWindow.OnWindowEvent(events.Common.WindowDidMove, func(ev *application.WindowEvent) {
 		x, y := wm.mainWindow.Position()
+		// 关键过滤：Windows 最小化时坐标会变为 (-32000, -32000)，绝对不能保存这个状态
+		if x < -10000 || y < -10000 {
+			zap.S().Debugf("[WindowManager] 窗口移动事件: 忽略最小化状态坐标 (%d, %d)", x, y)
+			return
+		}
 		zap.S().Debugf("[WindowManager] 窗口移动，新坐标: (%d, %d)", x, y)
 		config.UpdateWindowPosition(x, y)
 	})
