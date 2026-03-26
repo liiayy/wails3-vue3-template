@@ -137,7 +137,9 @@ func main() {
 			UniqueID: "com.myapp2.app",
 			OnSecondInstanceLaunch: func(data application.SecondInstanceData) {
 				if win, ok := application.Get().Window.GetByName("main"); ok {
-					win.Focus()
+					win.Show()       // 确保可见
+					win.UnMinimise() // 确保从任务栏还原（如果处于最小化状态）
+					win.Focus()      // 置顶并获取焦点
 				}
 			},
 		},

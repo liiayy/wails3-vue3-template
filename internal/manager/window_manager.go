@@ -174,9 +174,9 @@ func (wm *WindowManager) CreateAboutWindow() *application.WebviewWindow {
 	return aboutWin
 }
 
-// ShowMainWindow 把主窗口调到前景
 func (wm *WindowManager) ShowMainWindow() {
 	if wm.mainWindow != nil {
+		wm.mainWindow.UnMinimise() // 解决托盘唤醒可能存在的最小化状态问题
 		wm.mainWindow.Show()
 		wm.mainWindow.Focus()
 	}
