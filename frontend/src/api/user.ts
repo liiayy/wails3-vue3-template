@@ -1,26 +1,19 @@
 import { UserBinding } from '#/myapp2/internal/binding'
 import type { User, UserListResult } from '#/myapp2/internal/domain'
+import { handleResult } from './base'
 
 export type { User, UserListResult }
 
 /** 注册新用户 */
-export async function registerUser(name: string, email: string): Promise<User | null> {
-  try {
-    return await UserBinding.Register(name, email)
-  } catch (err) {
-    console.error('[API] registerUser failed:', err)
-    throw err
-  }
+export async function registerUser(name: string, email: string): Promise<User> {
+  const res = await UserBinding.Register(name, email)
+  return handleResult<User>(res)
 }
 
 /** 查询单个用户 */
-export async function fetchUserProfile(id: number): Promise<User | null> {
-  try {
-    return await UserBinding.GetProfile(id)
-  } catch (err) {
-    console.error('[API] fetchUserProfile failed:', err)
-    throw err
-  }
+export async function fetchUserProfile(id: number): Promise<User> {
+  const res = await UserBinding.GetProfile(id)
+  return handleResult<User>(res)
 }
 
 /** 分页查询用户列表 */
@@ -29,44 +22,28 @@ export async function listUsers(
   page: number,
   pageSize: number,
 ): Promise<{ items: User[]; total: number }> {
-  try {
-    const res = await UserBinding.List(keyword, page, pageSize)
-    return {
-      items: (res?.items || []).filter((u): u is User => u !== null),
-      total: res?.total || 0,
-    }
-  } catch (err) {
-    console.error('[API] listUsers failed:', err)
-    throw err
+  const res = await UserBinding.List(keyword, page, pageSize)
+  const data = handleResult<UserListResult>(res)
+  return {
+    items: data.items.filter((u): u is User => u !== null),
+    total: data.total,
   }
 }
 
 /** 更新用户 */
-export async function updateUser(id: number, name: string, email: string): Promise<User | null> {
-  try {
-    return await UserBinding.Update(id, name, email)
-  } catch (err) {
-    console.error('[API] updateUser failed:', err)
-    throw err
-  }
+export async function updateUser(id: number, name: string, email: string): Promise<User> {
+  const res = await UserBinding.Update(id, name, email)
+  return handleResult<User>(res)
 }
 
 /** 删除用户 */
 export async function deleteUser(id: number): Promise<void> {
-  try {
-    await UserBinding.Delete(id)
-  } catch (err) {
-    console.error('[API] deleteUser failed:', err)
-    throw err
-  }
+  const res = await UserBinding.Delete(id)
+  handleResult<void>(res)
 }
 
 /** 导出所有用户 */
 export async function exportUsers(): Promise<void> {
-  try {
-    await UserBinding.Export()
-  } catch (err) {
-    console.error('[API] exportUsers failed:', err)
-    throw err
-  }
+  const res = await UserBinding.Export()
+  handleResult<void>(res)
 }

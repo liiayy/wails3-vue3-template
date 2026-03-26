@@ -11,6 +11,7 @@ import {
   InfoCircleIcon,
 } from 'tdesign-icons-vue-next'
 import { MessagePlugin } from 'tdesign-vue-next'
+import { handleResult } from '@/api/base'
 
 import { useI18n } from 'vue-i18n'
 
@@ -43,29 +44,32 @@ onDeactivated(() => {
 
 async function sendBasic() {
   try {
-    await NotificationBinding.SendBasic(t('demo.sendBasicTitle'), t('demo.sendBasicBody'))
+    const res = await NotificationBinding.SendBasic(t('demo.sendBasicTitle'), t('demo.sendBasicBody'))
+    handleResult(res)
   } catch (err) {
-    MessagePlugin.error(`${t('common.failed')}: ${err}`)
+    // 报错已由 handleResult 处理
   }
 }
 
 async function sendSubtitle() {
   try {
-    await NotificationBinding.SendWithSubtitle(
+    const res = await NotificationBinding.SendWithSubtitle(
       t('demo.sendSubtitleTitle'),
       t('demo.sendSubtitleSub'),
       t('demo.sendSubtitleBody')
     )
+    handleResult(res)
   } catch (err) {
-    MessagePlugin.error(`${t('common.failed')}: ${err}`)
+    // 报错已由 handleResult 处理
   }
 }
 
 async function sendInteractive() {
   try {
-    await NotificationBinding.SendInteractive(t('demo.sendInteractiveTitle'), t('demo.interactiveBody'))
+    const res = await NotificationBinding.SendInteractive(t('demo.sendInteractiveTitle'), t('demo.interactiveBody'))
+    handleResult(res)
   } catch (err) {
-    MessagePlugin.error(`${t('common.failed')}: ${err}`)
+    // 报错已由 handleResult 处理
   }
 }
 </script>

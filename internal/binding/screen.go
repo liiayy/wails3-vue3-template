@@ -30,7 +30,7 @@ type ScreenInfo struct {
 }
 
 // GetAllScreens 获取所有显示器详细信息
-func (s *ScreenService) GetAllScreens(ctx context.Context) []ScreenInfo {
+func (s *ScreenService) GetAllScreens(ctx context.Context) *Result {
 	screens := s.app.Screen.GetAll()
 	var result []ScreenInfo
 
@@ -50,13 +50,13 @@ func (s *ScreenService) GetAllScreens(ctx context.Context) []ScreenInfo {
 			IsPrimary:   screen.IsPrimary,
 		})
 	}
-	return result
+	return Success(result)
 }
 
 // GetPrimaryScreen 获取主显示器
-func (s *ScreenService) GetPrimaryScreen(ctx context.Context) ScreenInfo {
+func (s *ScreenService) GetPrimaryScreen(ctx context.Context) *Result {
 	screen := s.app.Screen.GetPrimary()
-	return ScreenInfo{
+	info := ScreenInfo{
 		ID:          screen.ID,
 		Name:        screen.Name,
 		X:           screen.Bounds.X,
@@ -70,4 +70,5 @@ func (s *ScreenService) GetPrimaryScreen(ctx context.Context) ScreenInfo {
 		ScaleFactor: screen.ScaleFactor,
 		IsPrimary:   screen.IsPrimary,
 	}
+	return Success(info)
 }

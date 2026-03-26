@@ -8,6 +8,7 @@ import {
   RefreshIcon
 } from 'tdesign-icons-vue-next'
 import { MessagePlugin } from 'tdesign-vue-next'
+import { handleResult } from '@/api/base'
 
 const screens = ref<any[]>([])
 const loading = ref(false)
@@ -24,10 +25,11 @@ const updateContainerSize = () => {
 const fetchScreens = async () => {
   loading.value = true
   try {
-    const data = await ScreenService.GetAllScreens()
-    screens.value = data
+    const res = await ScreenService.GetAllScreens()
+    screens.value = handleResult<any[]>(res, true) || []
   } catch (err) {
-    MessagePlugin.error(`获取屏幕信息失败: ${err}`)
+    // 静默失败，已有 handleResult 弹出或忽略
+    console.error(err)
   } finally {
     loading.value = false
   }

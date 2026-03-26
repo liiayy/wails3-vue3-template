@@ -5,6 +5,7 @@ import {
   SystemBinding,
 } from '#/myapp2/internal/binding'
 import { Events } from '@wailsio/runtime'
+import { handleResult } from '@/api/base'
 
 interface SettingsState {
   theme: 'light' | 'dark' | 'auto'
@@ -32,22 +33,21 @@ export const useSettingsStore = defineStore('settings', {
      * 并开启 Wails 事件监听，实现多窗口实时同步
      */
     async init() {
-      try {
-        const [remoteSettings, autostart] = await Promise.all([
-          SettingBinding.GetAll(),
-          SystemBinding.IsAutostartEnabled(),
-        ])
+      const remoteRes = await SettingBinding.GetAll()
+      const autostartRes = await SystemBinding.IsAutostartEnabled()
 
-        if (remoteSettings) {
-          if (remoteSettings.theme) this.theme = remoteSettings.theme as any
-          if (remoteSettings.language) this.language = remoteSettings.language
-          if (remoteSettings.isSidebarCollapsed)
-            this.isSidebarCollapsed = remoteSettings.isSidebarCollapsed === 'true'
-          if (remoteSettings.zoom)
-            this.zoom = Number(remoteSettings.zoom) || 100
-        }
+      // 静默获取，因为初始化不想弹窗
+      const remoteSettings = handleResult<Record<string, string>>(remoteRes, true) || {}
+      const autostart = handleResult<boolean>(autostartRes, true)
 
-        this.isAutostart = autostart
+      if (remoteSettings.theme) this.theme = remoteSettings.theme as any
+      if (remoteSettings.language) this.language = remoteSettings.language
+      if (remoteSettings.isSidebarCollapsed)
+        this.isSidebarCollapsed = remoteSettings.isSidebarCollapsed === 'true'
+      if (remoteSettings.zoom)
+        this.zoom = Number(remoteSettings.zoom) || 100
+
+      this.isAutostart = autostart
 
         // 注册跨窗口同步监听器
         Events.On(SYNC_EVENT, (ev: any) => {
@@ -55,31 +55,27 @@ export const useSettingsStore = defineStore('settings', {
           if ((this.$state as any)[key] === value) return
           ;(this.$state as any)[key] = value
         })
-      } catch (err) {
-        console.error('[Settings] 初始化失败:', err)
-      }
     },
 
     async updateSetting<K extends keyof SettingsState>(key: K, value: SettingsState[K]) {
       this.$state[key] = value
 
-      try {
-        if (key === 'isAutostart') {
-          await SystemBinding.SetAutostart(value as boolean)
-        } else {
-          await SettingBinding.Save(key, String(value))
-        }
-
-        if (key === 'language') {
-          // 同步给后端的国际化服务 (逻辑同步，非 UI)
-          await NotificationBinding.SetLanguage(value as string)
-        }
-
-        // 广播变更
-        Events.Emit(SYNC_EVENT, { key, value })
-      } catch (err) {
-        console.error(`[Settings] 同步项目 ${key} 失败:`, err)
+      if (key === 'isAutostart') {
+        const res = await SystemBinding.SetAutostart(value as boolean)
+        handleResult(res)
+      } else {
+        const res = await SettingBinding.Save(key, String(value))
+        handleResult(res)
       }
+
+      if (key === 'language') {
+        // 同步给后端的国际化服务 (逻辑同步，非 UI)
+        const res = await NotificationBinding.SetLanguage(value as string)
+        handleResult(res)
+      }
+
+      // 广播变更
+      Events.Emit(SYNC_EVENT, { key, value })
     },
 
   },

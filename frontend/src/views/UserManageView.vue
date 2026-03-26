@@ -32,10 +32,11 @@ async function fetchList() {
   tableLoading.value = true
   try {
     const res = await listUsers(debouncedKeyword.value, pagination.current, pagination.pageSize)
-    tableData.value = res?.items || []
-    pagination.total = res?.total || 0
+    tableData.value = res.items
+    pagination.total = res.total
   } catch (err) {
-    MessagePlugin.error(t('users.loadFailed') + ': ' + String(err))
+    // handleResult 已自动弹出报错，此处仅处理本地状态（如关闭加载）
+    console.error(err)
   } finally {
     tableLoading.value = false
   }
@@ -113,7 +114,7 @@ function handleDelete(row: User) {
         MessagePlugin.success(t('users.deleteSuccess'))
         fetchList()
       } catch (err) {
-        MessagePlugin.error(t('users.deleteFailed') + ': ' + String(err))
+        // handleResult 已处理报错
       }
       confirmDialog.destroy()
     },

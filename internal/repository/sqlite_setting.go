@@ -23,7 +23,7 @@ func (r *SqliteSettingRepository) Get(ctx context.Context, key string) (string, 
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return "", nil // 未设置项不算由于驱动错，返回空
 		}
-		return "", err
+		return "", domain.ErrInternal("获取设置项失败", err)
 	}
 	return s.Value, nil
 }
@@ -31,13 +31,16 @@ func (r *SqliteSettingRepository) Get(ctx context.Context, key string) (string, 
 func (r *SqliteSettingRepository) Set(ctx context.Context, key, value string) error {
 	s := domain.Setting{Key: key, Value: value}
 	// Upsert: 若存在则更新，若不存在则新增
-	return r.db.WithContext(ctx).Save(&s).Error
+	if err := r.db.WithContext(ctx).Save(&s).Error; err != nil {
+		return domain.ErrInternal("保存设置项失败", err)
+	}
+	return nil
 }
 
 func (r *SqliteSettingRepository) GetAll(ctx context.Context) (map[string]string, error) {
 	var settings []domain.Setting
 	if err := r.db.WithContext(ctx).Find(&settings).Error; err != nil {
-		return nil, err
+		return nil, domain.ErrInternal("获取全量设置项失败", err)
 	}
 
 	result := make(map[string]string)

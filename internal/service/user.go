@@ -3,8 +3,6 @@ package service
 import (
 	"context"
 	"encoding/json"
-	"errors"
-	"fmt"
 	"os"
 
 	"myapp2/internal/domain"
@@ -23,15 +21,15 @@ func NewUserService(repo domain.UserRepository, logger domain.Logger) *UserServi
 // RegisterUser 新增用户
 func (s *UserService) RegisterUser(ctx context.Context, name, email string) (*domain.User, error) {
 	if name == "" {
-		return nil, errors.New("用户名不能为空")
+		return nil, domain.ErrValidation("用户名不能为空")
 	}
 	if email == "" {
-		return nil, errors.New("邮箱不能为空")
+		return nil, domain.ErrValidation("邮箱不能为空")
 	}
 	user := &domain.User{Name: name, Email: email}
 	err := s.repo.Save(ctx, user)
 	if err != nil {
-		return nil, fmt.Errorf("注册入库失败: %w", err)
+		return nil, domain.ErrInternal("注册入库失败", err)
 	}
 	return user, nil
 }
@@ -54,7 +52,7 @@ func (s *UserService) UpdateUser(ctx context.Context, id int, name, email string
 		user.Email = email
 	}
 	if err := s.repo.Save(ctx, user); err != nil {
-		return nil, fmt.Errorf("更新用户失败: %w", err)
+		return nil, domain.ErrInternal("更新用户失败", err)
 	}
 	return user, nil
 }
@@ -89,8 +87,11 @@ func (s *UserService) ExportToJSON(ctx context.Context, path string) error {
 
 	data, err := json.MarshalIndent(users, "", "  ")
 	if err != nil {
-		return err
+		return domain.ErrInternal("JSON 序列化失败", err)
 	}
 
-	return os.WriteFile(path, data, 0644)
+	if err := os.WriteFile(path, data, 0644); err != nil {
+		return domain.ErrInternal("写入文件失败", err)
+	}
+	return nil
 }

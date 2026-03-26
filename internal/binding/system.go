@@ -17,11 +17,16 @@ func NewSystemBinding(appName string) *SystemBinding {
 }
 
 // SetAutostart 设置开机自启动
-func (b *SystemBinding) SetAutostart(ctx context.Context, enabled bool) error {
-	return system.SetAutostart(b.appName, enabled)
+func (b *SystemBinding) SetAutostart(ctx context.Context, enabled bool) *Result {
+	err := system.SetAutostart(b.appName, enabled)
+	return Failure(err)
 }
 
 // IsAutostartEnabled 检查当前是否已开启自启动
-func (b *SystemBinding) IsAutostartEnabled(ctx context.Context) (bool, error) {
-	return system.IsAutostartEnabled(b.appName)
+func (b *SystemBinding) IsAutostartEnabled(ctx context.Context) *Result {
+	enabled, err := system.IsAutostartEnabled(b.appName)
+	if err != nil {
+		return Failure(err)
+	}
+	return Success(enabled)
 }

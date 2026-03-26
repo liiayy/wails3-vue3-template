@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"gorm.io/gorm"
 	"myapp2/internal/domain"
@@ -26,10 +27,10 @@ func (r *SqliteUserRepository) FindByID(ctx context.Context, id int) (*domain.Us
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			r.logger.Warnf("数据库查询 User 失败：未找到 ID=%d 的用户", id)
-			return nil, errors.New("user not found")
+			return nil, domain.ErrNotFound(fmt.Sprintf("未找到 ID=%d 的用户", id), result.Error)
 		}
 		r.logger.Errorf("查询数据库遇见系统错: %v", result.Error)
-		return nil, result.Error
+		return nil, domain.ErrInternal("查询数据库遇见系统错", result.Error)
 	}
 	return &user, nil
 }
@@ -39,7 +40,7 @@ func (r *SqliteUserRepository) Save(ctx context.Context, user *domain.User) erro
 	result := r.db.WithContext(ctx).Save(user)
 	if result.Error != nil {
 		r.logger.Errorf("保存数据写入 SQLite 失败: %v", result.Error)
-		return result.Error
+		return domain.ErrInternal("保存数据写入 SQLite 失败", result.Error)
 	}
 	return nil
 }
@@ -49,10 +50,10 @@ func (r *SqliteUserRepository) Delete(ctx context.Context, id int) error {
 	result := r.db.WithContext(ctx).Delete(&domain.User{}, id)
 	if result.Error != nil {
 		r.logger.Errorf("删除用户失败 ID=%d: %v", id, result.Error)
-		return result.Error
+		return domain.ErrInternal("删除用户失败", result.Error)
 	}
 	if result.RowsAffected == 0 {
-		return errors.New("user not found")
+		return domain.ErrNotFound(fmt.Sprintf("未找到 ID=%d 的用户", id), nil)
 	}
 	return nil
 }
