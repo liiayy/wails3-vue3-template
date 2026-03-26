@@ -91,7 +91,7 @@ func (wm *WindowManager) CreateMainWindow() *application.WebviewWindow {
 		InitialPosition:  initialPos,
 		X:                winX,
 		Y:                winY,
-		BackgroundColour: application.NewRGB(27, 38, 54),
+		BackgroundColour: application.NewRGB(254, 255, 255),
 		URL:              "/",
 		EnableFileDrop:   true,
 		Frameless:        true,
