@@ -129,43 +129,55 @@ const { execute: handleExport, loading: exportLoading } = useAsyncAction(async (
 </script>
 
 <template>
-  <div class="space-y-5">
-    <!-- 页面标题 + 操作栏 (栅格化) -->
-    <t-row justify="space-between" align="center" :gutter="[16, 16]">
-      <t-col :xs="12" :sm="4" :md="3">
-        <h2 class="text-xl font-bold text-[var(--td-text-color-primary)]">{{ $t('users.title') }}</h2>
-      </t-col>
+  <div class="user-manage-container p-2 space-y-6">
+    <!-- 1. 顶部标题 & 全局操作 -->
+    <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-[var(--td-text-color-primary)] tracking-tight">
+          {{ $t('users.title') }}
+        </h1>
+        <p class="text-[var(--td-text-color-secondary)] text-sm font-normal mt-1">
+           管理系统中的所有用户信息，支持搜索、新增、编辑及数据导出
+        </p>
+      </div>
+      <div class="flex items-center gap-2">
+        <t-button
+          variant="outline"
+          theme="default"
+          :loading="exportLoading"
+          @click="handleExport"
+        >
+          <template #icon><DownloadIcon /></template>
+          {{ $t('users.exportBtn') }}
+        </t-button>
+        <t-button theme="primary" @click="openCreateDialog">
+          <template #icon><AddIcon /></template>
+          {{ $t('users.addUser') }}
+        </t-button>
+      </div>
+    </section>
 
-      <t-col :xs="12" :sm="8" :md="9">
-        <t-row :gutter="[12, 12]" justify="end">
-          <t-col :span="true">
-            <t-input
-              v-model="keyword"
-              :placeholder="$t('users.searchPlaceholder')"
-              clearable
-              style="width: 240px"
-            >
-              <template #prefixIcon><SearchIcon /></template>
-            </t-input>
-          </t-col>
-          <t-col :span="true">
-            <t-button variant="outline" theme="default" :loading="exportLoading" @click="handleExport">
-              <template #icon><DownloadIcon /></template>
-              {{ $t('users.exportBtn') }}
-            </t-button>
-          </t-col>
-          <t-col :span="true">
-            <t-button theme="primary" @click="openCreateDialog">
-              <template #icon><AddIcon /></template>
-              {{ $t('users.addUser') }}
-            </t-button>
-          </t-col>
-        </t-row>
-      </t-col>
-    </t-row>
+    <!-- 2. 核心内容区 (过滤 + 表格) -->
+    <t-card :bordered="false" class="shadow-md rounded-xl overflow-hidden">
+      <!-- 过滤栏 -->
+      <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <div class="flex items-center gap-4">
+          <t-input
+            v-model="keyword"
+            :placeholder="$t('users.searchPlaceholder')"
+            clearable
+            style="width: 280px"
+          >
+            <template #prefixIcon><SearchIcon /></template>
+          </t-input>
+        </div>
+        
+        <div class="text-[var(--td-text-color-placeholder)] text-sm">
+          共 <span class="text-[var(--td-brand-color)] font-medium">{{ pagination.total }}</span> 个用户
+        </div>
+      </div>
 
-    <!-- 数据表格 -->
-    <t-card :bordered="false" class="shadow-sm">
+      <!-- 表格 -->
       <t-table
         :data="tableData"
         :columns="columns"
@@ -173,27 +185,53 @@ const { execute: handleExport, loading: exportLoading } = useAsyncAction(async (
         row-key="id"
         stripe
         hover
+        vertical-align="middle"
         :pagination="pagination"
         @page-change="onPageChange"
-        size="small"
+        class="user-table"
       >
+        <!-- 头像/名称列增强 -->
+        <template #name="{ row }">
+          <div class="flex items-center gap-3">
+            <t-avatar size="small" :hide-on-load-failed="false">
+              {{ row.name.charAt(0).toUpperCase() }}
+            </t-avatar>
+            <span class="font-medium text-[var(--td-text-color-primary)]">{{ row.name }}</span>
+          </div>
+        </template>
+
+        <!-- 邮箱列 -->
+        <template #email="{ row }">
+          <span class="text-[var(--td-text-color-secondary)]">{{ row.email }}</span>
+        </template>
+
         <!-- 操作列 -->
         <template #operation="{ row }">
-          <div class="flex items-center justify-center gap-2">
-            <t-button variant="text" theme="primary" size="small" @click="openEditDialog(row)">
-              <template #icon><EditIcon /></template>
-              {{ $t('common.edit') }}
-            </t-button>
-            <t-button variant="text" theme="danger" size="small" @click="handleDelete(row)">
-              <template #icon><DeleteIcon /></template>
-              {{ $t('common.delete') }}
-            </t-button>
+          <div class="flex items-center gap-1">
+            <t-tooltip content="编辑用户信息">
+              <t-button variant="text" theme="primary" shape="square" @click="openEditDialog(row)">
+                <EditIcon />
+              </t-button>
+            </t-tooltip>
+            <t-tooltip content="删除该用户">
+              <t-button variant="text" theme="danger" shape="square" @click="handleDelete(row)">
+                <DeleteIcon />
+              </t-button>
+            </t-tooltip>
+          </div>
+        </template>
+
+        <!-- 空状态 -->
+        <template #empty>
+          <div class="flex flex-col items-center justify-center py-12 opacity-50">
+            <div class="text-4xl mb-2">🔍</div>
+            <p>暂无符合搜索条件的用户</p>
           </div>
         </template>
       </t-table>
     </t-card>
 
-    <!-- 新增/编辑弹窗 -->
+    <!-- 3. 新增/编辑弹窗 -->
     <t-dialog
       v-model:visible="dialogVisible"
       :header="isEdit ? $t('users.editUser') : $t('users.addUser')"
@@ -204,16 +242,52 @@ const { execute: handleExport, loading: exportLoading } = useAsyncAction(async (
       }"
       :cancel-btn="$t('common.cancel')"
       :on-confirm="() => doSubmit()"
-      width="480px"
+      width="520px"
+      placement="center"
+      destroy-on-close
     >
-      <t-form :data="formData" label-align="top" class="space-y-4">
-        <t-form-item :label="$t('users.colName')" name="name">
-          <t-input v-model="formData.name" :placeholder="$t('users.namePlaceholder')" clearable />
-        </t-form-item>
-        <t-form-item :label="$t('users.colEmail')" name="email">
-          <t-input v-model="formData.email" :placeholder="$t('users.emailPlaceholder')" clearable />
-        </t-form-item>
-      </t-form>
+      <div class="pt-2">
+        <t-form :data="formData" label-align="top" colon>
+          <t-form-item :label="$t('users.colName')" name="name" help="支持中英文，不可超过32个字符">
+            <t-input 
+              v-model="formData.name" 
+              :placeholder="$t('users.namePlaceholder')" 
+              clearable 
+              autofocus
+            />
+          </t-form-item>
+          <t-form-item :label="$t('users.colEmail')" name="email" help="用于接收系统通知和找回密码">
+            <t-input v-model="formData.email" :placeholder="$t('users.emailPlaceholder')" clearable />
+          </t-form-item>
+        </t-form>
+      </div>
     </t-dialog>
   </div>
 </template>
+
+<style scoped>
+.user-manage-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.user-table :deep(.t-table__header tr) {
+  background-color: var(--td-bg-color-secondarycontainer);
+}
+
+.user-table :deep(.t-table__content) {
+  border-radius: 8px;
+}
+
+/* 自定义卡片样式 */
+:deep(.t-card) {
+  padding: 24px;
+}
+
+/* 响应式调整 */
+@media (max-width: 640px) {
+  .user-manage-container {
+    padding: 12px;
+  }
+}
+</style>

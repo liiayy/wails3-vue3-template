@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useSettingsStore } from '@/stores/settings'
 import { useI18n } from 'vue-i18n'
@@ -68,6 +68,27 @@ function onMenuChange(value: string) {
 function toggleSidebar() {
   settings.updateSetting('isSidebarCollapsed', !settings.isSidebarCollapsed)
 }
+
+// 底部状态栏时间
+const currentTime = ref('')
+let timer: number | null = null
+
+const updateTime = () => {
+  const now = new Date()
+  const hours = String(now.getHours()).padStart(2, '0')
+  const minutes = String(now.getMinutes()).padStart(2, '0')
+  const seconds = String(now.getSeconds()).padStart(2, '0')
+  currentTime.value = `${hours}:${minutes}:${seconds}`
+}
+
+onMounted(() => {
+  updateTime()
+  timer = window.setInterval(updateTime, 1000)
+})
+
+onUnmounted(() => {
+  if (timer) clearInterval(timer)
+})
 </script>
 
 <template>
@@ -176,6 +197,30 @@ function toggleSidebar() {
           </Transition>
         </router-view>
       </main>
+
+      <!-- ========== 底部状态栏 ========== -->
+      <footer
+        class="h-6 flex items-center justify-between px-3 shrink-0 border-t border-[var(--td-border-level-1-color)] bg-[var(--td-bg-color-container)] text-[11px] text-[var(--td-text-color-secondary)] uppercase tracking-wider"
+      >
+        <div class="flex items-center gap-3">
+          <span class="flex items-center gap-1.5">
+            <div
+              class="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_4px_rgba(34,197,94,0.6)]"
+            ></div>
+            Connected
+          </span>
+          <span class="opacity-40">|</span>
+          <span>Ready</span>
+        </div>
+
+        <div class="flex-1 flex justify-center font-medium">MyApp2 v1.0.0</div>
+
+        <div class="flex items-center gap-3">
+          <span>UTF-8</span>
+          <span class="opacity-40">|</span>
+          <span class="font-mono tabular-nums">{{ currentTime }}</span>
+        </div>
+      </footer>
     </div>
   </div>
 </template>
@@ -192,7 +237,7 @@ function toggleSidebar() {
 }
 .fade-leave-to {
   opacity: 0;
-  transform: scale(1.01);
+  transform: scale(1);
 }
 
 /* 侧边栏菜单样式微调 */
