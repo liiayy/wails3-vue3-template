@@ -1,4 +1,4 @@
-# MyApp2 - Wails 3 企业级桌面应用模板
+# wails3-vue3-template - Wails 3 企业级桌面应用模板
 
 <div align="center">
 
@@ -11,7 +11,7 @@
 [![Vue 版本](https://img.shields.io/badge/Vue-3.5+-4FC08D?logo=vue.js)](https://vuejs.org)
 [![许可证](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-[功能特性](#功能特性) • [快速开始](#快速开始) • [架构设计](#架构设计) • [文档](#文档)
+[功能特性](#功能特性) • [截图展示](#截图展示) • [快速开始](#快速开始) • [架构设计](#架构设计) • [文档](#文档)
 
 </div>
 
@@ -19,7 +19,7 @@
 
 ## 项目简介
 
-MyApp2 是一个全面的桌面应用程序模板，展示了构建跨平台桌面应用的 **Wails v3 最佳实践**。它结合了 Go 强大的后端能力和 Vue 3 现代的前端生态系统，为企业级应用提供了坚实的基础。
+wails3-vue3-template 是一个全面的桌面应用程序模板，展示了构建跨平台桌面应用的 **Wails v3 最佳实践**。它结合了 Go 强大的后端能力和 Vue 3 现代的前端生态系统，为企业级应用提供了坚实的基础。
 
 ### 为什么选择这个项目？
 
@@ -30,6 +30,45 @@ MyApp2 是一个全面的桌面应用程序模板，展示了构建跨平台桌�
 - 🌓 **主题系统**：浅色/深色/自动主题，与系统偏好同步
 - 💾 **持久化**：SQLite + GORM 自动迁移
 - 📦 **独立分发**：单二进制文件，内嵌所有资源
+
+---
+
+## 截图展示
+
+<table>
+  <tr>
+    <td align="center"><b>首页</b></td>
+    <td align="center"><b>主题模式</b></td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/首页.png" alt="首页" width="450"/></td>
+    <td><img src="docs/images/主题模式.png" alt="主题模式" width="450"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>配置中心</b></td>
+    <td align="center"><b>文件操作</b></td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/配置中心.png" alt="配置中心" width="450"/></td>
+    <td><img src="docs/images/文件操作.png" alt="文件操作" width="450"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>剪切板操作</b></td>
+    <td align="center"><b>原生拖拽</b></td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/剪切板操作.png" alt="剪切板操作" width="450"/></td>
+    <td><img src="docs/images/原生拖拽.png" alt="原生拖拽" width="450"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>原生通知</b></td>
+    <td align="center"><b>多窗口状态共享</b></td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/原生通知.png" alt="原生通知" width="450"/></td>
+    <td><img src="docs/images/多窗口状态共享.gif" alt="多窗口状态共享" width="450"/></td>
+  </tr>
+</table>
 
 ---
 
@@ -92,8 +131,8 @@ MyApp2 是一个全面的桌面应用程序模板，展示了构建跨平台桌�
 
 ```bash
 # 克隆仓库
-git clone https://github.com/yourusername/myapp2.git
-cd myapp2
+git clone https://gitee.com/liiayy/wails3-vue3-template.git
+cd wails3-vue3-template
 
 # 安装前端依赖
 cd frontend
@@ -387,6 +426,6 @@ wails3 generate icons                     # 生成应用图标
 
 **使用 Wails v3 构建 ❤️**
 
-[报告问题](https://github.com/yourusername/myapp2/issues) · [功能建议](https://github.com/yourusername/myapp2/issues)
+[报告问题](https://gitee.com/liiayy/wails3-vue3-template/issues) · [功能建议](https://gitee.com/liiayy/wails3-vue3-template/issues)
 
 </div>
