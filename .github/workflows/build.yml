@@ -62,7 +62,7 @@ jobs:
             pkg-config
 
       - name: Install Wails v3 CLI
-        run: go install github.com/wailsapp/wails/v3/cmd/wails@latest
+        run: go install github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-alpha.74
 
       # === 构建（所有平台统一使用根 Taskfile 的 build:prod）===
       - name: Build
