@@ -12,6 +12,9 @@ export default defineConfig(({ mode }) => {
   const isDev = mode === 'development'
 
   return {
+    server: {
+      host: '127.0.0.1',
+    },
     plugins: [
       vue(),
       vueJsx(),
@@ -31,6 +34,9 @@ export default defineConfig(({ mode }) => {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
         '#': fileURLToPath(new URL('./bindings', import.meta.url)),
       },
+    },
+    build: {
+      target:['chrome96', 'edge96', 'firefox95',],
     },
   }
 })
