@@ -6,6 +6,9 @@ on:
       - 'v*'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     strategy:
@@ -71,7 +74,7 @@ jobs:
           echo "C:\Program Files (x86)\NSIS\Bin" | Out-File -FilePath $env:GITHUB_PATH -Append
 
       - name: Install Wails v3 CLI
-        run: go install github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-alpha.74
+        run: go install github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-alpha.94
 
       # === 构建（所有平台统一使用根 Taskfile 的 build:prod）===
       - name: Build
@@ -93,7 +96,7 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
-          task darwin:package APP_VERSION=$VERSION
+          task package:prod APP_VERSION=$VERSION
           cd bin
           zip -r "myapp2-${VERSION}-macOS.zip" "myapp2.app"
 
@@ -101,7 +104,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
-          task linux:package APP_VERSION=$VERSION
+          task package:prod APP_VERSION=$VERSION
 
       # === 上传产物 ===
       - name: Upload Artifacts (Windows)
