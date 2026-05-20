@@ -6,7 +6,7 @@
 
 **基于 Wails v3 构建的生产级、企业级桌面应用模板**
 
-[![Wails 版本](https://img.shields.io/badge/Wails-v3.0.0--alpha.74-blue)](https://wails.io)
+[![Wails 版本](https://img.shields.io/badge/Wails-v3.0.0--alpha.94-blue)](https://wails.io)
 [![Go 版本](https://img.shields.io/badge/Go-1.25+-00ADD8?logo=go)](https://go.dev)
 [![Vue 版本](https://img.shields.io/badge/Vue-3.5+-4FC08D?logo=vue.js)](https://vuejs.org)
 [![许可证](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)

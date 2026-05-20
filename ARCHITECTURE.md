@@ -6,21 +6,21 @@
 
 ## 一、技术栈一览
 
-| 层面 | 技术 | 用途 |
-|---|---|---|
-| 后端运行时 | Go 1.25+ | 核心业务逻辑与系统调用 |
-| 桌面框架 | Wails v3 (alpha.74) | 将 Go 后端与 Webview 前端合二为一 |
-| 前端框架 | Vue 3 (Composition API) | 界面构建 |
-| 国际化语言 | Vue I18n 11 | 全局多语言方案 |
-| 构建工具 | Vite 8 | 前端热重载与打包 |
-| UI 组件库 | TDesign Vue Next | 企业级 UI 组件 |
-| CSS 引擎 | Tailwind CSS 4 | 原子化样式 |
-| 状态管理 | Pinia 3 | 响应式状态与持久化 |
-| 路由 | Vue Router 5 (Hash 模式) | 多窗口路由支持 |
-| 数据库 | SQLite (via GORM) | 本地数据持久化 |
-| 日志引擎 | Zap + Lumberjack | 结构化日志与滚动切割 |
-| 配置中心 | Viper | YAML 配置文件读写 |
-| 任务自动化 | Taskfile v3 | 跨平台构建任务编排 |
+| 层面 | 技术                          | 用途 |
+|---|-----------------------------|---|
+| 后端运行时 | Go 1.25+                    | 核心业务逻辑与系统调用 |
+| 桌面框架 | Wails v3 (alpha.94)         | 将 Go 后端与 Webview 前端合二为一 |
+| 前端框架 | Vue 3 (Composition API)     | 界面构建 |
+| 国际化语言 | Vue I18n 11                 | 全局多语言方案 |
+| 构建工具 | Vite 8                      | 前端热重载与打包 |
+| UI 组件库 | TDesign Vue Next            | 企业级 UI 组件 |
+| CSS 引擎 | Tailwind CSS 4              | 原子化样式 |
+| 状态管理 | Pinia 3                     | 响应式状态与持久化 |
+| 路由 | Vue Router 5 (Hash 模式)      | 多窗口路由支持 |
+| 数据库 | SQLite (via GORM)           | 本地数据持久化 |
+| 日志引擎 | Zap + Lumberjack            | 结构化日志与滚动切割 |
+| 配置中心 | Viper                       | YAML 配置文件读写 |
+| 任务自动化 | Taskfile v3                 | 跨平台构建任务编排 |
 | 包管理 | pnpm (前端) / Go Modules (后端) | 依赖管理 |
 
 ---
