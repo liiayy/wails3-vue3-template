@@ -27,8 +27,6 @@ FROM gcr.io/distroless/static-debian12
 # Copy the binary
 COPY --from=builder /app/server /server
 
-# Copy frontend assets
-COPY --from=builder /app/frontend/dist /frontend/dist
 
 # Expose the default port
 EXPOSE 8080

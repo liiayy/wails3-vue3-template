@@ -1,6 +1,7 @@
 .task
 .idea
 .vscode
+.claude
 bin
 frontend/dist
 frontend/bindings

@@ -102,7 +102,7 @@ wails3 generate icons
 ### 绑定系统
 - **位置**: `frontend/bindings/`
 - **重要**: 这些文件是从 Go 服务**自动生成**的 - 请勿编辑
-- **模块名**: 基于 Go 模块名（目前是 `changeme`，需要在 `go.mod` 中更新）
+- **模块名**: 基于 Go 模块名（当前为 `myapp2`）
 - **用法**: 从 `@wailsio/runtime` 和生成的绑定导入以调用 Go 方法
 - **示例**: Go 服务方法 `GreetService.Greet(name string)` 在 TypeScript 中变为 `GreetService.Greet(name)`
 

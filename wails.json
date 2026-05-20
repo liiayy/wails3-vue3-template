@@ -1,0 +1,11 @@
+{
+  "name": "myapp2",
+  "version": "1.0.0",
+  "description": "MyApp2 - Wails 3 大型工程化架构模板",
+  "authors": [
+    "MyApp2 Studio"
+  ],
+  "copyright": "© 2026, MyApp2 Studio",
+  "license": "",
+  "productIdentifier": "com.myapp2.app"
+}
