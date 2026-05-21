@@ -57,7 +57,7 @@ tasks:
   package:prod:
     summary: 打包生产版安装包（NSIS 安装程序）
     cmds:
-      - task: "{{OS}}:package"
+      - task: '{{if eq OS "darwin"}}darwin:package:universal{{else}}{{OS}}:package{{end}}'
         vars:
           DEV: "false"
           APP_VERSION: "{{.APP_VERSION}}"

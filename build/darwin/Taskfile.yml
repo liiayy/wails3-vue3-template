@@ -100,10 +100,14 @@ tasks:
         vars:
           ARCH: amd64
           OUTPUT: "{{.BIN_DIR}}/{{.APP_NAME}}-amd64"
+          DEV: "{{.DEV}}"
+          APP_VERSION: "{{.APP_VERSION}}"
       - task: build
         vars:
           ARCH: arm64
           OUTPUT: "{{.BIN_DIR}}/{{.APP_NAME}}-arm64"
+          DEV: "{{.DEV}}"
+          APP_VERSION: "{{.APP_VERSION}}"
     cmds:
       - task: '{{if eq OS "darwin"}}build:universal:lipo:native{{else}}build:universal:lipo:go{{end}}'
 
@@ -127,13 +131,18 @@ tasks:
       - task: build
     cmds:
       - task: create:app:bundle
+      - task: create:dmg:installer
 
   package:universal:
     summary: Packages darwin universal binary (arm64 + amd64)
     deps:
       - task: build:universal
+        vars:
+          DEV: "{{.DEV}}"
+          APP_VERSION: "{{.APP_VERSION}}"
     cmds:
       - task: create:app:bundle
+      - task: create:dmg:installer
 
 
   create:app:bundle:
@@ -206,3 +215,36 @@ tasks:
         msg: "SIGN_IDENTITY is required. Set it in the vars section at the top of build/darwin/Taskfile.yml"
       - sh: '[ -n "{{.KEYCHAIN_PROFILE}}" ]'
         msg: "KEYCHAIN_PROFILE is required. Set it in the vars section at the top of build/darwin/Taskfile.yml"
+
+  create:dmg:installer:
+    summary: Creates a DMG installer (macOS only)
+    cmds:
+      - |
+        {{if eq OS "darwin"}}
+        if [ -d "{{.BIN_DIR}}/{{.APP_NAME}}.app" ]; then
+          # Remove existing DMG if it exists to avoid prompts
+          rm -f "{{.BIN_DIR}}/{{.APP_NAME}}-{{.APP_VERSION}}-macOS.dmg"
+          
+          # Create a temporary directory structure for the DMG to include Applications link
+          TEMP_DMG_DIR="{{.BIN_DIR}}/tmp_dmg"
+          rm -rf "$TEMP_DMG_DIR"
+          mkdir -p "$TEMP_DMG_DIR"
+          
+          # Copy .app bundle into temp dir
+          cp -R "{{.BIN_DIR}}/{{.APP_NAME}}.app" "$TEMP_DMG_DIR/"
+          
+          # Create symbolic link to /Applications for easy drag-and-drop
+          ln -s /Applications "$TEMP_DMG_DIR/Applications"
+          
+          # Run hdiutil to create the DMG
+          hdiutil create -volname "{{.APP_NAME}}" -srcfolder "$TEMP_DMG_DIR" -ov -format UDZO "{{.BIN_DIR}}/{{.APP_NAME}}-{{.APP_VERSION}}-macOS.dmg"
+          
+          # Clean up temp dir
+          rm -rf "$TEMP_DMG_DIR"
+        else
+          echo "Error: {{.BIN_DIR}}/{{.APP_NAME}}.app not found. Build the app bundle first."
+          exit 1
+        fi
+        {{else}}
+        echo "Skipping DMG creation (hdiutil is only available on macOS)"
+        {{end}}
