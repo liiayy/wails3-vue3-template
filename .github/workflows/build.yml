@@ -18,15 +18,19 @@ jobs:
           - name: 'Windows x64'
             os: 'windows-latest'
             artifact-name: 'Windows'
+            arch: 'amd64'
           - name: 'macOS Universal'
             os: 'macos-latest'
             artifact-name: 'macOS'
+            arch: 'universal'
           - name: 'Linux x64'
             os: 'ubuntu-latest'
             artifact-name: 'Linux-x64'
+            arch: 'amd64'
           - name: 'Linux arm64'
             os: 'ubuntu-24.04-arm'
             artifact-name: 'Linux-arm64'
+            arch: 'arm64'
 
     runs-on: ${{ matrix.build.os }}
     name: ${{ matrix.build.name }}
@@ -97,6 +101,9 @@ jobs:
         run: |
           $version = "$env:GITHUB_REF_NAME" -replace '^v', ''
           task package:prod APP_VERSION=$version
+          Rename-Item -Path "bin/myapp2-amd64-installer.exe" -NewName "myapp2-$version-windows-amd64.exe"
+          Compress-Archive -Path "bin/myapp2.exe" -DestinationPath "bin/myapp2-$version-windows-amd64.zip"
+          Remove-Item -Path "bin/myapp2.exe"
 
       - name: Package (macOS) - .app Bundle + .zip
         if: runner.os == 'macOS'
@@ -104,13 +111,25 @@ jobs:
           VERSION="${GITHUB_REF_NAME#v}"
           task package:prod APP_VERSION=$VERSION
           cd bin
-          zip -r "myapp2-${VERSION}-macOS.zip" "myapp2.app"
+          mv "myapp2-${VERSION}-macOS.dmg" "myapp2-${VERSION}-macOS-universal.dmg"
+          zip -r "myapp2-${VERSION}-macOS-universal.zip" "myapp2.app"
+          rm -rf "myapp2.app"
 
       - name: Package (Linux) - .deb + .rpm + .AppImage
         if: runner.os == 'Linux'
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
           task package:prod APP_VERSION=$VERSION
+          cd bin
+          ARCH="${{ matrix.build.arch }}"
+          mv myapp2.deb "myapp2-${VERSION}-linux-${ARCH}.deb"
+          mv myapp2.rpm "myapp2-${VERSION}-linux-${ARCH}.rpm"
+          if [ -f myapp2-x86_64.AppImage ]; then
+            mv myapp2-x86_64.AppImage "myapp2-${VERSION}-linux-${ARCH}.AppImage"
+          elif [ -f myapp2-aarch64.AppImage ]; then
+            mv myapp2-aarch64.AppImage "myapp2-${VERSION}-linux-${ARCH}.AppImage"
+          fi
+          rm -f myapp2
 
       # === 上传产物 ===
       - name: Upload Artifacts
@@ -124,7 +143,6 @@ jobs:
             bin/*.deb
             bin/*.rpm
             bin/*.AppImage
-            bin/myapp2
           if-no-files-found: warn
 
   # === GitHub Release（将各平台产物一并发布）===
