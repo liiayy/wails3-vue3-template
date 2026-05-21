@@ -1,431 +1,431 @@
-# wails3-vue3-template - Wails 3 企业级桌面应用模板
+# wails3-vue3-template - Wails 3 Enterprise Desktop Application Template
 
 <div align="center">
 
 **[English](README.md) | [简体中文](README_zh.md)**
 
-**基于 Wails v3 构建的生产级、企业级桌面应用模板**
+**A production-grade, enterprise-ready desktop application template built with Wails v3**
 
-[![Wails 版本](https://img.shields.io/badge/Wails-v3.0.0--alpha.94-blue)](https://wails.io)
-[![Go 版本](https://img.shields.io/badge/Go-1.25+-00ADD8?logo=go)](https://go.dev)
-[![Vue 版本](https://img.shields.io/badge/Vue-3.5+-4FC08D?logo=vue.js)](https://vuejs.org)
-[![许可证](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Wails Version](https://img.shields.io/badge/Wails-v3.0.0--alpha.94-blue)](https://wails.io)
+[![Go Version](https://img.shields.io/badge/Go-1.25+-00ADD8?logo=go)](https://go.dev)
+[![Vue Version](https://img.shields.io/badge/Vue-3.5+-4FC08D?logo=vue.js)](https://vuejs.org)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-[功能特性](#功能特性) • [截图展示](#截图展示) • [快速开始](#快速开始) • [架构设计](#架构设计) • [文档](#文档)
+[Features](#features) • [Screenshots](#screenshots) • [Quick Start](#quick-start) • [Architecture](#architecture) • [Documentation](#documentation)
 
 </div>
 
 ---
 
-## 项目简介
+## Introduction
 
-wails3-vue3-template 是一个全面的桌面应用程序模板，展示了构建跨平台桌面应用的 **Wails v3 最佳实践**。它结合了 Go 强大的后端能力和 Vue 3 现代的前端生态系统，为企业级应用提供了坚实的基础。
+wails3-vue3-template is a comprehensive desktop application template that showcases **Wails v3 best practices** for building cross-platform desktop applications. It combines Go's powerful backend capabilities with Vue 3's modern frontend ecosystem, providing a solid foundation for enterprise-grade applications.
 
-### 为什么选择这个项目？
+### Why This Project?
 
-- 🚀 **生产就绪**：包含日志、配置、数据库迁移、错误处理和优雅关机
-- 🏗️ **清晰架构**：分层设计（Binding → Service → Repository → Domain）易于维护
-- 🎨 **现代 UI**：基于 Vue 3、TDesign 组件库和 Tailwind CSS 4 构建
-- 🌍 **国际化**：完整的中英文多语言支持
-- 🌓 **主题系统**：浅色/深色/自动主题，与系统偏好同步
-- 💾 **持久化**：SQLite + GORM 自动迁移
-- 📦 **独立分发**：单二进制文件，内嵌所有资源
+- 🚀 **Production Ready**: Includes logging, configuration, database migration, error handling, and graceful shutdown
+- 🏗️ **Clean Architecture**: Layered design (Binding → Service → Repository → Domain) for easy maintenance
+- 🎨 **Modern UI**: Built with Vue 3, TDesign component library, and Tailwind CSS 4
+- 🌍 **Internationalization**: Full Chinese and English multilingual support
+- 🌓 **Theme System**: Light/Dark/Auto themes synced with system preferences
+- 💾 **Persistence**: SQLite + GORM with auto migration
+- 📦 **Standalone Distribution**: Single binary with all resources embedded
 
 ---
 
-## 截图展示
+## Screenshots
 
 <table>
   <tr>
-    <td align="center"><b>首页</b></td>
-    <td align="center"><b>主题模式</b></td>
+    <td align="center"><b>Home Page</b></td>
+    <td align="center"><b>Theme Mode</b></td>
   </tr>
   <tr>
-    <td><img src="docs/images/首页.png" alt="首页" width="450"/></td>
-    <td><img src="docs/images/主题模式.png" alt="主题模式" width="450"/></td>
+    <td><img src="docs/images/首页.png" alt="Home Page" width="450"/></td>
+    <td><img src="docs/images/主题模式.png" alt="Theme Mode" width="450"/></td>
   </tr>
   <tr>
-    <td align="center"><b>配置中心</b></td>
-    <td align="center"><b>文件操作</b></td>
+    <td align="center"><b>Configuration Center</b></td>
+    <td align="center"><b>File Operations</b></td>
   </tr>
   <tr>
-    <td><img src="docs/images/配置中心.png" alt="配置中心" width="450"/></td>
-    <td><img src="docs/images/文件操作.png" alt="文件操作" width="450"/></td>
+    <td><img src="docs/images/配置中心.png" alt="Configuration Center" width="450"/></td>
+    <td><img src="docs/images/文件操作.png" alt="File Operations" width="450"/></td>
   </tr>
   <tr>
-    <td align="center"><b>剪切板操作</b></td>
-    <td align="center"><b>原生拖拽</b></td>
+    <td align="center"><b>Clipboard Operations</b></td>
+    <td align="center"><b>Native Drag & Drop</b></td>
   </tr>
   <tr>
-    <td><img src="docs/images/剪切板操作.png" alt="剪切板操作" width="450"/></td>
-    <td><img src="docs/images/原生拖拽.png" alt="原生拖拽" width="450"/></td>
+    <td><img src="docs/images/剪切板操作.png" alt="Clipboard Operations" width="450"/></td>
+    <td><img src="docs/images/原生拖拽.png" alt="Native Drag & Drop" width="450"/></td>
   </tr>
   <tr>
-    <td align="center"><b>原生通知</b></td>
-    <td align="center"><b>多窗口状态共享</b></td>
+    <td align="center"><b>Native Notifications</b></td>
+    <td align="center"><b>Multi-window State Sharing</b></td>
   </tr>
   <tr>
-    <td><img src="docs/images/原生通知.png" alt="原生通知" width="450"/></td>
-    <td><img src="docs/images/多窗口状态共享.gif" alt="多窗口状态共享" width="450"/></td>
+    <td><img src="docs/images/原生通知.png" alt="Native Notifications" width="450"/></td>
+    <td><img src="docs/images/多窗口状态共享.gif" alt="Multi-window State Sharing" width="450"/></td>
   </tr>
 </table>
 
 ---
 
-## 功能特性
+## Features
 
-### 核心能力
+### Core Capabilities
 
-- **多窗口管理**：创建和管理多个独立窗口，集成系统托盘
-- **用户管理**：完整的 CRUD 示例，包含分页、搜索和表单验证
-- **设置持久化**：实时设置同步，自动持久化到数据库
-- **原生集成**：
-    - 文件对话框（打开/保存/多选）
-    - 剪贴板操作
-    - 原生文件拖放
-    - 带操作和回复的系统通知
-- **状态管理**：Pinia 状态存储，支持路由状态保持
-- **动态路由**：基于路由元数据自动生成侧边栏菜单
-- **开发工具**：热重载、Vue DevTools、TypeScript 严格模式
+- **Multi-window Management**: Create and manage multiple independent windows with system tray integration
+- **User Management**: Complete CRUD example with pagination, search, and form validation
+- **Settings Persistence**: Real-time settings sync with automatic persistence to database
+- **Native Integration**:
+  - File dialogs (open/save/multi-select)
+  - Clipboard operations
+  - Native file drag & drop
+  - System notifications with actions and replies
+- **State Management**: Pinia state stores with route state preservation
+- **Dynamic Routing**: Auto-generated sidebar menu from route metadata
+- **Developer Tools**: Hot reload, Vue DevTools, TypeScript strict mode
 
-### 开发体验
+### Developer Experience
 
-- **类型安全**：完整的 TypeScript 覆盖，自动生成绑定
-- **代码质量**：ESLint、Oxlint、Prettier 和自动格式化
-- **构建流水线**：使用 Taskfile 自动化的生产构建优化
-- **日志系统**：结构化日志，支持日志轮转（Lumberjack）
-- **配置管理**：基于 Viper 的 YAML 配置
-- **错误处理**：统一的错误响应和 panic 恢复
-
----
-
-## 技术栈
-
-| 层级 | 技术选型 | 用途 |
-|------|---------|------|
-| **后端运行时** | Go 1.25+ | 核心业务逻辑与系统调用 |
-| **桌面框架** | Wails v3 (alpha.74) | 连接 Go 后端与 WebView 前端 |
-| **前端框架** | Vue 3 (Composition API) | 响应式 UI 组件 |
-| **国际化** | Vue I18n 11 | 多语言支持 |
-| **构建工具** | Vite 8 | 快速热重载和优化构建 |
-| **UI 组件库** | TDesign Vue Next | 企业级组件库 |
-| **CSS 引擎** | Tailwind CSS 4 | 原子化样式 |
-| **状态管理** | Pinia 3 | 响应式状态与持久化 |
-| **路由** | Vue Router 5 (Hash 模式) | 多窗口路由支持 |
-| **数据库** | SQLite (via GORM) | 本地数据持久化 |
-| **日志** | Zap + Lumberjack | 结构化日志与轮转 |
-| **配置中心** | Viper | YAML 配置管理 |
-| **任务自动化** | Taskfile v3 | 跨平台构建任务 |
+- **Type Safety**: Full TypeScript coverage with auto-generated bindings
+- **Code Quality**: ESLint, Oxlint, Prettier, and auto-formatting
+- **Build Pipeline**: Automated production build optimization with Taskfile
+- **Logging**: Structured logging with rotation support (Lumberjack)
+- **Configuration**: Viper-based YAML configuration
+- **Error Handling**: Unified error responses and panic recovery
 
 ---
 
-## 快速开始
+## Tech Stack
 
-### 环境要求
+| Layer | Technology | Purpose |
+|------|-----------|---------|
+| **Backend Runtime** | Go 1.25+ | Core business logic & system calls |
+| **Desktop Framework** | Wails v3 (alpha.94) | Bridge Go backend with WebView frontend |
+| **Frontend Framework** | Vue 3 (Composition API) | Reactive UI components |
+| **Internationalization** | Vue I18n 11 | Multi-language support |
+| **Build Tool** | Vite 8 | Fast HMR and optimized builds |
+| **UI Component Library** | TDesign Vue Next | Enterprise component library |
+| **CSS Engine** | Tailwind CSS 4 | Utility-first styling |
+| **State Management** | Pinia 3 | Reactive state & persistence |
+| **Router** | Vue Router 5 (Hash Mode) | Multi-window routing support |
+| **Database** | SQLite (via GORM) | Local data persistence |
+| **Logging** | Zap + Lumberjack | Structured logging & rotation |
+| **Configuration** | Viper | YAML configuration management |
+| **Task Automation** | Taskfile v3 | Cross-platform build tasks |
 
-- **Go**: 1.25 或更高版本
-- **Node.js**: ^20.19.0 或 >=22.12.0
-- **pnpm**: 最新版本（推荐）或 npm/yarn
+---
 
-### 安装步骤
+## Quick Start
+
+### Prerequisites
+
+- **Go**: 1.25 or higher
+- **Node.js**: ^20.19.0 or >=22.12.0
+- **pnpm**: Latest (recommended) or npm/yarn
+
+### Installation
 
 ```bash
-# 克隆仓库
-git clone https://gitee.com/liiayy/wails3-vue3-template.git
+# Clone the repository
+git clone https://github.com/liiayy/wails3-vue3-template.git
 cd wails3-vue3-template
 
-# 安装前端依赖
+# Install frontend dependencies
 cd frontend
 pnpm install
 cd ..
 
-# 运行开发模式
+# Run development mode
 wails3 dev
-# 或者
+# Or
 task dev
 ```
 
-就这样！应用会自动打开，前后端代码修改都会自动热重载。
+That's it! The application will open automatically, and both frontend and backend code changes will hot-reload.
 
-### 生产构建
+### Production Build
 
 ```bash
-# 标准生产构建
+# Standard production build
 wails3 build
 
-# 优化构建（注入版本号）
+# Optimized build (inject version number)
 task build:prod
 
-# 指定版本构建
+# Build with specific version
 task build:prod APP_VERSION=2.1.0
 ```
 
-输出文件在 `bin/` 目录中。
+Output files are in the `bin/` directory.
 
 ---
 
-## 项目结构
+## Project Structure
 
 ```
 myapp2/
-├── main.go                          # 应用入口（依赖注入 & 启动）
-├── go.mod / go.sum                  # Go 依赖
-├── Taskfile.yml                     # 构建任务自动化
+├── main.go                          # Application entry point (DI & startup)
+├── go.mod / go.sum                  # Go dependencies
+├── Taskfile.yml                     # Build task automation
 │
-├── internal/                        # Go 私有核心包
-│   ├── app/                         # Wails 生命周期管理
-│   ├── binding/                     # 前端桥接层（控制器）
-│   ├── buildinfo/                   # 编译期版本注入
-│   ├── config/                      # Viper YAML 配置
-│   ├── database/                    # GORM + SQLite 连接
-│   ├── domain/                      # 领域模型 + Repository 接口
-│   ├── logger/                      # Zap + Lumberjack 日志引擎
-│   ├── manager/                     # 多窗口管理器 + 系统托盘
-│   ├── repository/                  # SQLite 仓储实现
-│   └── service/                     # 业务逻辑层
+├── internal/                        # Go private core packages
+│   ├── app/                         # Wails lifecycle management
+│   ├── binding/                     # Frontend bridge layer (controllers)
+│   ├── buildinfo/                   # Compile-time version injection
+│   ├── config/                      # Viper YAML configuration
+│   ├── database/                    # GORM + SQLite connection
+│   ├── domain/                      # Domain models + Repository interfaces
+│   ├── logger/                      # Zap + Lumberjack logging engine
+│   ├── manager/                     # Multi-window manager + system tray
+│   ├── repository/                  # SQLite repository implementation
+│   └── service/                     # Business logic layer
 │
-├── build/                           # Wails 构建配置 & 资源
+├── build/                           # Wails build configuration & assets
 │
-└── frontend/                        # Vue 3 前端
-    ├── bindings/                    # 自动生成的 TS 绑定（请勿编辑）
+└── frontend/                        # Vue 3 frontend
+    ├── bindings/                    # Auto-generated TS bindings (do not edit)
     ├── src/
-    │   ├── main.ts                  # 前端入口
-    │   ├── App.vue                  # 根组件
-    │   ├── api/                     # API 抽象层
-    │   ├── assets/                  # 静态资源
-    │   ├── composables/             # Vue 组合式 API 工具箱
-    │   ├── layouts/                 # 布局组件
-    │   ├── locales/                 # i18n 语言文件
-    │   ├── router/                  # Vue Router 配置
-    │   ├── stores/                  # Pinia 状态存储
-    │   └── views/                   # 页面组件
-    ├── vite.config.ts               # Vite 配置
-    └── package.json                 # 前端依赖
+    │   ├── main.ts                  # Frontend entry point
+    │   ├── App.vue                  # Root component
+    │   ├── api/                     # API abstraction layer
+    │   ├── assets/                  # Static assets
+    │   ├── composables/             # Vue composables toolkit
+    │   ├── layouts/                 # Layout components
+    │   ├── locales/                 # i18n language files
+    │   ├── router/                  # Vue Router configuration
+    │   ├── stores/                  # Pinia state stores
+    │   └── views/                   # Page components
+    ├── vite.config.ts               # Vite configuration
+    └── package.json                 # Frontend dependencies
 ```
 
 ---
 
-## 架构设计
+## Architecture
 
-### 分层架构
+### Layered Architecture
 
 ```
 ┌──────────────┐
-│   前端       │  Vue 3 / TypeScript
-│  (WebView)   │
+│   Frontend   │  Vue 3 / TypeScript
+│   (WebView)  │
 └──────┬───────┘
        │  Wails JS SDK
 ┌──────▼───────┐
-│   Binding    │  参数校验、错误处理
-└──────┬───────┘  （控制器层）
+│   Binding    │  Parameter validation, error handling
+└──────┬───────┘  (Controller layer)
        │
 ┌──────▼───────┐
-│   Service    │  纯业务逻辑，可测试
+│   Service    │  Pure business logic, testable
 └──────┬───────┘
        │
 ┌──────▼───────┐
-│  Repository  │  GORM 数据库操作
+│  Repository  │  GORM database operations
 └──────┬───────┘
        │
 ┌──────▼───────┐
-│    Domain    │  实体模型 + 接口
-└──────────────┘  零依赖，应用核心
+│    Domain    │  Entity models + interfaces
+└──────────────┘  Zero dependencies, application core
 ```
 
-**核心优势**：只需添加新的 Repository 实现即可更换数据库，上层代码**无需修改**。
+**Core Advantage**: Simply add a new Repository implementation to switch databases — upper layers **require no changes**.
 
-### 依赖注入流程
+### Dependency Injection Flow
 
 ```go
-// main.go 启动顺序：
-config.InitConfig()           // 0. 加载 YAML 配置
-logger.InitLogger()           // 1. 初始化日志
-database.InitDB()             // 2. 连接 SQLite
-  → repository.New...()       // 3. 创建仓储
-    → service.New...()        // 4. 创建服务
-      → binding.New...()      // 5. 创建桥接
-application.New(bindings...)  // 6. 组装 Wails 应用
-manager.NewWindowManager()    // 7. 创建窗口 & 托盘
-wailsApp.Run()                // 8. 运行事件循环
+// main.go startup order:
+config.InitConfig()           // 0. Load YAML configuration
+logger.InitLogger()           // 1. Initialize logger
+database.InitDB()             // 2. Connect to SQLite
+  → repository.New...()       // 3. Create repositories
+    → service.New...()        // 4. Create services
+      → binding.New...()      // 5. Create bindings
+application.New(bindings...)  // 6. Assemble Wails app
+manager.NewWindowManager()    // 7. Create windows & tray
+wailsApp.Run()                // 8. Run event loop
 ```
 
 ---
 
-## 文档
+## Documentation
 
-- **[架构指南](ARCHITECTURE.md)** - 详细的架构文档
-- **[开发指南](CLAUDE.md)** - 贡献者开发说明
-- **[Wails 文档](https://wails.io/docs/next/introduction)** - Wails v3 官方文档
+- **[Architecture Guide](ARCHITECTURE.md)** - Detailed architecture documentation
+- **[Development Guide](CLAUDE.md)** - Contributor development notes
+- **[Wails Documentation](https://wails.io/docs/next/introduction)** - Official Wails v3 documentation
 
 ---
 
-## 核心特性深度解析
+## Core Features Deep Dive
 
-### 1. 生产构建流水线
+### 1. Production Build Pipeline
 
-`task build:prod` 命令提供：
-- **安全增强**：生产环境自动移除 Vue DevTools
-- **编译期注入**：通过 ldflags 注入版本号和环境标识
-- **二进制优化**：`-trimpath`、`-s -w` 减小体积
-- **隐藏控制台**：Windows 下使用 `-H windowsgui`
+The `task build:prod` command provides:
+- **Security**: Automatically removes Vue DevTools in production
+- **Compile-time Injection**: Injects version number and environment via ldflags
+- **Binary Optimization**: `-trimpath`, `-s -w` for smaller footprint
+- **Hidden Console**: Uses `-H windowsgui` on Windows
 
-### 2. 主题与国际化
+### 2. Theme & Internationalization
 
-- **跟随系统**：浅色/深色/自动模式，实时同步 OS 设置
-- **双语支持**：中英文切换，基于 Vue I18n + TDesign
-- **状态持久**：设置自动同步到 SQLite（通过 Pinia）
+- **System-aware**: Light/Dark/Auto modes synced with OS settings
+- **Bilingual Support**: Chinese/English switching via Vue I18n + TDesign
+- **Persistent State**: Settings auto-synced to SQLite (via Pinia)
 
-### 3. Vue Composables 工具箱
+### 3. Vue Composables Toolkit
 
-使用可复用的 composables 消除样板代码：
-- `useAsyncAction(fn)`：自动 loading/error 状态包装
-- `useWailsEvent(name)`：无内存泄漏的事件订阅
-- `useWindowControl()`：无状态窗口控制 API
-- `useDebounce(ref)`：响应式防抖
+Eliminate boilerplate with reusable composables:
+- `useAsyncAction(fn)`: Auto loading/error state wrapper
+- `useWailsEvent(name)`: Memory-leak-free event subscription
+- `useWindowControl()`: Stateless window control API
+- `useDebounce(ref)`: Reactive debounce
 
-### 4. 完整 CRUD 示例
+### 4. Complete CRUD Example
 
-`UserManageView.vue` 展示了：
-- 服务端分页（Offset/Limit）
-- 防抖搜索（LIKE 查询）
-- TDesign 数据表格与行内操作
-- 创建/编辑模态框
-- 删除二次确认
+`UserManageView.vue` demonstrates:
+- Server-side pagination (Offset/Limit)
+- Debounced search (LIKE query)
+- TDesign data table with inline actions
+- Create/Edit modal dialogs
+- Delete confirmation
 
 ### 5. SQLite + GORM
 
-数据库位置：`AppData/MyApp2/data/app_data.db`
-- AutoMigrate 自动迁移
-- 外键约束
-- 事务支持
-- 连接池
+Database location: `AppData/MyApp2/data/app_data.db`
+- AutoMigrate
+- Foreign key constraints
+- Transaction support
+- Connection pooling
 
-### 6. 结构化日志
+### 6. Structured Logging
 
-日志文件：`AppData/MyApp2/logs/app.log`
-- 单文件 50MB 自动切割
-- 最多保留 10 个备份文件
-- 保留 30 天，gzip 压缩
-- 基于等级的过滤优化性能
+Log file: `AppData/MyApp2/logs/app.log`
+- 50MB per-file auto rotation
+- Max 10 backup files retained
+- 30-day retention with gzip compression
+- Level-based filtering for performance
 
-### 7. 优雅停机
+### 7. Graceful Shutdown
 
-应用退出时清理：
-- 释放文件锁
-- 刷新日志缓冲
-- 关闭数据库连接
-- 注销系统托盘
+Cleanup on application exit:
+- Release file locks
+- Flush log buffers
+- Close database connections
+- Unregister system tray
 
-### 8. 多窗口与托盘
+### 8. Multi-window & Tray
 
-- 独立窗口管理
-- 系统托盘与右键菜单
-- 窗口状态持久化
-- 跨平台托盘图标
+- Independent window management
+- System tray with context menu
+- Window state persistence
+- Cross-platform tray icons
 
 ---
 
-## 开发任务
+## Development Tasks
 
-### 添加后端服务
+### Adding a Backend Service
 
-1. 在 `internal/domain/` 定义领域模型
-2. 在 `internal/repository/` 创建仓储
-3. 在 `internal/service/` 实现业务逻辑
-4. 在 `internal/binding/` 暴露接口
-5. 在 `main.go` 注册服务
-6. 运行 `wails3 generate bindings --ts -clean=true`
-7. 在 `frontend/src/api/` 添加前端封装
+1. Define domain models in `internal/domain/`
+2. Create repository in `internal/repository/`
+3. Implement business logic in `internal/service/`
+4. Expose API in `internal/binding/`
+5. Register the service in `main.go`
+6. Run `wails3 generate bindings --ts -clean=true`
+7. Add frontend wrapper in `frontend/src/api/`
 
-### 添加前端页面
+### Adding a Frontend Page
 
-1. 在 `frontend/src/views/` 创建 `*.vue`
-2. 在 `frontend/src/router/index.ts` 添加路由
-3. 配置菜单元数据：
+1. Create `*.vue` in `frontend/src/views/`
+2. Add route in `frontend/src/router/index.ts`
+3. Configure menu metadata:
    ```typescript
    meta: {
      showInMenu: true,
-     menuSection: 'top', // 或 'bottom'
+     menuSection: 'top', // or 'bottom'
      title: 'menu.new_page',
      icon: 'desktop'
    }
    ```
-4. 在 `locales/` 添加 i18n 键值
+4. Add i18n key-value pairs in `locales/`
 
-### 常用命令
+### Common Commands
 
 ```bash
-# 开发
-wails3 dev              # 完整开发模式（热重载）
-task dev                # 同上
+# Development
+wails3 dev              # Full dev mode (hot reload)
+task dev                # Same as above
 
-# 构建
-wails3 build           # 标准构建
-task build:prod        # 优化构建
-task package:prod      # 创建安装包
+# Build
+wails3 build           # Standard build
+task build:prod        # Optimized build
+task package:prod      # Create installer package
 
-# 仅前端
+# Frontend only
 cd frontend
-pnpm dev               # 前端开发服务器
-pnpm build             # 生产构建
-pnpm lint              # 代码检查
-pnpm format            # 代码格式化
+pnpm dev               # Frontend dev server
+pnpm build             # Production build
+pnpm lint              # Code linting
+pnpm format            # Code formatting
 
-# 代码生成
-wails3 generate bindings --ts -clean=true  # 重新生成绑定
-wails3 generate icons                     # 生成应用图标
+# Code generation
+wails3 generate bindings --ts -clean=true  # Regenerate bindings
+wails3 generate icons                     # Generate app icons
 ```
 
 ---
 
-## 安全策略
+## Security Policy
 
-| 数据类型 | 存储位置 | 用户可改 | 示例 |
-|----------|----------|----------|------|
-| 环境标识/版本号 | 🔒 编译期 ldflags | ❌ | `IsDev`, `Version` |
-| 部署配置 | 📄 config.yaml | ✅ | 窗口大小、日志级别 |
-| 用户偏好 | 🗂️ SQLite (Pinia) | ✅ | 主题、语言、布局 |
-| 业务数据 | 🗂️ SQLite (GORM) | ✅ | 用户记录 |
-
----
-
-## 贡献指南
-
-欢迎贡献！请遵循以下准则：
-
-1. Fork 本仓库
-2. 创建特性分支 (`git checkout -b feature/amazing-feature`)
-3. 提交更改 (`git commit -m 'Add amazing feature'`)
-4. 推送到分支 (`git push origin feature/amazing-feature`)
-5. 开启 Pull Request
-
-### 代码规范
-
-- **Go**: 遵循标准 Go 规范，运行 `gofmt`
-- **TypeScript/Vue**: 使用 ESLint 和 Prettier (`pnpm lint && pnpm format`)
-- **提交信息**: 使用约定式提交格式
+| Data Type | Storage Location | User Modifiable | Example |
+|-----------|-----------------|-----------------|---------|
+| Environment/Version | 🔒 Compile-time ldflags | ❌ | `IsDev`, `Version` |
+| Deployment Config | 📄 config.yaml | ✅ | Window size, log level |
+| User Preferences | 🗂️ SQLite (Pinia) | ✅ | Theme, language, layout |
+| Business Data | 🗂️ SQLite (GORM) | ✅ | User records |
 
 ---
 
-## 开源协议
+## Contributing
 
-本项目采用 MIT 协议 - 详见 [LICENSE](LICENSE) 文件
+Contributions are welcome! Please follow these guidelines:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Code Standards
+
+- **Go**: Follow standard Go conventions, run `gofmt`
+- **TypeScript/Vue**: Use ESLint and Prettier (`pnpm lint && pnpm format`)
+- **Commit Messages**: Use conventional commit format
 
 ---
 
-## 致谢
+## License
 
-- [Wails](https://wails.io) - 优秀的桌面应用框架
-- [Vue.js](https://vuejs.org) - 渐进式 JavaScript 框架
-- [TDesign](https://tdesign.tencent.com/) - 企业级 Vue 组件库
-- [Tailwind CSS](https://tailwindcss.com) - 原子化 CSS 框架
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## Acknowledgments
+
+- [Wails](https://wails.io) - Excellent desktop application framework
+- [Vue.js](https://vuejs.org) - Progressive JavaScript framework
+- [TDesign](https://tdesign.tencent.com/) - Enterprise Vue component library
+- [Tailwind CSS](https://tailwindcss.com) - Utility-first CSS framework
 
 ---
 
 <div align="center">
 
-**使用 Wails v3 构建 ❤️**
+**Built with Wails v3 ❤️**
 
-[报告问题](https://gitee.com/liiayy/wails3-vue3-template/issues) · [功能建议](https://gitee.com/liiayy/wails3-vue3-template/issues)
+[Report Issue](https://gitee.com/liiayy/wails3-vue3-template/issues) · [Feature Request](https://gitee.com/liiayy/wails3-vue3-template/issues)
 
 </div>
